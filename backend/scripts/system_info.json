@@ -1,0 +1,9 @@
+{
+  "hostname": "srv1423577",
+  "cpu_cores": 2,
+  "memory_total_mb": 7939,
+  "memory_used_mb": 1038,
+  "disk_total_gb": 96,
+  "disk_used_gb": 27,
+  "os": "Ubuntu 25.10"
+}

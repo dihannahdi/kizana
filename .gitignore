@@ -1,0 +1,69 @@
+# Large database files (20GB+ — not stored in git)
+*.sqlite
+*.sqlite3
+*.db
+
+# Environment / secrets
+.env
+.env.local
+.env.production
+backend/.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Rust build artifacts
+backend/target/
+
+# Node / SvelteKit
+frontend/node_modules/
+frontend/.svelte-kit/
+frontend/build/
+frontend/.env
+frontend/.env.local
+
+# Temp / scratch files
+tmp_*.py
+test_*.py
+get_token.py
+fix_title.py
+v*.txt
+test_result.json
+run_tests*.sh
+
+# Logs
+*.log
+
+# VS Code
+.vscode/
+
+# Tantivy index (generated at runtime)
+backend/index/
+backend/data/
+
+# Deployment secrets
+deploy/
+Dockerfile
+nginx_kizana.conf
+
+# Reference documents (PDFs, private collection)
+"Bahstul Masail Database/"
+Bahstul*
+
+# Workspace file
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Microsoft Office temp files
+~$*

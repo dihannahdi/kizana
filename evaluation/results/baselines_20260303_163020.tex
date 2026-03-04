@@ -1,0 +1,35 @@
+% Auto-generated baseline comparison for Kizana Search paper
+
+\begin{table}[h]
+\centering
+\caption{Baseline Comparison Results}
+\label{tab:baselines}
+\begin{tabular}{lccccccc}
+\toprule
+System & MAP & MRR & NDCG@5 & NDCG@10 & P@5 & P@10 & Avg(ms) \\
+\midrule
+\textbf{Kizana (Full)} & 0.740 & 0.749 & 0.465 & 0.541 & 0.704 & 0.692 & 777.3 \\
+No Translation & 0.139 & 0.140 & 0.123 & 0.127 & 0.110 & 0.096 & 68.0 \\
+Raw BM25 & 0.734 & 0.750 & 0.451 & 0.533 & 0.719 & 0.701 & 789.8 \\
+Translation Only & 0.729 & 0.749 & 0.447 & 0.524 & 0.715 & 0.697 & 308.8 \\
+Scoring Only & 0.750 & 0.749 & 0.466 & 0.533 & 0.725 & 0.721 & 853.5 \\
+Full + Stemmer & 0.666 & 0.697 & 0.402 & 0.481 & 0.608 & 0.619 & 2008.5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Per-Language Performance (Full System)}
+\label{tab:per-language}
+\begin{tabular}{lcccccc}
+\toprule
+Language & MAP & MRR & NDCG@5 & NDCG@10 & P@5 & P@10 \\
+\midrule
+ar & 0.838 & 0.809 & 0.581 & 0.597 & 0.860 & 0.780 \\
+en & 0.610 & 0.661 & 0.367 & 0.462 & 0.533 & 0.505 \\
+id & 0.776 & 0.786 & 0.494 & 0.579 & 0.740 & 0.742 \\
+mixed & 0.734 & 0.706 & 0.431 & 0.488 & 0.720 & 0.727 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,105 @@
+
+═══════════════════════════════════════════════════════════════════════
+RELEVANCE ASSESSMENT PROTOCOL — Kizana Search Gold Standard
+═══════════════════════════════════════════════════════════════════════
+
+1. ASSESSOR QUALIFICATIONS
+───────────────────────────
+The gold standard was constructed by an assessor with the following
+qualifications:
+  • Graduate-level education in Islamic jurisprudence (fiqh) and
+    Arabic language studies
+  • Proficiency in Bahasa Indonesia, English, and Classical Arabic
+  • 5+ years of practical experience in bahtsul masail (Islamic
+    legal research) within the pesantren tradition
+  • Familiarity with all four Sunni madhhab methodologies
+
+2. QUERY CONSTRUCTION METHODOLOGY
+──────────────────────────────────
+Queries were constructed following these principles:
+
+  a) Ecological Validity: Queries represent real questions asked
+     in pesantren bahtsul masail forums, university Islamic law
+     courses, and community fatwa consultations.
+
+  b) Stratified Sampling:
+     • 50 queries in Bahasa Indonesia (dominant user base)
+     • 20 queries in English (academic users)
+     • 15 queries in mixed Indonesian-Arabic-English
+     • 10 queries in Arabic (baseline reference)
+     • Balanced across 4 domains: ibadah, muamalat, munakahat, aqidah
+
+  c) Difficulty Calibration:
+     • Simple factual queries (e.g., "syarat sah shalat jumat")
+     • Cross-topic queries requiring multi-concept mapping
+     • Queries with domain-specific jargon and transliteration
+     • Queries mixing everyday language with Islamic terminology
+
+3. RELEVANCE JUDGMENT CRITERIA
+──────────────────────────────
+Each query is annotated with:
+
+  • expected_concepts: The Arabic juristic concepts that should appear
+    in relevant results (e.g., "حمل الطفل في الصلاة" for a query
+    about carrying a child during prayer).
+
+  • relevant_keywords: Arabic terms that indicate topical relevance.
+    Keywords are selected from the established vocabulary of the
+    corresponding fiqh chapter (kitab) in classical sources.
+
+  • min_relevant: Minimum number of results expected to be relevant,
+    based on the assessor's a priori knowledge of the corpus.
+
+4. AUTO-JUDGMENT FUNCTION
+─────────────────────────
+Results are judged on a 4-point graded relevance scale:
+
+  3 = Highly Relevant: 3+ keyword matches in the result's content
+      fields (content_snippet, title, hierarchy, book_name).
+      The result directly addresses the query topic.
+
+  2 = Relevant: 2 keyword matches. The result discusses the topic
+      but may address a related sub-question.
+
+  1 = Partially Relevant: 1 keyword match. The result mentions
+      the topic but is not focused on it.
+
+  0 = Not Relevant: No keyword matches found.
+
+This automated judgment approximates domain expert assessment
+while ensuring full reproducibility. The keyword-based approach
+is validated against the following consistency checks.
+
+5. CONSISTENCY VALIDATION
+─────────────────────────
+To validate the reliability of keyword-based auto-judgment:
+
+  a) Strict vs. Generous Agreement: We compare judgments using
+     the full keyword set (generous) against judgments using only
+     the first 2 keywords (strict). Cohen's κ measures agreement.
+
+  b) Sensitivity Analysis: We measure how judgment changes when
+     keywords are added or removed. Stable judgments indicate
+     robust keyword selection.
+
+  c) Face Validity: A random sample of 20 query-result pairs
+     is manually verified by the assessor to confirm alignment
+     between auto-judgment and expert assessment.
+
+6. LIMITATIONS
+──────────────
+  • Single assessor (no multi-rater IAA possible without additional
+    domain experts)
+  • Keyword matching may miss semantically relevant results that
+    use synonymous Arabic expressions not in the keyword list
+  • The 4-point scale is coarser than ideal; future work should
+    include pooling-based assessment with multiple judges
+
+7. REFERENCES
+─────────────
+  • Voorhees, E.M. (2000). Variations in relevance judgments and
+    the measurement of retrieval effectiveness. IPM 36(5).
+  • Saracevic, T. (2007). Relevance: A review of the literature.
+    JASIST 58(13).
+  • Bailey et al. (2008). Relevance assessment: Are judges
+    exchangeable and does it matter? SIGIR '08.

@@ -1,0 +1,22 @@
+% Auto-generated ablation table for Kizana Search paper
+\begin{table}[h]
+\centering
+\caption{Ablation Study Results}
+\label{tab:ablation}
+\begin{tabular}{lcccccc}
+\toprule
+Configuration & MAP & MRR & NDCG@5 & NDCG@10 & P@5 & P@10 \\
+\midrule
+\textbf{Full System} & 0.740 & 0.749 & 0.465 & 0.541 & 0.704 & 0.692 \\
+- Query Translation & 0.139 & 0.140 & 0.123 & 0.127 & 0.110 & 0.096 \\
+- Phrase Mapping & 0.730 & 0.746 & 0.452 & 0.532 & 0.690 & 0.685 \\
+- Multi-Variant & 0.771 & 0.779 & 0.488 & 0.559 & 0.758 & 0.747 \\
+- Hierarchy Boost & 0.734 & 0.753 & 0.467 & 0.542 & 0.706 & 0.696 \\
+- Parent Boost & 0.740 & 0.751 & 0.467 & 0.542 & 0.704 & 0.693 \\
+- Book Penalty & 0.736 & 0.753 & 0.447 & 0.529 & 0.715 & 0.701 \\
+- Diversity Cap & 0.735 & 0.747 & 0.463 & 0.540 & 0.700 & 0.690 \\
+Raw BM25 Only & 0.734 & 0.750 & 0.451 & 0.533 & 0.719 & 0.701 \\
++ Arabic Stemmer & 0.666 & 0.697 & 0.402 & 0.481 & 0.608 & 0.619 \\
+\bottomrule
+\end{tabular}
+\end{table}

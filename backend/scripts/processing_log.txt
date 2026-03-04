@@ -1,0 +1,728 @@
+﻿python.exe : Ignoring wrong pointing object 6 0 (offset 0)
+At line:1 char:105
++ ... lyContinue; & "C:/Users/ADVAN/AppData/Local/Python/pythoncore-3.14-64 ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Ignoring wrong ... 6 0 (offset 0):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Ignoring wrong pointing object 10 0 (offset 0)
+Ignoring wrong pointing object 19 0 (offset 0)
+Ignoring wrong pointing object 21 0 (offset 0)
+Ignoring wrong pointing object 25 0 (offset 0)
+Ignoring wrong pointing object 47 0 (offset 0)
+Ignoring wrong pointing object 49 0 (offset 0)
+Ignoring wrong pointing object 60 0 (offset 0)
+Ignoring wrong pointing object 62 0 (offset 0)
+Ignoring wrong pointing object 76 0 (offset 0)
+Ignoring wrong pointing object 78 0 (offset 0)
+Ignoring wrong pointing object 80 0 (offset 0)
+Ignoring wrong pointing object 101 0 (offset 0)
+Ignoring wrong pointing object 127 0 (offset 0)
+Ignoring wrong pointing object 129 0 (offset 0)
+Ignoring wrong pointing object 145 0 (offset 0)
+Ignoring wrong pointing object 151 0 (offset 0)
+Ignoring wrong pointing object 183 0 (offset 0)
+Ignoring wrong pointing object 196 0 (offset 0)
+Ignoring wrong pointing object 202 0 (offset 0)
+Ignoring wrong pointing object 240 0 (offset 0)
+Ignoring wrong pointing object 278 0 (offset 0)
+Ignoring wrong pointing object 280 0 (offset 0)
+Ignoring wrong pointing object 296 0 (offset 0)
+Ignoring wrong pointing object 302 0 (offset 0)
+Ignoring wrong pointing object 6 0 (offset 0)
+Ignoring wrong pointing object 8 0 (offset 0)
+Ignoring wrong pointing object 19 0 (offset 0)
+Ignoring wrong pointing object 21 0 (offset 0)
+Ignoring wrong pointing object 25 0 (offset 0)
+Ignoring wrong pointing object 27 0 (offset 0)
+Ignoring wrong pointing object 31 0 (offset 0)
+Ignoring wrong pointing object 33 0 (offset 0)
+Ignoring wrong pointing object 45 0 (offset 0)
+Ignoring wrong pointing object 55 0 (offset 0)
+Ignoring wrong pointing object 57 0 (offset 0)
+Ignoring wrong pointing object 59 0 (offset 0)
+Ignoring wrong pointing object 65 0 (offset 0)
+Ignoring wrong pointing object 111 0 (offset 0)
+Ignoring wrong pointing object 113 0 (offset 0)
+Ignoring wrong pointing object 118 0 (offset 0)
+Ignoring wrong pointing object 125 0 (offset 0)
+Ignoring wrong pointing object 127 0 (offset 0)
+Ignoring wrong pointing object 134 0 (offset 0)
+Ignoring wrong pointing object 136 0 (offset 0)
+Ignoring wrong pointing object 138 0 (offset 0)
+Ignoring wrong pointing object 159 0 (offset 0)
+Ignoring wrong pointing object 161 0 (offset 0)
+Ignoring wrong pointing object 179 0 (offset 0)
+Ignoring wrong pointing object 188 0 (offset 0)
+Ignoring wrong pointing object 190 0 (offset 0)
+Ignoring wrong pointing object 216 0 (offset 0)
+Ignoring wrong pointing object 218 0 (offset 0)
+Ignoring wrong pointing object 220 0 (offset 0)
+Ignoring wrong pointing object 222 0 (offset 0)
+Ignoring wrong pointing object 227 0 (offset 0)
+Ignoring wrong pointing object 233 0 (offset 0)
+Ignoring wrong pointing object 255 0 (offset 0)
+Ignoring wrong pointing object 257 0 (offset 0)
+Ignoring wrong pointing object 265 0 (offset 0)
+incorrect startxref pointer(3)
+parsing for Object Streams
+Bahtsul Masail Document Processor
+Base dir: D:\nahdi\bahtsulmasail\Bahstul Masail Database
+Output DB: D:\nahdi\bahtsulmasail\backend\produk_hukum.sqlite
+============================================================
+Found 302 documents to process
+[1/302] Processing: 115_KEPUTUSAN_KOMISI_B_BM_PCNU_KAB_PASURUAN_DI_ALYASINI_fix.pdf
+  [OK] 20343 chars, 7 pages
+[2/302] Processing: 14213-38689-1-PB.pdf
+  [OK] 44193 chars, 15 pages
+[3/302] Processing: 147. Hasil BM - Berbisnis Rokok Ilegal.pdf
+  [OK] 9564 chars, 4 pages
+[4/302] Processing: 172. HASIL BM HIPJAS 6 REVISI.pdf
+  [OK] 44235 chars, 32 pages
+[5/302] Processing: 181. BM pp darul falah amtsilati jepara.pdf
+  [OK] 5719 chars, 8 pages
+[6/302] Processing: 2022 Tebuireng.pdf
+  [OK] 53784 chars, 18 pages
+[7/302] Processing: 43. komisi A-2 (1).pdf
+  [OK] 25879 chars, 17 pages
+[8/302] Processing: 50. HASIL KEPUTUSAN FMPP 39 KOMISI B.pdf
+  [OK] 35145 chars, 12 pages
+[9/302] Processing: 74. HASIL KOMISI A BM REGIONAL PUTRI 23 (4).pdf
+  [OK] 46856 chars, 13 pages
+[10/302] Processing: @bahsilnu_HASIL KEPUTUSAN FMPP 32 KOMISI B.pdf
+  [OK] 76631 chars, 20 pages
+[11/302] Processing: BUKU rumusan.pdf
+  [OK] 60273 chars, 29 pages
+[12/302] Processing: BUKU RUSEM FMPP BANYUMAS KOM A.pdf
+  [OK] 276060 chars, 125 pages
+[13/302] Processing: DRAFT HASIL BM Haul Komisi B.pdf
+  [OK] 107347 chars, 35 pages
+[14/302] Processing: Fatwa No 83-Hukum Dukungan Terhadap Perjuangan  Palestina (.pdf
+  [OK] 20257 chars, 9 pages
+[15/302] Processing: Fatwa No.1 tahun 2022 Game Higgs Domino Island.pdf
+  [OK] 23843 chars, 11 pages
+[16/302] Processing: format hasil KOMISI B.pdf
+  [OK] 32500 chars, 9 pages
+[17/302] Processing: Forum Bahtsul Masa-il 2019.pdf
+  [OK] 75918 chars, 40 pages
+[18/302] Processing: Hasil Bahtsul Masail tentang Penyakit Mulut dan Kuku.pdf
+  [OK] 16399 chars, 6 pages
+[19/302] Processing: Hasil BM Haul 2024 Komisi A.pdf
+  [OK] 63755 chars, 17 pages
+[20/302] Processing: hasil BM PCNU November 2021 pdf 2.pdf
+  [OK] 8035 chars, 3 pages
+[21/302] Processing: HASIL BMK XXVI ngunut KOM A.pdf
+  [OK] 20230 chars, 6 pages
+[22/302] Processing: hasil FMPP ke 35 KOMISI A.pdf
+  [OK] 57271 chars, 14 pages
+[23/302] Processing: hasil FMPP ke 35 KOMISI B.pdf
+  [OK] 71158 chars, 20 pages
+[24/302] Processing: hasil FMPP ke 35 KOMISI C.pdf
+  [OK] 36977 chars, 11 pages
+[25/302] Processing: Hasil Haul Kencong 2022 M.pdf
+  [OK] 20384 chars, 10 pages
+[26/302] Processing: Hasil Keputusan Bahtsul Masail Tentang Feodalisme Pesantren.pdf
+  [OK] 10846 chars, 3 pages
+[27/302] Processing: HASIL KEPUTUSAN BMK 53 ..pdf
+  [OK] 46846 chars, 14 pages
+[28/302] Processing: HASIL KEPUTUSAN BMK 54 PP. Tanggir.pdf
+  [OK] 51156 chars, 13 pages
+[29/302] Processing: HASIL KEPUTUSAN BMK KOMISI A (2) (1).pdf
+  [OK] 38482 chars, 11 pages
+[30/302] Processing: HASIL KEPUTUSAN BMK KOMISI B.pdf
+  [OK] 39416 chars, 12 pages
+[31/302] Processing: Hasil Keputusan BMK Langitan 2023_Notulen.pdf
+  [OK] 44011 chars, 18 pages
+[32/302] Processing: HASIL KEPUTUSAN BMK PP. AN-NAJAH 2024.pdf
+  [OK] 11601 chars, 7 pages
+[33/302] Processing: HASIL KEPUTUSAN BMK PP. AN-NAJAH.pdf
+  [OK] 17312 chars, 4 pages
+[34/302] Processing: HASIL KEPUTUSAN BOIKOT.pdf
+  [OK] 14988 chars, 4 pages
+[35/302] Processing: HASIL KEPUTUSAN FBM KOMISI A.pdf
+  [OK] 36587 chars, 9 pages
+[36/302] Processing: HASIL KEPUTUSAN FBM KOMISI B.pdf
+  [OK] 30453 chars, 8 pages
+[37/302] Processing: HASIL KEPUTUSAN FMK KE-X DARUT TAUHID INJELAN.pdf
+  [OK] 40226 chars, 13 pages
+[38/302] Processing: HASIL KEPUTUSAN FMP3 KOMISI A.pdf
+  [OK] 41927 chars, 11 pages
+[39/302] Processing: HASIL KEPUTUSAN FMP3 KOMISI B.pdf
+  [OK] 31750 chars, 10 pages
+[40/302] Processing: HASIL KEPUTUSAN FMP3 KOMISI C.pdf
+  [OK] 44518 chars, 13 pages
+[41/302] Processing: HASIL KEPUTUSAN FMPP 32 KOMISI A.pdf
+  [OK] 63340 chars, 17 pages
+[42/302] Processing: HASIL KEPUTUSAN FMPP 37 KOMISI A.pdf
+  [OK] 48766 chars, 14 pages
+[43/302] Processing: HASIL KEPUTUSAN FMPP 37 KOMISI B.pdf
+  [OK] 41444 chars, 15 pages
+[44/302] Processing: HASIL KEPUTUSAN FMPP 37 KOMISI C.pdf
+  [OK] 38114 chars, 13 pages
+[45/302] Processing: HASIL KEPUTUSAN FMPP 39 KOMISI A.pdf
+  [OK] 78662 chars, 28 pages
+[46/302] Processing: HASIL KEPUTUSAN FMPP 39 KOMISI B.pdf
+  [SKIP] Already processed
+[47/302] Processing: HASIL KEPUTUSAN FMPP 39 KOMISI C.pdf
+  [OK] 45668 chars, 16 pages
+[48/302] Processing: HASIL KEPUTUSAN FMPP 41 DI PP. LIRBOYO KOMISI A.pdf
+  [OK] 20017 chars, 8 pages
+[49/302] Processing: HASIL KEPUTUSAN FMPP 41 DI PP. LIRBOYO KOMISI B.pdf
+  [OK] 28873 chars, 10 pages
+[50/302] Processing: HASIL KEPUTUSAN FMPP 41 DI PP. LIRBOYO KOMISI C.pdf
+  [OK] 49228 chars, 15 pages
+[51/302] Processing: HASIL KEPUTUSAN FMPP 42 TAMBAKBERAS KOM. A.pdf
+  [OK] 65083 chars, 19 pages
+[52/302] Processing: HASIL KEPUTUSAN FMPP 42 TAMBAKBERAS KOM. B.pdf
+  [OK] 45998 chars, 15 pages
+[53/302] Processing: HASIL KEPUTUSAN FMPP 42 TAMBAKBERAS KOM. C.pdf
+  [OK] 56070 chars, 18 pages
+[54/302] Processing: Hasil Keputusan haul putri ke-20 (F4).pdf
+  [OK] 33347 chars, 13 pages
+[55/302] Processing: HASIL KEPUTUSAN KBMK KE X Lanbulan.pdf
+  [OK] 28026 chars, 11 pages
+[56/302] Processing: HASIL KEPUTUSAN KOMISI A BMK XXIV.pdf
+  [OK] 55699 chars, 20 pages
+[57/302] Processing: HASIL KEPUTUSAN KOMISI A FMPP LIRBOYO (1).pdf
+  [OK] 74483 chars, 21 pages
+[58/302] Processing: HASIL KEPUTUSAN KOMISI B BMK XXIV.pdf
+  [OK] 47706 chars, 19 pages
+[59/302] Processing: HASIL KEPUTUSAN KOMISI B FMPP LIRBOYO.pdf
+  [OK] 38825 chars, 11 pages
+[60/302] Processing: HASIL KEPUTUSAN KOMISI C BMK XXIV (1).pdf
+  [OK] 33440 chars, 15 pages
+[61/302] Processing: HASIL KEPUTUSAN KOMISI C BMK XXIV (2).pdf
+  [SKIP] Already processed
+[62/302] Processing: HASIL KEPUTUSAN KOMISI C BMK XXIV.pdf
+  [SKIP] Already processed
+[63/302] Processing: HASIL KEPUTUSAN KOMISI C FMPP LIRBOYO.pdf
+  [OK] 37684 chars, 12 pages
+[64/302] Processing: HASIL KEPUTUSAN LBM SE-JAWA MADURA Ke 2.pdf
+  [OK] 29034 chars, 16 pages
+[65/302] Processing: HASIL KOMISI A BM REGIONAL PUTRI 23 (4).pdf
+  [SKIP] Already processed
+[66/302] Processing: HASIL KOMISI A BMK NGUNUT 2022.docx
+  [OK] 24251 chars, 112 pages
+[67/302] Processing: Hasil putusan bahtsul masail LBMNU PWNU Jawa Tengah di Popongan (1).pdf
+  [OK] 31392 chars, 13 pages
+[68/302] Processing: Hasil-Hasil_Musyawarah-Nasional-Alim-Ulama-Nahdlatul-Ulama-2019.pdf
+  [OK] 455589 chars, 317 pages
+[69/302] Processing: HASIL-KEPUTUSAN-BMP-KOM-A.pdf
+  [OK] 56440 chars, 15 pages
+[70/302] Processing: HASIL-KEPUTUSAN-BMP-KOM-C.pdf
+  [OK] 33573 chars, 11 pages
+[71/302] Processing: HASIL-KEPUTUSAN-BMP-KOMISI-B.pdf
+  [OK] 32130 chars, 10 pages
+[72/302] Processing: Hasil-Munas-dan-Konbes-NU-2017 (2).pdf
+  [OK] 501242 chars, 337 pages
+[73/302] Processing: HASIL_IJTIMA__ULAMA_KOMISI_FATWA_SE_INDONESIA_VII_TAHUN_2021.pdf
+  [OK] 213649 chars, 110 pages
+[74/302] Processing: KEPUTUSAN BAHTSU PWNU AGUSTUS 29 2023.pdf
+  [OK] 64673 chars, 19 pages
+[75/302] Processing: KEPUTUSAN BMK 19 Komisi B.pdf
+  [OK] 41064 chars, 10 pages
+[76/302] Processing: KEPUTUSAN BMK KE-27 A DAN B.pdf
+  [OK] 39373 chars, 22 pages
+[77/302] Processing: KEPUTUSAN BMK KOMISI A 2019.pdf
+  [OK] 39205 chars, 11 pages
+[78/302] Processing: KEPUTUSAN FMP3 XXIV di PP Lirboyo.pdf
+  [OK] 124015 chars, 68 pages
+[79/302] Processing: KEPUTUSAN FSM 1447.pdf
+  [OK] 19190 chars, 8 pages
+[80/302] Processing: komisi A (1).pdf
+  [SKIP] Already processed
+[81/302] Processing: KOMISI A - HASIL KEPUTUSAN FMPP 40 PP. SUNAN DRAJAT LAMONGAN.pdf
+  [OK] 31821 chars, 10 pages
+[82/302] Processing: KOMISI A.pdf
+  [OK] 40168 chars, 11 pages
+[83/302] Processing: komisi B (1).pdf
+  [OK] 27548 chars, 15 pages
+[84/302] Processing: KOMISI B - HASIL KEPUTUSAN FMPP 40.pdf
+  [OK] 34042 chars, 12 pages
+[85/302] Processing: KOMISI B.pdf
+  [OK] 45491 chars, 12 pages
+[86/302] Processing: komisi C (1).pdf
+  [OK] 30942 chars, 9 pages
+[87/302] Processing: KOMISI C - HASIL KEPUTUSAN FMPP 40.pdf
+  [OK] 24079 chars, 10 pages
+[88/302] Processing: KOMISI C .pdf
+  [OK] 75429 chars, 17 pages
+[89/302] Processing: KOMISI C.pdf
+  [OK] 35339 chars, 11 pages
+[90/302] Processing: NU Ahkamul Fuqoha_.pdf
+  [OK] 2068357 chars, 995 pages
+[91/302] Processing: PBNU - Hasil-Hasil MUNAS & KONBES 2021 - Materi.docx
+  [OK] 174479 chars, 1039 pages
+[92/302] Processing: PBNU - Hasil-Hasil MUNAS & KONBES 2021 - Materi.pdf
+  [OK] 312465 chars, 158 pages
+[93/302] Processing: RUMUSAN BMK 2023 JADI.pdf
+  [OK] 26989 chars, 20 pages
+[94/302] Processing: RUMUSAN FINAL EMKA KE 37 KOMISI A.pdf
+  [OK] 44147 chars, 18 pages
+[95/302] Processing: RUMUSAN FINAL EMKA KE 37 KOMISI B.pdf
+  [OK] 18597 chars, 13 pages
+[96/302] Processing: Rumusan Ma_had Aly UINMA, BM PC NU Malang.pdf
+  [OK] 17308 chars, 7 pages
+[97/302] Processing: RUSEM FMP3 XXV PP. Modern Ar Rifa_i Malang.pdf
+  [OK] 87854 chars, 48 pages
+[98/302] Processing: Rusem Komisi C FMPP 41 Versi Panitia.pdf
+  [OK] 62405 chars, 18 pages
+[99/302] Processing: Abdullah Saeed\015201872a670bebc31ce689c95ae6eb.pdf
+  [OK] 736611 chars, 198 pages
+[100/302] Processing: Abdullah Saeed\250622903.pdf
+  [OK] 93397 chars, 29 pages
+[101/302] Processing: Abdullah Saeed\644205.pdf
+  [OK] 736685 chars, 285 pages
+[102/302] Processing: Abdullah Saeed\9781317974154.pdf
+  [OK] 564923 chars, 205 pages
+[103/302] Processing: Abdullah Saeed\Abdullah-Saeed-Interpreting-Quran.pdf
+  [OK] 527103 chars, 206 pages
+[104/302] Processing: BM FMPP Terbaru\HASIL KEPUTUSAN BAHTSUL MASAIL AL FALAH PLOSO KE 25 KOMISI A.pdf
+  [OK] 63679 chars, 23 pages
+[105/302] Processing: BM FMPP Terbaru\HASIL KEPUTUSAN BAHTSUL MASAIL AL FALAH PLOSO KE 25 KOMISI B.pdf
+  [OK] 40241 chars, 21 pages
+[106/302] Processing: BM FMPP Terbaru\HASIL KEPUTUSAN BMP P2L 2025 KOMISI A.pdf
+  [OK] 34933 chars, 11 pages
+[107/302] Processing: BM FMPP Terbaru\HASIL KEPUTUSAN BMP P2L 2025 KOMISI B.pdf
+  [OK] 38522 chars, 14 pages
+[108/302] Processing: BM FMPP Terbaru\HASIL KEPUTUSAN BMP P2L 2025 KOMISI C.pdf
+  [OK] 73162 chars, 18 pages
+[109/302] Processing: File dari Gus Fudholla\00. Rusem Lantakan Setor LBM.docx
+  [OK] 72295 chars, 223 pages
+[110/302] Processing: File dari Gus Fudholla\01. PP. Kiyai Syarifudin Lumajang.doc
+  [OK] 155608 chars, 710 pages
+[111/302] Processing: File dari Gus Fudholla\02. PP. AN-NUR LAMONGAN.docx
+  [OK] 40196 chars, 184 pages
+[112/302] Processing: File dari Gus Fudholla\02. RUSEM BM Mahad Aly Andalusia Banyumas.docx
+  [OK] 85671 chars, 286 pages
+[113/302] Processing: File dari Gus Fudholla\1 Hasil BM KE 1Komisi B ok.docx
+  [OK] 13382 chars, 68 pages
+[114/302] Processing: File dari Gus Fudholla\1. Rusem Manhaj Al-Ashab 1-06-2024 (bab Sholat khouf).docx
+  [OK] 36429 chars, 80 pages
+[115/302] Processing: File dari Gus Fudholla\1. Rusem Sementara Delegasi.docx
+  [OK] 53390 chars, 133 pages
+[116/302] Processing: File dari Gus Fudholla\11. RUSEM PATI.docx
+  [OK] 253140 chars, 822 pages
+[117/302] Processing: File dari Gus Fudholla\18. Rusem BM Kebumen.docx
+  [OK] 52973 chars, 210 pages
+[118/302] Processing: File dari Gus Fudholla\2 HASIL BM MA KE 2.docx
+  [OK] 8123 chars, 35 pages
+[119/302] Processing: File dari Gus Fudholla\2. ┘îRusem Tafsir 13-07-2024 (╪ú╪¿┘ê ╪Ñ╪¿╪▒╪º┘ç┘è┘à).docx
+  [OK] 63459 chars, 87 pages
+[120/302] Processing: File dari Gus Fudholla\23. Rumusan_Bm_Lanbulan.docx
+  [OK] 37363 chars, 188 pages
+[121/302] Processing: File dari Gus Fudholla\26. HASIL KEPUTUSAN BMK SYARIFUDDIN.pdf
+  [OK] 14378 chars, 5 pages
+[122/302] Processing: File dari Gus Fudholla\26. RUSEM BM NGUNUT TULUNG AGUNG  KOMISI B.docx
+  [OK] 45813 chars, 177 pages
+[123/302] Processing: File dari Gus Fudholla\26. RUSEM BMK PP. Assalafi Babakan.pdf
+  [OK] 55106 chars, 16 pages
+[124/302] Processing: File dari Gus Fudholla\3. Rusem Tafsir 05-10-2024 (┘â┘è╪» ╪º┘ä┘å╪│╪º╪í) .docx
+  [OK] 22629 chars, 55 pages
+[125/302] Processing: File dari Gus Fudholla\50. Rusem BM Nurul Cholil Komisi B.docx
+  [OK] 87936 chars, 285 pages
+[126/302] Processing: File dari Gus Fudholla\BM MA V POLEMIK OBLIGASI SYARIAH.pdf
+  [OK] 6492 chars, 2 pages
+[127/302] Processing: File dari Gus Fudholla\BMP Komisi A FIX (1).docx
+  [OK] 47497 chars, 209 pages
+[128/302] Processing: File dari Gus Fudholla\BMP Komisi A FIX.docx
+  [SKIP] Already processed
+[129/302] Processing: File dari Gus Fudholla\BMP Komisi B FIX.docx
+  [OK] 42004 chars, 220 pages
+[130/302] Processing: File dari Gus Fudholla\Delegasi matholi_ul anwar simo.docx
+  [OK] 48260 chars, 189 pages
+[131/302] Processing: File dari Gus Fudholla\Dokumen (4).docx
+  [OK] 4466 chars, 18 pages
+[132/302] Processing: File dari Gus Fudholla\Draft Rusem BM I Aliyah, Kom. B (Dai Perempuan).pdf
+  [OK] 20861 chars, 9 pages
+[133/302] Processing: File dari Gus Fudholla\Draft Rusem BM I Aly Kom. A.pdf
+  [OK] 11718 chars, 4 pages
+[134/302] Processing: File dari Gus Fudholla\File Jawaban Childfree UIN Maulana Malik Ibrahim Malang.docx
+  [OK] 25022 chars, 81 pages
+[135/302] Processing: File dari Gus Fudholla\FIX Hasil Keputusan DMTS ke-08.pdf
+  [OK] 27730 chars, 31 pages
+[136/302] Processing: File dari Gus Fudholla\FORSTEK.docx
+  [OK] 81566 chars, 342 pages
+[137/302] Processing: File dari Gus Fudholla\HASIL FMPP 38 KOMISI A 2.docx
+  [OK] 53783 chars, 272 pages
+[138/302] Processing: File dari Gus Fudholla\HASIL FMPP 38 KOMISI B 2.docx
+  [OK] 32087 chars, 214 pages
+[139/302] Processing: File dari Gus Fudholla\HASIL FMPP 38 KOMISI C 2.docx
+  [OK] 36108 chars, 198 pages
+[140/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN BMK 2023 KOM A.docx
+  [OK] 54000 chars, 213 pages
+[141/302] Processing: File dari Gus Fudholla\Hasil Keputusan BMK 2023 KOM C .docx
+  [OK] 35658 chars, 183 pages
+[142/302] Processing: File dari Gus Fudholla\Hasil Keputusan BMK 2023 Komisi B.docx
+  [OK] 33485 chars, 159 pages
+[143/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN BMK KOMISI A 2.docx
+  [OK] 39906 chars, 159 pages
+[144/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN BMK KOMISI B.docx
+  [OK] 41186 chars, 211 pages
+[145/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN BMK PP. AN-NAJAH 2024.pdf
+  [OK] 11599 chars, 7 pages
+[146/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN BMP KOM A.docx
+  [OK] 54724 chars, 211 pages
+[147/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN BMP KOM B.docx
+  [OK] 32415 chars, 191 pages
+[148/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN BMP KOM C (1).pdf
+  [SKIP] Already processed
+[149/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN BMP KOM C.docx
+  [OK] 33706 chars, 178 pages
+[150/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN BMP KOM C.pdf
+  [SKIP] Already processed
+[151/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN FMP3 XXV PP. Modern Ar Rifa_i Malang-1.pdf
+  [SKIP] Already processed
+[152/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN FMPP 37 KOMISI A 2.docx
+  [OK] 50122 chars, 222 pages
+[153/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN FMPP 37 KOMISI B 2.docx
+  [OK] 42417 chars, 277 pages
+[154/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN FMPP 37 KOMISI C 2.docx
+  [OK] 38814 chars, 275 pages
+[155/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN FMPP 37 KOMISI C.docx
+  [SKIP] Already processed
+[156/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN FMPP 39 KOMISI A.docx
+  [OK] 77987 chars, 452 pages
+[157/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN FMPP 39 KOMISI B.docx
+  [OK] 36127 chars, 275 pages
+[158/302] Processing: File dari Gus Fudholla\HASIL KEPUTUSAN FMPP 39 KOMISI C.docx
+  [OK] 45416 chars, 303 pages
+[159/302] Processing: File dari Gus Fudholla\HASIL RUMUSAN BM PP. AN-NUR PUTER.pdf
+  [OK] 50580 chars, 16 pages
+[160/302] Processing: File dari Gus Fudholla\HASIL_KEPUTUSAN_FMPP 36 KOMISI_A_FMPP_LIRBOYO.docx
+  [OK] 72309 chars, 281 pages
+[161/302] Processing: File dari Gus Fudholla\HASIL_KEPUTUSAN_FMPP 36 KOMISI_B_FMPP_LIRBOYO.docx
+  [OK] 38517 chars, 186 pages
+[162/302] Processing: File dari Gus Fudholla\HASIL_KEPUTUSAN_FMPP 36 KOMISI_C_FMPP_LIRBOYO.docx
+  [OK] 38399 chars, 179 pages
+[163/302] Processing: File dari Gus Fudholla\KEPUTUSAN FMP3 XXIV di PP Lirboyo (1).pdf
+  [SKIP] Already processed
+[164/302] Processing: File dari Gus Fudholla\KOMISI A - HASIL KEPUTUSAN FMPP 40 PP. SUNAN DRAJAT LAMONGAN.doc
+  [OK] 181198 chars, 1795 pages
+[165/302] Processing: File dari Gus Fudholla\KOMISI A 2aliyah.docx
+  [OK] 4507 chars, 21 pages
+[166/302] Processing: File dari Gus Fudholla\KOMISI B - HASIL KEPUTUSAN FMPP 40.doc
+  [OK] 193930 chars, 1798 pages
+[167/302] Processing: File dari Gus Fudholla\Komisi B, Zakat Dagang.pdf
+  [OK] 3719 chars, 2 pages
+[168/302] Processing: File dari Gus Fudholla\KOMISI C - HASIL KEPUTUSAN FMPP 40.doc
+  [OK] 155032 chars, 2318 pages
+[169/302] Processing: File dari Gus Fudholla\Munas Komisi Waqiiyah fix-2.docx
+  [OK] 74804 chars, 266 pages
+[170/302] Processing: File dari Gus Fudholla\Musgab 2 Tsn KE II Kom. A.docx
+  [OK] 4762 chars, 38 pages
+[171/302] Processing: File dari Gus Fudholla\PP. Miftahul Ulum.docx
+  [OK] 46232 chars, 213 pages
+[172/302] Processing: File dari Gus Fudholla\PP. Salafiyyah Lamongan.docx
+  [OK] 58603 chars, 177 pages
+[173/302] Processing: File dari Gus Fudholla\RUMUSAN BM 3 KELAS 2 ALY KOMISI B.docx
+  [OK] 12548 chars, 59 pages
+[174/302] Processing: File dari Gus Fudholla\RUMUSAN BM PERDANA II ALIYAH KOMISI B.pdf
+  [OK] 8708 chars, 4 pages
+[175/302] Processing: File dari Gus Fudholla\Rumusan Sementara BM Hustle Culturedocx.docx
+  [OK] 21630 chars, 60 pages
+[176/302] Processing: File dari Gus Fudholla\Rumusan Sementara BM Hustle Culturedocx.pdf
+  [OK] 21254 chars, 6 pages
+[177/302] Processing: File dari Gus Fudholla\rumusan talkhis opening musy mahalli.docx
+  [OK] 20512 chars, 185 pages
+[178/302] Processing: File dari Gus Fudholla\rumusan talkhis opening musy mahalli.pdf
+  [OK] 20247 chars, 9 pages
+[179/302] Processing: File dari Gus Fudholla\RUSEM BLOKAGUNG.docx
+  [OK] 101166 chars, 325 pages
+[180/302] Processing: File dari Gus Fudholla\RUSEM BM 2 MA SMT 1.docx
+  [OK] 13539 chars, 38 pages
+[181/302] Processing: File dari Gus Fudholla\Rusem BM Banyuanyar.docx
+  [OK] 49279 chars, 184 pages
+[182/302] Processing: File dari Gus Fudholla\rusem bm ke II kls 3 aly kom a.docx
+  [OK] 19119 chars, 88 pages
+[183/302] Processing: File dari Gus Fudholla\Rusem Bm Kuningan Kom B.docx
+  [OK] 52376 chars, 179 pages
+[184/302] Processing: File dari Gus Fudholla\RUSEM BM PLOSO KOM B.docx
+  [OK] 130622 chars, 453 pages
+[185/302] Processing: File dari Gus Fudholla\Rusem BM Ploso Kom C.docx
+  [OK] 95884 chars, 264 pages
+[186/302] Processing: File dari Gus Fudholla\Rusem BM Ploso Kom C.pdf
+  [OK] 105771 chars, 19 pages
+[187/302] Processing: File dari Gus Fudholla\Rusem BM. Syaichona Cholil (BMW_13).docx
+  [OK] 67018 chars, 235 pages
+[188/302] Processing: File dari Gus Fudholla\RUSEM BMK KEBUMEN NURUL HIDAYAH.docx
+  [OK] 83455 chars, 376 pages
+[189/302] Processing: File dari Gus Fudholla\rusem fmpp 40 Komisi A.docx
+  [OK] 96977 chars, 284 pages
+[190/302] Processing: File dari Gus Fudholla\RUSEM FMPP KOM B SETOR.docx
+  [OK] 180731 chars, 620 pages
+[191/302] Processing: File dari Gus Fudholla\rusem FOMAS 2024[1].doc
+  [OK] 149216 chars, 246 pages
+[192/302] Processing: File dari Gus Fudholla\RUSEM KOMISI FMPP 39 Komisi (B) Al-Iman Bulus.pdf
+  [OK] 84385 chars, 23 pages
+[193/302] Processing: File dari Gus Fudholla\Rusem Musgab III Tsanawiyah Komisi C.docx
+  [OK] 10737 chars, 70 pages
+[194/302] Processing: File dari Gus Fudholla\RUSEM MUSGAB Kom A.pdf
+  [OK] 2961 chars, 2 pages
+[195/302] Processing: File dari Gus Fudholla\rusem smt lll WPS Office.docx
+  [OK] 25942 chars, 80 pages
+[196/302] Processing: File dari Gus Fudholla\rusem talkhis terakhirdocx.pdf
+  [OK] 16478 chars, 7 pages
+[197/302] Processing: File dari Gus Fudholla\RUSEM_NURUL_KHOLIL_BANGKALAN 29 Des 24.docx
+  [OK] 59407 chars, 256 pages
+[198/302] Processing: File dari Gus Fudholla\SETOR PERUMUS RUMUSAN SIDOGIRI RUMUSAN 21 JULI 2024.docx
+  [OK] 299847 chars, 1054 pages
+[199/302] Processing: File dari Gus Fudholla\SETOR RUMUSAN BUNTET.docx
+  [OK] 29925 chars, 116 pages
+[200/302] Processing: File dari Gus Fudholla\Setor RUSEM BM NGunut.docx
+  [OK] 27861 chars, 112 pages
+[201/302] Processing: LBM Jabodetabek\Hasil Bahtsul Masail LBMPP ZONA JABODETABEK .pdf
+  [OK] 13712 chars, 5 pages
+[202/302] Processing: LBM Jabodetabek\Hasil BM Putra Haul Prof. Dr. KH. Ali Musthafa Yakub, LC., MA. Pdf.pdf
+  [OK] 7976 chars, 3 pages
+[203/302] Processing: LBM Jabodetabek\Hasil BM Putri Haul Prof. Dr. KH. Ali Musthafa Yakub, LC., MA..pdf
+  [OK] 10928 chars, 4 pages
+[204/302] Processing: LBM Jabodetabek\Hasil Keputusan BM Pra Muskerwil Banten 2025 FIX.pdf
+  [OK] 31620 chars, 12 pages
+[205/302] Processing: MUNAS & KONBES\HASIL FINAL MUNAS 2025 (KOMISI WAQI_IYYAH) TERBARU.pdf
+  [OK] 46647 chars, 20 pages
+[206/302] Processing: MUNAS & KONBES\SOLUSI PROBLEMATIKA - AKTUAL- HUKUM ISLAM.pdf
+  [SKIP] Already processed
+[207/302] Processing: NU Menjawab Problem Umat\NU Menjawab Problematika Umat 1.pdf
+  [OK] 88828 chars, 943 pages
+[208/302] Processing: NU Menjawab Problem Umat\NU Menjawab Problematika Umat 2.pdf
+  [OK] 105781 chars, 860 pages
+[209/302] Processing: PCINU Mesir\╪¿┘ä╪º ╪╣┘å┘ê╪º┘å.docx
+  [OK] 77655 chars, 259 pages
+[210/302] Processing: Pedoman BM\424066980-PEDOMAN-BAHTSUL-MASAIL.pdf
+  [OK] 77716 chars, 56 pages
+[211/302] Processing: PONPES Daerah JABAR\Hasil Keputusan Bahtsu Masail Haul Pondok Buntet 2025.pdf
+  [OK] 22169 chars, 6 pages
+[212/302] Processing: PONPES Daerah JABAR\Hasil Keputusan BM Haul Buntet 2024 Komisi B (1).pdf
+  [OK] 17901 chars, 5 pages
+[213/302] Processing: Ponpes Kawasan Jateng\HASIL BAHSU MASAIL AL ITTIHAD 2024.pdf
+  [OK] 14093 chars, 10 pages
+[214/302] Processing: Ponpes Kawasan Jateng\HASIL BM JP3M 2024.pdf
+  [OK] 67686 chars, 54 pages
+[215/302] Processing: Ponpes Kawasan Jateng\Hasil BM.pdf
+  [OK] 23430 chars, 9 pages
+[216/302] Processing: Ponpes Kawasan Jateng\Hasil BMK 2025 PP DARUL FALAH KUDUS.pdf
+  [OK] 21216 chars, 12 pages
+[217/302] Processing: Ponpes Kawasan Jateng\HASIL BMK ALITTIHAD.pdf
+  [OK] 15788 chars, 12 pages
+[218/302] Processing: Ponpes Kawasan Jateng\ok HASIL FINAL BMP DONOHUDAN FORMAT BIASA.pdf
+  [OK] 67306 chars, 47 pages
+[219/302] Processing: PONPES REJOSO\HASIL FBMPP DI PP REJOSO.pdf
+  [OK] 5674 chars, 3 pages
+[220/302] Processing: PP langitan\DRAFT HASIL BM Haul Komisi B.pdf
+  [SKIP] Already processed
+[221/302] Processing: PP langitan\E-BOOK MUHARRAM 1446 (LTN KESAN LANGITAN).pdf
+  [OK] 48821 chars, 33 pages
+[222/302] Processing: PP langitan\HASIL BAHSU NGLINGI 23 FEB 2025.pdf
+  [OK] 7859 chars, 4 pages
+[223/302] Processing: PP langitan\Hasil Bahsu PCNU di Ngraho.pdf
+  [OK] 6757 chars, 3 pages
+[224/302] Processing: PP langitan\Hasil Bahsul Masail Konfercap NU Bojonegoro.pdf
+  [OK] 17522 chars, 9 pages
+[225/302] Processing: PP langitan\HASIL BAHTSUL MASAIL KENDURUWAN.pdf
+  [OK] 9007 chars, 4 pages
+[226/302] Processing: PP langitan\Hasil BMK ke III PDF Nurul Hidayah.pdf
+  [OK] 40339 chars, 16 pages
+[227/302] Processing: PP langitan\HASIL BMK komisi B.pdf
+  [OK] 33815 chars, 8 pages
+[228/302] Processing: PP langitan\Hasil Keputusan Bahtsul Masaail PP. DARUSSALAM SUMBERSARI dalam rangka HAUL KH. IMAM FAQIH ASY_ARI .doc
+  [OK] 209871 chars, 1443 pages
+[229/302] Processing: PP langitan\Hasil Keputusan Bahtsul Masaail PP. DARUSSALAM SUMBERSARI dalam rangka HAUL KH. IMAM FAQIH ASY_ARI .pdf
+  [OK] 58847 chars, 14 pages
+[230/302] Processing: PP langitan\HASIL KEPUTUSAN BAHTSUL MASAIL  XX PP. MIFTAHUL ULUM DEMAK.pdf
+  [OK] 32619 chars, 19 pages
+[231/302] Processing: PP langitan\HASIL KEPUTUSAN BAHTSUL MASAIL HIPJAS PUTRI 3.pdf
+  [OK] 30949 chars, 18 pages
+[232/302] Processing: PP langitan\HASIL KEPUTUSAN BAHTSUL MASAIL NASIONAL FIXdocx.docx
+  [OK] 34612 chars, 159 pages
+[233/302] Processing: PP langitan\HASIL KEPUTUSAN BAHTSUL MASAIL NASIONAL FIXdocx.pdf
+  [OK] 37409 chars, 34 pages
+[234/302] Processing: PP langitan\HASIL KEPUTUSAN BM JAWA MADURA KEBUN BARU IV.docx
+  [OK] 28523 chars, 144 pages
+[235/302] Processing: PP langitan\HASIL KEPUTUSAN BM JAWA MADURA KEBUN BARU IV.pdf
+  [OK] 30269 chars, 9 pages
+[236/302] Processing: PP langitan\HASIL KEPUTUSAN BM LBM JATIROGO _24.pdf
+  [OK] 25636 chars, 7 pages
+[237/302] Processing: PP langitan\HASIL KEPUTUSAN BM XX NEW FIX - Copy.doc
+  [OK] 129620 chars, 1071 pages
+[238/302] Processing: PP langitan\Hasil Keputusan bmk 15.pdf
+  [OK] 55629 chars, 65 pages
+[239/302] Processing: PP langitan\HASIL KEPUTUSAN BMK 54 PP. Tanggir.pdf
+  [SKIP] Already processed
+[240/302] Processing: PP langitan\Hasil Keputusan BMK Al Kautsar  - Komisi A 2025 M.pdf
+  [OK] 36145 chars, 14 pages
+[241/302] Processing: PP langitan\Hasil Keputusan BMK Al Kautsar - Komisi B 2024M.pdf
+  [OK] 78048 chars, 32 pages
+[242/302] Processing: PP langitan\HASIL KEPUTUSAN BMK KOMISI A (2).pdf
+  [SKIP] Already processed
+[243/302] Processing: PP langitan\HASIL KEPUTUSAN BMK PP. AN-NAJAH 2024.pdf
+  [SKIP] Already processed
+[244/302] Processing: PP langitan\HASIL KEPUTUSAN BMK V PP. LANGITAN 2025.pdf
+  [OK] 49741 chars, 18 pages
+[245/302] Processing: PP langitan\HASIL KEPUTUSAN BMW XIV.pdf
+  [OK] 46834 chars, 16 pages
+[246/302] Processing: PP langitan\HASIL KEPUTUSAN FBMPP PARE KE-45 SE JAWA-MADURA refisi.docx
+  [OK] 60884 chars, 197 pages
+[247/302] Processing: PP langitan\HASIL KEPUTUSAN FIX FMPP 42 JOMBANG KOMISI A.pdf
+  [OK] 63041 chars, 18 pages
+[248/302] Processing: PP langitan\HASIL KEPUTUSAN FMP3 KOMISI A.pdf
+  [SKIP] Already processed
+[249/302] Processing: PP langitan\HASIL KEPUTUSAN FMP3 KOMISI B.pdf
+  [SKIP] Already processed
+[250/302] Processing: PP langitan\HASIL KEPUTUSAN FMP3 KOMISI C.pdf
+  [SKIP] Already processed
+[251/302] Processing: PP langitan\HASIL KEPUTUSAN FMPP 42 TAMBAK BERAS KOMISI C.pdf
+  [OK] 56039 chars, 18 pages
+[252/302] Processing: PP langitan\HASIL KEPUTUSAN FMPP 43  KOMISI A BANYUMAS ANDALUSIA.pdf
+  [OK] 38971 chars, 14 pages
+[253/302] Processing: PP langitan\HASIL KEPUTUSAN FMPP 43 KOMISI B BANYUMAS ANDALUSIA.pdf
+  [OK] 30593 chars, 12 pages
+[254/302] Processing: PP langitan\HASIL KEPUTUSAN FMPP 43 KOMISI C BANYUMAS ANDALUSIA.pdf
+  [OK] 48129 chars, 16 pages
+[255/302] Processing: PP langitan\HASIL KEPUTUSAN KBMK KE X.pdf
+  [SKIP] Already processed
+[256/302] Processing: PP langitan\HASIL KEPUTUSAN KOMISI A BMK XXIV.pdf
+  [SKIP] Already processed
+[257/302] Processing: PP langitan\HASIL KEPUTUSAN KOMISI B BMK XXIV.pdf
+  [SKIP] Already processed
+[258/302] Processing: PP langitan\KEPUTUSAN BAHTSUL MASAIL LBM PCNU TUBAN (KEREK 29 OKT. _23).pdf
+  [OK] 21648 chars, 8 pages
+[259/302] Processing: PP langitan\KEPUTUSAN BMB XI  OKT. 2024 FONT ADJWA ASSALAF DAN BELWE LTBT.docx
+  [OK] 30672 chars, 160 pages
+[260/302] Processing: PP langitan\KEPUTUSAN FSM 1447.pdf
+  [SKIP] Already processed
+[261/302] Processing: PP langitan\KOMISI A.docx
+  [OK] 35815 chars, 239 pages
+[262/302] Processing: PP langitan\KOMISI A.pdf
+  [OK] 36426 chars, 20 pages
+[263/302] Processing: PP langitan\Komisi B Print.pdf
+  [OK] 1015991 chars, 283 pages
+[264/302] Processing: PP langitan\KOMISI B.docx
+  [OK] 29499 chars, 203 pages
+[265/302] Processing: PP langitan\KOMISI B.pdf
+  [OK] 30330 chars, 17 pages
+[266/302] Processing: PP langitan\MUQORROR MK 59 BUKU.pdf
+  [OK] 76026 chars, 47 pages
+[267/302] Processing: PP langitan\RUMUSAN BMK IV AL IHSAN.pdf
+  [OK] 37728 chars, 11 pages
+[268/302] Processing: PP langitan\RUMUSAN FIX BMK PP. ABU DZARRIN2024...pdf
+  [OK] 25788 chars, 8 pages
+[269/302] Processing: PP langitan\RUMUSAN NADWAH V Matholi_ul Anwar.pdf
+  [OK] 53555 chars, 15 pages
+[270/302] Processing: PP langitan\Rumusan sementara bahtsul masail se.docx
+  [OK] 17585 chars, 83 pages
+[271/302] Processing: Update  27 -01 -2026\126. Hasil-hasil Muktamar Ke-33 NU (1) (1).pdf
+  [OK] 626532 chars, 427 pages
+[272/302] Processing: Update  27 -01 -2026\141. HASIL KEPUTUSAN BAHTSUL MASAIL SE-JAWA MADURA HSM-PIM.pdf
+  [OK] 36041 chars, 22 pages
+[273/302] Processing: Update  27 -01 -2026\146. HASIL BM AL FALAH PLOSO KE-20 2018.pdf
+  [OK] 74638 chars, 26 pages
+[274/302] Processing: Update  27 -01 -2026\173. HALAQAH ULAMA ASWAJA FIKIH BERADAB - luthfibashori2023.pdf
+  [OK] 178331 chars, 110 pages
+[275/302] Processing: Update  27 -01 -2026\180. BMK pp raudlatut tholibin tuban.pdf
+  [SKIP] Already processed
+[276/302] Processing: Update  27 -01 -2026\222. BMK 25 NURUL CHOLIL Des 2025 Kom A & B.pdf
+  [OK] 97378 chars, 45 pages
+[277/302] Processing: Update  27 -01 -2026\229. FBMP DIY 18 DESEMBER 2025.pdf
+  [OK] 29560 chars, 8 pages
+[278/302] Processing: Update  27 -01 -2026\232. BMK ke-V PP. Tashwirul Afkar okt 2025 Komisi-B.pdf
+  [OK] 41459 chars, 15 pages
+[279/302] Processing: Update  27 -01 -2026\5_6311857365238946701.pdf
+  [OK] 150043 chars, 99 pages
+[280/302] Processing: Update  27 -01 -2026\88. HASIL BMK PPNC KO-A-B.pdf
+  [OK] 66095 chars, 36 pages
+[281/302] Processing: Update  27 -01 -2026\dana masjid.docx
+  [OK] 17634 chars, 88 pages
+[282/302] Processing: Update  27 -01 -2026\Gaji pekerja masjid.docx
+  [OK] 21708 chars, 85 pages
+[283/302] Processing: Update  27 -01 -2026\HASIL BMK AL-IMAN 2025.pdf
+  [OK] 37081 chars, 12 pages
+[284/302] Processing: Update  27 -01 -2026\Hasil BMK Ploso komisi A 2017.pdf
+  [OK] 54721 chars, 12 pages
+[285/302] Processing: Update  27 -01 -2026\Hasil Keputusan BMK V - PP. Najaahaan Garut - Komisi A.pdf
+  [OK] 19070 chars, 8 pages
+[286/302] Processing: Update  27 -01 -2026\HASIL KEPUTUSAN FMPP 39 KOMISI C (2).pdf
+  [SKIP] Already processed
+[287/302] Processing: Update  27 -01 -2026\HASIL KEPUTUSAN FMPP 44 KOMISI C.pdf
+  [OK] 52665 chars, 14 pages
+[288/302] Processing: Update  27 -01 -2026\Keputusan BM. Haul KHR. Asnawi.pdf
+  [OK] 10094 chars, 6 pages
+[289/302] Processing: Update  27 -01 -2026\menghutangkan kas masjid = tawassul tak sesuai.docx
+  [OK] 13966 chars, 39 pages
+[290/302] Processing: Update  27 -01 -2026\soal perabot korona d masjid.docx
+  [OK] 1112 chars, 6 pages
+[291/302] Processing: Update 03-02-2026\116. Kputusn BM Qanunyah Musykerwil I PWNU Jtm.pdf
+  [OK] 53330 chars, 17 pages
+[292/302] Processing: Update 03-02-2026\124. KEPUTUSAN FMP3 Sulaiman Trenggalek 2019.pdf
+  [OK] 116396 chars, 64 pages
+[293/302] Processing: Update 03-02-2026\18. DRAFT HASIL BM Haul Komisi B.pdf
+  [SKIP] Already processed
+[294/302] Processing: Update 03-02-2026\228. MK muhawaroh kubro KE-39 AL KHOZINY KOMISI A.pdf
+  [OK] 16448 chars, 13 pages
+[295/302] Processing: Update 03-02-2026\48. Hasil BMK LBM PWNU Jawa Barat - Kom A.pdf
+  [OK] 36626 chars, 19 pages
+[296/302] Processing: Update 03-02-2026\52. HASIL KEPUTUSAN BMW-65.pdf
+  [OK] 53510 chars, 39 pages
+[297/302] Processing: Update 05-02-2026\EMKA 2023 A.pdf
+  [OK] 34801 chars, 13 pages
+[298/302] Processing: Update 05-02-2026\HASIL KEPUTUSAN BM SEKAR.pdf
+  [OK] 10998 chars, 4 pages
+[299/302] Processing: Zona berpikir\FORMULASI NALAR FIQH Jilid 1.pdf
+  [OK] 130 chars, 349 pages
+[300/302] Processing: Zona berpikir\FORMULASI NALAR FIQH Jilid 2.pdf
+  [OK] 134 chars, 464 pages
+[301/302] Processing: Zona berpikir\Metode Istinbath Maqashidi.docx
+  [OK] 36682 chars, 91 pages
+[302/302] Processing: Zona berpikir\┘â╪¬╪º╪¿   pdf       ╪º┘é╪▒╪º  ╪º┘ê┘å┘ä╪º┘è┘å  4772 - ┘à╪╣╪¼┘à ╪º┘ä┘à╪╡╪╖┘ä╪¡╪º╪¬ ┘ê╪º┘ä╪ú┘ä┘ü╪º╪╕ ╪º┘ä┘ü┘é┘ç┘è╪⌐.pdf
+  [WARN] No content extracted, skipping
+
+============================================================
+Processing complete!
+  Success: 275
+  Failed:  1
+  Skipped: 26
+  Total:   302
+
+Categories:
+  Abdullah Saeed: 5 documents
+  BM FMPP Terbaru: 5 documents
+  File dari Gus Fudholla: 86 documents
+  LBM Jabodetabek: 4 documents
+  MUNAS & KONBES: 1 documents
+  NU Menjawab Problem Umat: 2 documents
+  PCINU Mesir: 1 documents
+  PONPES Daerah JABAR: 2 documents
+  PONPES REJOSO: 1 documents
+  PP langitan: 40 documents
+  Pedoman BM: 1 documents
+  Ponpes Kawasan Jateng: 6 documents
+  Umum: 93 documents
+  Update  27 -01 -2026: 18 documents
+  Update 03-02-2026: 5 documents
+  Update 05-02-2026: 2 documents
+  Zona berpikir: 3 documents
+
+Database stats:
+  Total documents: 275
+  Total text: 19,403,823 characters (19.4 MB)
+  DB size: 41.1 MB
+
+Testing FTS search for 'nikah'...
+  [236] Keputusan BAHTSUL MASAIL LBM PCNU TUBAN (KEREK 29 OKT. _23) (PP langitan)
+    ...<b>Nikah</b> Siri dan Status <b>Nikah</b> Resmi (MWCNU Bangilan) 
+Budi melaksanakan <b>nikah</b> ...
+  [266] Kputusn BM Qanunyah Musykerwil I PWNU Jtm (Update 03-02-2026)
+    ...2) Penundaan menikah sampai batas minimal usia <b>nikah</b> justru memberi peluang pergaulan 
+har...
+  [2] 14213-38689-1-PB (Umum)
+    ...Contemporary  Islamic jurisprudence opens up 
+space in studying the legal status of lavender marr...
+  [51] Keputusan FMPP 42 TAMBAKBERAS KOM. B (Umum)
+    ...Apakah akad <b>nikah</b> yang telah dilakukan pada kasus pernikahan pertama dihukumi sah? 
+Jawaba...
+  [47] Keputusan FMPP 41 DI PP. LIRBOYO KOMISI A (Umum)
+    ...Janda Hamil Ingin <b>Nikah</b> |PP. Al-Falah Ploso 
+Deskripsi Masalah: 
+Akad <b>nikah</b> merupak...
+
+Done! Database saved to: D:\nahdi\bahtsulmasail\backend\produk_hukum.sqlite

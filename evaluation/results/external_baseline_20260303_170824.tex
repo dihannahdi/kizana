@@ -1,0 +1,33 @@
+% Auto-generated external baseline comparison table
+\begin{table}[t]
+\centering
+\caption{Cross-lingual retrieval comparison: Kizana vs.\ external baselines. Statistical significance determined by paired $t$-test on per-query AP scores.}
+\label{tab:external-baseline}
+\begin{tabular}{lcccccc}
+\toprule
+System & MAP & MRR & NDCG@5 & NDCG@10 & P@5 & P@10 \\
+\midrule
+No Translation & 0.139 & 0.140 & 0.123 & 0.127 & 0.110 & 0.096 \\
+Google Translate + BM25 & 0.799 & 0.876 & 0.580 & 0.649 & 0.750 & 0.733 \\
+Google Translate + Scoring & 0.795 & 0.875 & 0.570 & 0.628 & 0.744 & 0.717 \\
+\textbf{Kizana (Full)} & \textbf{0.740} & \textbf{0.749} & \textbf{0.465} & \textbf{0.541} & \textbf{0.704} & \textbf{0.692} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% Per-language comparison: Kizana vs Google Translate + BM25
+\begin{table}[t]
+\centering
+\caption{Per-language MAP comparison across systems.}
+\label{tab:external-per-lang}
+\begin{tabular}{lccccc}
+\toprule
+System & Ar & En & Id & Mixed & Overall \\
+\midrule
+No Translation & 0.833 & 0.129 & 0.027 & 0.067 & 0.139 \\
+Google Translate + BM25 & 0.831 & 0.726 & 0.810 & 0.845 & 0.799 \\
+Google Translate + Scoring & 0.833 & 0.770 & 0.785 & 0.837 & 0.795 \\
+\textbf{Kizana (Full)} & \textbf{0.838} & \textbf{0.610} & \textbf{0.776} & \textbf{0.734} & \textbf{0.740} \\
+\bottomrule
+\end{tabular}
+\end{table}

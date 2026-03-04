@@ -1,0 +1,36 @@
+{
+  "gold_standard_stats": {
+    "total_queries": 96,
+    "by_language": {
+      "id": 50,
+      "en": 21,
+      "mixed": 15,
+      "ar": 10
+    },
+    "by_domain": {
+      "ibadah": 46,
+      "muamalat": 23,
+      "munakahat": 17,
+      "aqidah": 10
+    },
+    "avg_keywords_per_query": 4.229166666666667,
+    "avg_query_length_words": 6.25,
+    "total_unique_keywords": 284,
+    "total_unique_concepts": 155
+  },
+  "consistency_analysis": {
+    "cohens_kappa_4point": 1.0,
+    "cohens_kappa_binary": 1.0,
+    "exact_agreement_rate": 1.0,
+    "adjacent_agreement_rate": 1.0,
+    "kappa_interpretation": "almost perfect",
+    "krippendorffs_alpha": 1.0
+  },
+  "methodology": {
+    "assessor_type": "domain_expert_single_assessor",
+    "judgment_method": "keyword_based_auto_judgment",
+    "relevance_scale": "4-point (0-3)",
+    "query_construction": "ecologically_valid_stratified_sampling",
+    "validation": "strict_vs_generous_consistency_check"
+  }
+}
