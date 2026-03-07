@@ -78,6 +78,82 @@ export async function sendQuery(query, sessionId = null) {
   });
 }
 
+/**
+ * Stream AI-synthesized answer via SSE.
+ * @param {string} query
+ * @param {string|null} sessionId
+ * @param {{ onResults?: Function, onChunk?: Function, onDone?: Function, onError?: Function }} callbacks
+ * @returns {Promise<void>}
+ */
+export async function sendQueryStream(query, sessionId = null, callbacks = {}) {
+  const authState = get(auth);
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(authState.token ? { Authorization: `Bearer ${authState.token}` } : {})
+  };
+
+  const res = await fetch(`${API_BASE}/query/stream`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ query, session_id: sessionId })
+  });
+
+  if (res.status === 401) {
+    auth.logout();
+    throw new Error('Session expired. Please login again.');
+  }
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({ error: 'Stream request failed' }));
+    throw new Error(errData.error || 'Stream request failed');
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+
+    // Parse SSE events (separated by double newline)
+    const parts = buffer.split('\n\n');
+    buffer = parts.pop(); // Keep incomplete chunk in buffer
+
+    for (const part of parts) {
+      if (!part.trim()) continue;
+
+      let eventType = 'message';
+      let data = '';
+
+      for (const line of part.split('\n')) {
+        if (line.startsWith('event: ')) {
+          eventType = line.slice(7).trim();
+        } else if (line.startsWith('data: ')) {
+          data += line.slice(6);
+        }
+      }
+
+      if (!data) continue;
+
+      try {
+        const parsed = JSON.parse(data);
+        if (eventType === 'search_results' && callbacks.onResults) {
+          callbacks.onResults(parsed);
+        } else if (eventType === 'ai_chunk' && callbacks.onChunk) {
+          callbacks.onChunk(parsed.content);
+        } else if (eventType === 'ai_done' && callbacks.onDone) {
+          callbacks.onDone(parsed);
+        }
+      } catch {
+        // Non-JSON data, skip
+      }
+    }
+  }
+}
+
 // Book
 export async function readBook(bookId, page = null) {
   return request('/book', {

@@ -1,9 +1,14 @@
 use crate::config::Config;
 use crate::query_translator::{QueryLang, TranslatedQuery};
-use log::{warn, error};
+use log::{warn, error, info};
 use reqwest::Client;
 use serde_json::json;
+use futures::StreamExt;
+use futures::SinkExt;
 
+pub type SseItem = Result<actix_web::web::Bytes, std::io::Error>;
+
+#[derive(Clone)]
 pub struct AiClient {
     client: Client,
     api_url: String,
@@ -107,6 +112,163 @@ impl AiClient {
                 Ok(self.local_synthesis(query, results, translated))
             }
         }
+    }
+
+    /// Stream AI synthesized answer via SSE. Returns the full accumulated text.
+    /// Sends chunks to the provided sender as they arrive from the LLM.
+    pub async fn synthesize_answer_stream(
+        &self,
+        query: &str,
+        results: &[crate::models::SearchResult],
+        translated: Option<&TranslatedQuery>,
+        mut tx: futures::channel::mpsc::Sender<SseItem>,
+    ) -> String {
+        if self.api_key.is_empty() {
+            let local = self.local_synthesis(query, results, translated);
+            let chunk_json = serde_json::json!({"content": &local}).to_string();
+            let _ = tx.send(Ok(actix_web::web::Bytes::from(
+                format!("event: ai_chunk\ndata: {}\n\n", chunk_json)
+            ))).await;
+            return local;
+        }
+
+        let lang = translated
+            .map(|t| &t.detected_language)
+            .unwrap_or(&QueryLang::Indonesian);
+
+        let context = build_rich_context(results);
+        let system_prompt = build_system_prompt_stream(lang);
+        let user_prompt = build_user_prompt(query, lang, &context, translated);
+
+        let body = json!({
+            "model": self.model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            "stream": true,
+            "max_tokens": 4000,
+            "temperature": 0.3
+        });
+
+        let resp = match self
+            .client
+            .post(&self.api_url)
+            .header("Authorization", format!("Bearer {}", self.api_key))
+            .header("Content-Type", "application/json")
+            .json(&body)
+            .send()
+            .await
+        {
+            Ok(r) => r,
+            Err(e) => {
+                error!("AI stream request failed: {}", e);
+                let fallback = self.local_synthesis(query, results, translated);
+                let chunk_json = serde_json::json!({"content": &fallback}).to_string();
+                let _ = tx.send(Ok(actix_web::web::Bytes::from(
+                    format!("event: ai_chunk\ndata: {}\n\n", chunk_json)
+                ))).await;
+                return fallback;
+            }
+        };
+
+        if !resp.status().is_success() {
+            let status = resp.status();
+            let body_text = resp.text().await.unwrap_or_default();
+            warn!("AI stream API error {}: {}", status, body_text);
+            let fallback = self.local_synthesis(query, results, translated);
+            let chunk_json = serde_json::json!({"content": &fallback}).to_string();
+            let _ = tx.send(Ok(actix_web::web::Bytes::from(
+                format!("event: ai_chunk\ndata: {}\n\n", chunk_json)
+            ))).await;
+            return fallback;
+        }
+
+        let mut full_text = String::new();
+        let mut buffer = String::new();
+        let mut stream = resp.bytes_stream();
+
+        while let Some(chunk_result) = stream.next().await {
+            let chunk_bytes = match chunk_result {
+                Ok(b) => b,
+                Err(e) => {
+                    warn!("Stream chunk error: {}", e);
+                    break;
+                }
+            };
+
+            let text = String::from_utf8_lossy(&chunk_bytes);
+            buffer.push_str(&text);
+
+            // Process complete SSE events (double newline separated)
+            while let Some(pos) = buffer.find("\n\n") {
+                let event_block = buffer[..pos].to_string();
+                buffer = buffer[pos + 2..].to_string();
+
+                for line in event_block.lines() {
+                    let data = if let Some(d) = line.strip_prefix("data: ") {
+                        d.trim()
+                    } else {
+                        continue;
+                    };
+
+                    if data == "[DONE]" {
+                        continue;
+                    }
+
+                    if let Ok(json_val) = serde_json::from_str::<serde_json::Value>(data) {
+                        // Handle both delta (streaming) and message (non-streaming) formats
+                        let content = json_val["choices"][0]["delta"]["content"]
+                            .as_str()
+                            .or_else(|| json_val["choices"][0]["message"]["content"].as_str());
+
+                        if let Some(c) = content {
+                            if !c.is_empty() {
+                                full_text.push_str(c);
+                                let chunk_json = serde_json::json!({"content": c}).to_string();
+                                let _ = tx.send(Ok(actix_web::web::Bytes::from(
+                                    format!("event: ai_chunk\ndata: {}\n\n", chunk_json)
+                                ))).await;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Process any remaining buffer
+        if !buffer.trim().is_empty() {
+            for line in buffer.lines() {
+                if let Some(data) = line.strip_prefix("data: ") {
+                    let data = data.trim();
+                    if data != "[DONE]" {
+                        if let Ok(json_val) = serde_json::from_str::<serde_json::Value>(data) {
+                            if let Some(c) = json_val["choices"][0]["delta"]["content"].as_str() {
+                                if !c.is_empty() {
+                                    full_text.push_str(c);
+                                    let chunk_json = serde_json::json!({"content": c}).to_string();
+                                    let _ = tx.send(Ok(actix_web::web::Bytes::from(
+                                        format!("event: ai_chunk\ndata: {}\n\n", chunk_json)
+                                    ))).await;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if full_text.is_empty() {
+            info!("AI stream returned empty, using local synthesis");
+            let fallback = self.local_synthesis(query, results, translated);
+            let chunk_json = serde_json::json!({"content": &fallback}).to_string();
+            let _ = tx.send(Ok(actix_web::web::Bytes::from(
+                format!("event: ai_chunk\ndata: {}\n\n", chunk_json)
+            ))).await;
+            return fallback;
+        }
+
+        full_text
     }
 
     fn local_synthesis(
@@ -376,4 +538,131 @@ fn build_user_prompt(
         "السؤال (بلغة: {}): {}{}\n\nالمراجع المتاحة:\n{}\n\nأجب بناءً على هذه المراجع فقط. لكل عبارة اذكر اسم الكتاب واسم المؤلف/العالم ورقم الصفحة.",
         lang_label, query, translation_info, context
     )
+}
+
+/// Build rich context string from search results for AI prompts
+fn build_rich_context(results: &[crate::models::SearchResult]) -> String {
+    results
+        .iter()
+        .take(10)
+        .enumerate()
+        .map(|(i, r)| {
+            let book_info = if !r.book_name.is_empty() && !r.author_name.is_empty() {
+                format!("📖 {} — {} (كتاب رقم {}, ص {})", r.book_name, r.author_name, r.book_id, r.page)
+            } else if !r.book_name.is_empty() {
+                format!("📖 {} (كتاب رقم {}, ص {})", r.book_name, r.book_id, r.page)
+            } else {
+                format!("📖 كتاب رقم {}, ص {}", r.book_id, r.page)
+            };
+
+            format!(
+                "{}. {}\nالعنوان: {}\nالنص: {}\n",
+                i + 1,
+                book_info,
+                r.title,
+                if r.content_snippet.is_empty() { &r.title } else { &r.content_snippet }
+            )
+        })
+        .collect()
+}
+
+/// Enhanced system prompt for streaming bahtsul masail synthesis
+fn build_system_prompt_stream(lang: &QueryLang) -> String {
+    let base = r#"أنت عالم إسلامي متخصص في بحث المسائل الفقهية، ومتمرس في استخراج الأحكام من كتب التراث الإسلامي الكلاسيكي. تعمل كمحرك "بحث المسائل" للبحث في أكثر من 7800 كتاب من أمهات كتب الإسلام.
+
+مهمتك الأساسية: التحليل الشامل للعبارات والنصوص المقدمة من الكتب، ثم تقديم إجابة منظمة ومتكاملة بأسلوب بحث المسائل.
+
+الهيكل المطلوب للإجابة:
+
+## ✅ الجواب
+[ملخص واضح ومباشر للحكم الشرعي أو الإجابة على السؤال]
+
+## 📖 العبارات والدلائل
+[لكل مصدر، اذكر:]
+📖 **[اسم الكتاب]** — *[المؤلف/العالم]* (ص X)
+> "[النص العربي الأصلي — العبارة]"
+
+[شرح مختصر للعبارة وعلاقتها بالسؤال]
+
+## ⚖️ خلاف العلماء
+[إن وجد اختلاف بين المذاهب أو العلماء، اذكر كل قول مع دليله]
+
+## 📝 الخلاصة
+[تلخيص نهائي مع الراجح إن أمكن، أو عرض الأقوال بحياد]
+
+---
+⚠️ *هذا ليس فتوى رسمية. يرجى الرجوع إلى النص الأصلي ومراجعة أهل العلم المختصين.*
+
+قواعد صارمة:
+1. لا تُفتِ بما لم تجده في المراجع المقدمة — الأمانة العلمية أولاً
+2. اذكر كل عبارة بالنص العربي الأصلي مع اسم الكتاب والمؤلف والصفحة
+3. إذا وجدت خلافاً بين العلماء، اعرض جميع الأقوال بإنصاف
+4. إذا لم تجد إجابة كافية في المراجع، قل ذلك بصراحة
+5. ابدأ دائماً بالجواب المباشر ثم ادعمه بالعبارات"#;
+
+    let lang_instruction = match lang {
+        QueryLang::Indonesian => {
+            r#"
+
+تعليمات اللغة: أجب باللغة الإندونيسية (Bahasa Indonesia) مع الحفاظ على العبارات العربية الأصلية.
+
+Format yang harus diikuti:
+
+## ✅ Jawaban
+[Ringkasan hukum/jawaban yang jelas dan langsung]
+
+## 📖 Ibaroh & Dalil
+[Untuk setiap sumber kitab:]
+📖 **[Nama Kitab]** — *[Nama Ulama/Pengarang]* (Hal. X)
+> "[Teks Arab asli — ibaroh]"
+
+Penjelasan: [terjemah/penjelasan dalam bahasa Indonesia]
+
+## ⚖️ Perbedaan Pendapat Ulama
+[Jika ada khilaf, sebutkan pendapat masing-masing mazhab/ulama]
+
+## 📝 Kesimpulan
+[Ringkasan akhir dengan pendapat yang rajih jika memungkinkan]
+
+---
+⚠️ *Ini bukan fatwa resmi. Rujuklah teks asli kitab dan konsultasikan dengan ulama yang kompeten.*"#
+        }
+        QueryLang::English => {
+            r#"
+
+Language instructions: Answer in English while preserving original Arabic passages (ibarah).
+
+Required format:
+
+## ✅ Answer
+[Clear, direct summary of the ruling/answer]
+
+## 📖 Textual Evidence (Ibarah)
+[For each source:]
+📖 **[Book Name]** — *[Scholar Name]* (p. X)
+> "[Original Arabic text — ibarah]"
+
+Explanation: [English explanation of the passage]
+
+## ⚖️ Scholarly Differences
+[If there are different opinions among scholars/madhabs, present each view]
+
+## 📝 Conclusion
+[Final summary with the stronger opinion if applicable]
+
+---
+⚠️ *This is not an official fatwa. Please refer to original texts and consult qualified scholars.*"#
+        }
+        _ => {
+            r#"
+
+تعليمات اللغة: أجب باللغة العربية الفصيحة. لكل مرجع اذكر:
+- النص العربي الأصلي (العبارة) بين علامتي اقتباس
+- اسم الكتاب
+- اسم المؤلف/العالم
+- رقم الصفحة"#
+        }
+    };
+
+    format!("{}{}", base, lang_instruction)
 }

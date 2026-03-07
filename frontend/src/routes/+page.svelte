@@ -1,6 +1,6 @@
 <script>
   import { auth, searchResults, aiAnswer, isLoading, error, showReader, bookData, currentSession } from '$lib/stores.js';
-  import { sendQuery, readBook, login as apiLogin, register as apiRegister, getSessions, getSession, deleteSession, renameSession } from '$lib/api.js';
+  import { sendQuery, sendQueryStream, readBook, login as apiLogin, register as apiRegister, getSessions, getSession, deleteSession, renameSession } from '$lib/api.js';
   import { onMount, onDestroy } from 'svelte';
   import { marked } from 'marked';
   import DOMPurify from 'dompurify';
@@ -38,6 +38,8 @@
   let detectedLanguage = $state('');
   let detectedDomain = $state('');
   let translatedTerms = $state([]);
+  let isStreaming = $state(false);
+  let streamingAnswer = $state('');
 
   // ─── New Features State ───
   // Task 1: Resizable panels
@@ -132,21 +134,52 @@
     isLoading.set(true);
     error.set('');
     showQuickActions = false;
+    aiAnswer.set('');
+    streamingAnswer = '';
+    isStreaming = true;
+
     try {
-      const data = await sendQuery(query, sessionId);
-      searchResults.set(data.results);
-      aiAnswer.set(data.ai_answer);
-      sessionId = data.session_id;
-      detectedLanguage = data.detected_language || '';
-      detectedDomain = data.detected_domain || '';
-      translatedTerms = data.translated_terms || [];
-      currentSession.set(data);
-      // Refresh sessions list so new/updated session appears
-      loadSessions();
+      await sendQueryStream(query, sessionId, {
+        onResults(data) {
+          searchResults.set(data.results);
+          detectedLanguage = data.detected_language || '';
+          detectedDomain = data.detected_domain || '';
+          translatedTerms = data.translated_terms || [];
+          // Results arrived — stop full loading spinner, keep streaming indicator
+          isLoading.set(false);
+        },
+        onChunk(content) {
+          streamingAnswer += content;
+        },
+        onDone(data) {
+          // Final complete answer + session
+          aiAnswer.set(data.ai_answer || streamingAnswer);
+          sessionId = data.session_id;
+          isStreaming = false;
+          streamingAnswer = '';
+          currentSession.set(data);
+          loadSessions();
+        }
+      });
     } catch (e) {
       error.set(e.message);
+      // Fallback to non-streaming
+      try {
+        const data = await sendQuery(query, sessionId);
+        searchResults.set(data.results);
+        aiAnswer.set(data.ai_answer);
+        sessionId = data.session_id;
+        detectedLanguage = data.detected_language || '';
+        detectedDomain = data.detected_domain || '';
+        translatedTerms = data.translated_terms || [];
+        currentSession.set(data);
+        loadSessions();
+      } catch (e2) {
+        error.set(e2.message);
+      }
     } finally {
       isLoading.set(false);
+      isStreaming = false;
     }
   }
 
@@ -828,23 +861,37 @@
         </div>
 
         <!-- AI Answer (Task 2: deduplicated, with clickable refs) -->
-        {#if answer}
-          <div class="ai-answer card">
+        {#if answer || isStreaming}
+          <div class="ai-answer card" class:streaming={isStreaming}>
             <div class="ai-header">
               <div class="ai-header-left">
                 <span class="ai-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M16 14a4 4 0 0 0-8 0v4h8v-4z"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg>
                 </span>
-                <h3>Jawaban AI</h3>
+                <h3>{isStreaming ? 'Menyintesis jawaban...' : 'Jawaban AI'}</h3>
+                {#if isStreaming}
+                  <span class="streaming-indicator">
+                    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                  </span>
+                {/if}
               </div>
               {#if results.length > 0}
                 <span class="ai-source-count">Dari {results.length} referensi</span>
               {/if}
             </div>
             <div class="ai-content markdown-body">
-              {@html renderMarkdown(answer)}
+              {#if isStreaming && streamingAnswer}
+                {@html renderMarkdown(streamingAnswer)}
+                <span class="typing-cursor">▊</span>
+              {:else if answer}
+                {@html renderMarkdown(answer)}
+              {:else if isStreaming}
+                <div class="ai-thinking">
+                  <span class="thinking-text">Menganalisis ibaroh dari kitab-kitab...</span>
+                </div>
+              {/if}
             </div>
-            {#if results.length > 0}
+            {#if !isStreaming && results.length > 0}
               <div class="ai-refs">
                 <span class="ai-refs-label">Sumber:</span>
                 {#each results.slice(0, 5) as result, i}
@@ -1584,6 +1631,70 @@
     margin-bottom: 20px;
     border-left: 4px solid var(--color-secondary);
     background: linear-gradient(135deg, #fffdf5, #fff);
+  }
+
+  .ai-answer.streaming {
+    border-left-color: var(--color-primary);
+    animation: streamPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes streamPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(var(--color-primary-rgb, 30, 86, 49), 0); }
+    50% { box-shadow: 0 0 12px 2px rgba(30, 86, 49, 0.08); }
+  }
+
+  .streaming-indicator {
+    display: inline-flex;
+    gap: 3px;
+    margin-left: 6px;
+  }
+
+  .streaming-indicator .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    animation: dotBounce 1.2s ease-in-out infinite;
+  }
+
+  .streaming-indicator .dot:nth-child(2) { animation-delay: 0.2s; }
+  .streaming-indicator .dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes dotBounce {
+    0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1.2); }
+  }
+
+  .typing-cursor {
+    display: inline;
+    animation: cursorBlink 0.8s step-end infinite;
+    color: var(--color-primary);
+    font-weight: bold;
+    margin-left: 1px;
+  }
+
+  @keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .ai-thinking {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 0;
+  }
+
+  .thinking-text {
+    color: var(--color-text-muted);
+    font-style: italic;
+    font-size: 0.9rem;
+    animation: fadeInOut 2s ease-in-out infinite;
+  }
+
+  @keyframes fadeInOut {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
   }
 
   .ai-header {

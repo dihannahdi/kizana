@@ -11,6 +11,7 @@ use actix_web::{web, HttpRequest, HttpResponse};
 use log::{info, error, warn};
 use std::sync::Arc;
 use std::time::Instant;
+use futures::SinkExt;
 
 pub struct AppState {
     pub db: Arc<Database>,
@@ -442,6 +443,190 @@ pub async fn query(
         detected_domain: format!("{}", translated.detected_domain),
         translated_terms: translated.arabic_terms.clone(),
     })
+}
+
+// ─── Streaming Query Handler (SSE) ───
+
+pub async fn query_stream(
+    req: HttpRequest,
+    data: web::Data<AppState>,
+    body: web::Json<QueryRequest>,
+) -> HttpResponse {
+    // Rate limit
+    let ip = get_client_ip(&req);
+    if !data.rate_limiter.check(&ip) {
+        return HttpResponse::TooManyRequests().json(serde_json::json!({
+            "error": "Rate limit exceeded. Coba lagi nanti."
+        }));
+    }
+
+    // Verify auth
+    let claims = match auth::extract_user_from_request(&req, &data.config) {
+        Ok(c) => c,
+        Err(e) => {
+            return HttpResponse::Unauthorized().json(serde_json::json!({ "error": e }));
+        }
+    };
+
+    let query_str = body.query.trim().to_string();
+    if query_str.is_empty() {
+        return HttpResponse::BadRequest().json(serde_json::json!({
+            "error": "Query cannot be empty"
+        }));
+    }
+    if query_str.len() > 2000 {
+        return HttpResponse::BadRequest().json(serde_json::json!({
+            "error": "Query terlalu panjang (maksimal 2000 karakter)"
+        }));
+    }
+
+    // Translate query
+    let translated = data.search.translate_query(&query_str);
+    info!(
+        "Stream query: lang={:?}, domain={:?}, terms={:?}",
+        translated.detected_language, translated.detected_domain, translated.arabic_terms
+    );
+
+    let search_start = Instant::now();
+
+    // Search
+    let cached_results = if let Some(ref cache) = data.cache {
+        cache.get_cached_search(&query_str).await
+    } else {
+        None
+    };
+
+    let results = if let Some(cached) = cached_results {
+        info!("Cache hit for stream query: {}", query_str);
+        cached
+    } else {
+        let mut kitab_results = match data.search.search_with_translated(&translated, 20) {
+            Ok(r) => r,
+            Err(e) => {
+                error!("Search error: {}", e);
+                return HttpResponse::InternalServerError().json(serde_json::json!({
+                    "error": format!("Search failed: {}", e)
+                }));
+            }
+        };
+
+        for r in &mut kitab_results {
+            if r.source_type.is_empty() {
+                r.source_type = "kitab".to_string();
+            }
+        }
+
+        if let Some(ref ph_db) = data.produk_hukum_db {
+            if let Ok(ph_results) = ph_db.search_for_unified(&query_str, 5) {
+                kitab_results.extend(ph_results);
+                kitab_results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
+            }
+        }
+
+        if let Some(ref cache) = data.cache {
+            cache.cache_search(&query_str, &kitab_results).await;
+        }
+        kitab_results
+    };
+
+    // Log query
+    let search_time_ms = search_start.elapsed().as_millis() as i64;
+    let top_score = results.first().map(|r| r.score).unwrap_or(0.0);
+    let num_results = results.len() as i32;
+    let lang_str = format!("{}", translated.detected_language);
+    let domain_str = format!("{}", translated.detected_domain);
+    let session_for_log = body.session_id.clone();
+    let _ = data.db.log_query(
+        &query_str, &lang_str, &domain_str, &translated.arabic_terms,
+        num_results, top_score, search_time_ms, session_for_log.as_deref(),
+    );
+
+    // Create SSE channel
+    let (mut tx, rx) = futures::channel::mpsc::channel::<crate::ai::SseItem>(64);
+
+    // Clone needed data for the async task
+    let data_clone = data.clone();
+    let query_clone = query_str.clone();
+    let results_clone = results.clone();
+    let translated_clone = translated.clone();
+    let session_id_input = body.session_id.clone();
+    let user_id = claims.sub;
+
+    actix_web::rt::spawn(async move {
+        // 1. Send search results
+        let results_event = serde_json::json!({
+            "results": &results_clone,
+            "query": &query_clone,
+            "detected_language": format!("{}", translated_clone.detected_language),
+            "detected_domain": format!("{}", translated_clone.detected_domain),
+            "translated_terms": &translated_clone.arabic_terms,
+        });
+        let _ = tx.send(Ok(actix_web::web::Bytes::from(
+            format!("event: search_results\ndata: {}\n\n", results_event.to_string())
+        ))).await;
+
+        // 2. Stream AI synthesis
+        let ai_tx = tx.clone();
+        let full_ai_text = data_clone.ai.synthesize_answer_stream(
+            &query_clone,
+            &results_clone,
+            Some(&translated_clone),
+            ai_tx,
+        ).await;
+
+        // 3. Save session
+        let session_id = session_id_input
+            .unwrap_or_else(|| uuid::Uuid::new_v4().to_string());
+
+        let cached_session = if let Some(ref cache) = data_clone.cache {
+            cache.get_cached_session(&session_id).await
+        } else {
+            None
+        };
+        let mut session = cached_session
+            .or_else(|| data_clone.db.get_session(&session_id, user_id).ok().flatten())
+            .unwrap_or_else(|| ChatSession {
+                id: session_id.clone(),
+                user_id,
+                title: query_clone.chars().take(50).collect(),
+                messages: Vec::new(),
+                created_at: chrono::Utc::now().to_rfc3339(),
+                updated_at: chrono::Utc::now().to_rfc3339(),
+            });
+
+        session.messages.push(ChatMessage {
+            role: "user".to_string(),
+            content: query_clone.clone(),
+            timestamp: chrono::Utc::now().to_rfc3339(),
+        });
+        session.messages.push(ChatMessage {
+            role: "assistant".to_string(),
+            content: full_ai_text.clone(),
+            timestamp: chrono::Utc::now().to_rfc3339(),
+        });
+        session.updated_at = chrono::Utc::now().to_rfc3339();
+
+        let _ = data_clone.db.save_session(&session);
+        if let Some(ref cache) = data_clone.cache {
+            cache.cache_session(&session).await;
+        }
+
+        // 4. Send done event
+        let done_event = serde_json::json!({
+            "session_id": &session_id,
+            "ai_answer": &full_ai_text,
+        });
+        let _ = tx.send(Ok(actix_web::web::Bytes::from(
+            format!("event: ai_done\ndata: {}\n\n", done_event.to_string())
+        ))).await;
+    });
+
+    HttpResponse::Ok()
+        .content_type("text/event-stream")
+        .insert_header(("Cache-Control", "no-cache"))
+        .insert_header(("X-Accel-Buffering", "no"))
+        .insert_header(("Connection", "keep-alive"))
+        .streaming(rx)
 }
 
 // ─── Book Reader Handler ───

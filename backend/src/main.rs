@@ -147,6 +147,7 @@ async fn main() -> std::io::Result<()> {
             .route("/api/auth/change-password", web::post().to(handlers::change_password))
             // Protected routes — Search & Chat
             .route("/api/query", web::post().to(handlers::query))
+            .route("/api/query/stream", web::post().to(handlers::query_stream))
             .route("/api/book", web::post().to(handlers::read_book))
             // Protected routes — Session Management
             .route("/api/sessions", web::get().to(handlers::get_sessions))
