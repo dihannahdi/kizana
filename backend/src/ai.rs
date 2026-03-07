@@ -217,10 +217,11 @@ impl AiClient {
                     }
 
                     if let Ok(json_val) = serde_json::from_str::<serde_json::Value>(data) {
-                        // Handle both delta (streaming) and message (non-streaming) formats
+                        // Only accept delta.content in streaming mode — do NOT fall back
+                        // to message.content, as the final SSE chunk may contain the full
+                        // accumulated text, which would duplicate everything.
                         let content = json_val["choices"][0]["delta"]["content"]
-                            .as_str()
-                            .or_else(|| json_val["choices"][0]["message"]["content"].as_str());
+                            .as_str();
 
                         if let Some(c) = content {
                             if !c.is_empty() {
