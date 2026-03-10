@@ -44,6 +44,37 @@ fn get_client_ip(req: &HttpRequest) -> String {
     }
 }
 
+/// Sanitize search query input to prevent injection attacks
+/// Removes potentially dangerous characters and limits length
+fn sanitize_search_query(input: &str) -> String {
+    let mut sanitized = input.trim().to_string();
+    
+    // Remove null bytes and control characters
+    sanitized = sanitized
+        .chars()
+        .filter(|c| !c.is_control() || *c == ' ' || *c == '\t')
+        .collect();
+    
+    // Limit query length to prevent DoS
+    if sanitized.len() > 500 {
+        sanitized.truncate(500);
+    }
+    
+    // Remove potentially dangerous special characters that could affect search
+    // Keep: letters, numbers, spaces, Arabic chars, basic punctuation
+    let dangerous_chars = ['<', '>', '{', '}', '[', ']', '\\', '|', '\'', '"', ';', '&', '$', '`', '#'];
+    for c in dangerous_chars {
+        sanitized = sanitized.replace(c, "");
+    }
+    
+    // Collapse multiple spaces
+    while sanitized.contains("  ") {
+        sanitized = sanitized.replace("  ", " ");
+    }
+    
+    sanitized
+}
+
 // ─── Auth Handlers ───
 
 pub async fn register(
@@ -305,6 +336,16 @@ pub async fn query(
         }));
     }
 
+    // Sanitize query to prevent injection attacks
+    let query_str = sanitize_search_query(&query_str);
+    
+    // Verify sanitized query is not empty
+    if query_str.is_empty() {
+        return HttpResponse::BadRequest().json(serde_json::json!({
+            "error": "Query mengandung karakter tidak valid"
+        }));
+    }
+
     // Check cache
     // ─── Step 1: Translate query (language detection, Arabic expansion) ───
     let translated = data.search.translate_query(&query_str);
@@ -336,10 +377,14 @@ pub async fn query(
             }
         };
 
-        // Mark all kitab results
+        // Mark all kitab results with source type and citation
         for r in &mut kitab_results {
             if r.source_type.is_empty() {
                 r.source_type = "kitab".to_string();
+            }
+            // P3: Add citation to each result
+            if let Ok(citation) = data.db.get_result_citation(r.book_id, r.toc_id) {
+                r.citation = citation;
             }
         }
 
@@ -477,6 +522,16 @@ pub async fn query_stream(
     if query_str.len() > 2000 {
         return HttpResponse::BadRequest().json(serde_json::json!({
             "error": "Query terlalu panjang (maksimal 2000 karakter)"
+        }));
+    }
+
+    // Sanitize query to prevent injection attacks
+    let query_str = sanitize_search_query(&query_str);
+    
+    // Verify sanitized query is not empty
+    if query_str.is_empty() {
+        return HttpResponse::BadRequest().json(serde_json::json!({
+            "error": "Query mengandung karakter tidak valid"
         }));
     }
 
@@ -1229,5 +1284,47 @@ pub async fn query_log_stats(
     match data.db.get_query_log_stats() {
         Ok(stats) => HttpResponse::Ok().json(stats),
         Err(e) => HttpResponse::InternalServerError().json(serde_json::json!({ "error": e })),
+    }
+}
+
+// ─── P2: Feedback Handlers ───
+
+/// Submit feedback for a search result
+/// POST /api/feedback
+pub async fn submit_feedback(
+    req: HttpRequest,
+    data: web::Data<AppState>,
+    body: web::Json<crate::models::FeedbackRequest>,
+) -> HttpResponse {
+    // Verify auth
+    let claims = match auth::extract_user_from_request(&req, &data.config) {
+        Ok(c) => c,
+        Err(e) => return HttpResponse::Unauthorized().json(serde_json::json!({ "error": e })),
+    };
+
+    // Validate feedback type
+    let feedback_type = &body.feedback_type;
+    if !["upvote", "downvote", "helpful", "not_relevant"].contains(&feedback_type.as_str()) {
+        return HttpResponse::BadRequest().json(serde_json::json!({
+            "error": "Invalid feedback type. Must be: upvote, downvote, helpful, or not_relevant"
+        }));
+    }
+
+    // Save feedback
+    match data.db.add_feedback(
+        claims.sub,
+        &body.query_text,
+        body.result_book_id,
+        body.result_toc_id,
+        &body.feedback_type,
+    ) {
+        Ok(id) => HttpResponse::Ok().json(serde_json::json!({
+            "success": true,
+            "feedback_id": id,
+            "message": "Feedback recorded"
+        })),
+        Err(e) => HttpResponse::InternalServerError().json(serde_json::json!({
+            "error": format!("Failed to save feedback: {}", e)
+        })),
     }
 }

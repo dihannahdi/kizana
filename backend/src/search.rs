@@ -386,6 +386,8 @@ impl SearchEngine {
                     author_name: meta.author_name,
                     source_type: "kitab".to_string(),
                     category: String::new(),
+                    citation: String::new(),
+                    similarity_score: 0.0,
                 });
             }
         }
@@ -697,6 +699,8 @@ impl SearchEngine {
                     author_name: meta.author_name,
                     source_type: "kitab".to_string(),
                     category: String::new(),
+                    citation: String::new(),
+                    similarity_score: 0.0,
                 });
             }
         }

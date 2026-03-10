@@ -952,6 +952,8 @@ impl Database {
                             author_name: meta.author_name,
                             source_type: "kitab".to_string(),
                             category: String::new(),
+                            citation: String::new(),
+                            similarity_score: 0.0,
                         });
                         if results.len() >= limit {
                             break;
@@ -1065,6 +1067,74 @@ impl Database {
             )
             .map_err(|e| format!("Revoke error: {}", e))?;
         Ok(affected > 0)
+    }
+
+    pub fn cleanup_old_sessions(&self, days: i64) -> Result<usize, String> {
+        let conn = self.conn.lock();
+        let cutoff = chrono::Utc::now() - chrono::Duration::days(days);
+        let cutoff_str = cutoff.format("%Y-%m-%d %H:%M:%S").to_string();
+        conn.execute(
+            "DELETE FROM chat_sessions WHERE updated_at < ?1",
+            params![cutoff_str],
+        )
+        .map_err(|e| format!("Session cleanup error: {}", e))
+    }
+
+    pub fn cleanup_old_query_logs(&self, days: i64) -> Result<usize, String> {
+        let conn = self.conn.lock();
+        let cutoff = chrono::Utc::now() - chrono::Duration::days(days);
+        let cutoff_str = cutoff.format("%Y-%m-%d %H:%M:%S").to_string();
+        conn.execute(
+            "DELETE FROM query_logs WHERE created_at < ?1",
+            params![cutoff_str],
+        )
+        .map_err(|e| format!("Query log cleanup error: {}", e))
+    }
+
+    pub fn get_result_citation(&self, book_id: i64, toc_id: i64) -> Result<String, String> {
+        let meta = self.get_book_metadata(book_id);
+        let conn = self.conn.lock();
+        let page: String = conn
+            .query_row(
+                &format!("SELECT COALESCE(page, '') FROM t{} WHERE id = ?1", book_id),
+                params![toc_id],
+                |row| row.get(0),
+            )
+            .unwrap_or_default();
+        let citation = if !meta.author_name.is_empty() {
+            format!("{} - {} ص. {}", meta.book_name, meta.author_name, page)
+        } else {
+            format!("{} ص. {}", meta.book_name, page)
+        };
+        Ok(citation)
+    }
+
+    pub fn add_feedback(
+        &self,
+        user_id: i64,
+        query_text: &str,
+        result_book_id: i64,
+        result_toc_id: i64,
+        feedback_type: &str,
+    ) -> Result<i64, String> {
+        let conn = self.conn.lock();
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS search_feedback (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                query_text TEXT NOT NULL,
+                result_book_id INTEGER NOT NULL,
+                result_toc_id INTEGER NOT NULL,
+                feedback_type TEXT NOT NULL,
+                created_at TEXT DEFAULT (datetime('now'))
+            )",
+            [],
+        ).map_err(|e| format!("Create feedback table error: {}", e))?;
+        conn.execute(
+            "INSERT INTO search_feedback (user_id, query_text, result_book_id, result_toc_id, feedback_type) VALUES (?1, ?2, ?3, ?4, ?5)",
+            params![user_id, query_text, result_book_id, result_toc_id, feedback_type],
+        ).map_err(|e| format!("Insert feedback error: {}", e))?;
+        Ok(conn.last_insert_rowid())
     }
 }
 

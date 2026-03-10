@@ -27,9 +27,22 @@ impl Config {
                 .unwrap_or_else(|_| "./kizana_all_books.sqlite".to_string()),
             redis_url: std::env::var("REDIS_URL")
                 .unwrap_or_else(|_| "redis://127.0.0.1:6379".to_string()),
-            jwt_secret: std::env::var("JWT_SECRET")
-                .expect("FATAL: JWT_SECRET environment variable must be set (minimum 32 chars)"),
-            ai_api_key: std::env::var("AI_API_KEY").unwrap_or_default(),
+            jwt_secret: {
+                let secret = std::env::var("JWT_SECRET")
+                    .expect("FATAL: JWT_SECRET environment variable must be set");
+                if secret.len() < 32 {
+                    panic!("FATAL: JWT_SECRET must be at least 32 characters for security");
+                }
+                secret
+            },
+            // Validate JWT_SECRET meets minimum length
+            ai_api_key: {
+                let key = std::env::var("AI_API_KEY").unwrap_or_default();
+                if key.is_empty() {
+                    log::warn!("AI_API_KEY not set - AI features will be disabled");
+                }
+                key
+            },
             ai_api_url: std::env::var("AI_API_URL")
                 .unwrap_or_else(|_| "https://api.x.ai/v1/chat/completions".to_string()),
             ai_model: std::env::var("AI_MODEL")

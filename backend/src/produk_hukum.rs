@@ -391,6 +391,8 @@ impl ProdukHukumDb {
                     author_name: "Bahtsul Masail".to_string(),
                     source_type: "produk_hukum".to_string(),
                     category,
+                    citation: String::new(),
+                    similarity_score: 0.0,
                 })
             })
             .map_err(|e| format!("Search error: {}", e))?

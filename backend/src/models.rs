@@ -99,7 +99,7 @@ pub struct QueryResponse {
 }
 
 // ─── Search ───
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct SearchResult {
     pub book_id: i64,
     pub toc_id: i64,
@@ -115,6 +115,30 @@ pub struct SearchResult {
     pub source_type: String, // "kitab" | "produk_hukum"
     #[serde(default)]
     pub category: String,    // For produk_hukum results
+    #[serde(default)]
+    pub citation: String,   // P3: Formatted citation (book, author, page)
+    #[serde(default)]
+    pub similarity_score: f32, // P4: Semantic similarity score
+}
+
+/// P2: User Feedback for search results
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SearchFeedback {
+    pub id: i64,
+    pub user_id: i64,
+    pub query_text: String,
+    pub result_book_id: i64,
+    pub result_toc_id: i64,
+    pub feedback_type: String, // "upvote" | "downvote" | "helpful" | "not_relevant"
+    pub created_at: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct FeedbackRequest {
+    pub query_text: String,
+    pub result_book_id: i64,
+    pub result_toc_id: i64,
+    pub feedback_type: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

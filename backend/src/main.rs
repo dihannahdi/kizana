@@ -89,6 +89,20 @@ async fn main() -> std::io::Result<()> {
         arl_cleanup.cleanup();
     });
 
+    // Background task: cleanup old sessions and query logs every 6 hours
+    let db_for_cleanup = db.clone();
+    std::thread::spawn(move || loop {
+        std::thread::sleep(std::time::Duration::from_secs(21600)); // 6 hours
+        match db_for_cleanup.cleanup_old_sessions(90) {
+            Ok(count) => log::info!("Session cleanup: {} old sessions removed", count),
+            Err(e) => log::error!("Session cleanup error: {}", e),
+        }
+        match db_for_cleanup.cleanup_old_query_logs(30) {
+            Ok(count) => log::info!("Query log cleanup: {} old logs removed", count),
+            Err(e) => log::error!("Query log cleanup error: {}", e),
+        }
+    });
+
     let frontend_url = config.frontend_url.clone();
     let host = config.host.clone();
     let port = config.port;
@@ -164,6 +178,8 @@ async fn main() -> std::io::Result<()> {
             // Evaluation endpoints — Admin only (Academic Research)
             .route("/api/eval/batch", web::post().to(handlers::eval_batch))
             .route("/api/eval/logs", web::get().to(handlers::query_log_stats))
+            // P2: Feedback endpoints
+            .route("/api/feedback", web::post().to(handlers::submit_feedback))
     })
     .bind(format!("{}:{}", host, port))?
     .workers(4)
