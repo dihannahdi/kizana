@@ -6,9 +6,9 @@ use log::{info, warn};
 use std::collections::HashMap;
 use std::sync::Arc;
 use tantivy::collector::TopDocs;
-use tantivy::query::QueryParser;
+use tantivy::query::{BooleanQuery, BoostQuery, Occur, PhraseQuery, QueryParser, TermQuery};
 use tantivy::schema::*;
-use tantivy::{doc, Index, IndexWriter, ReloadPolicy, TantivyDocument};
+use tantivy::{doc, Index, IndexWriter, ReloadPolicy, TantivyDocument, Term};
 use parking_lot::RwLock;
 
 /// Maximum results from the same book (diversity limit)
@@ -19,6 +19,7 @@ pub struct SearchEngine {
     reader: tantivy::IndexReader,
     schema: Schema,
     field_content: Field,
+    field_title: Field,
     field_book_id: Field,
     field_toc_id: Field,
     field_page: Field,
@@ -47,7 +48,8 @@ impl SearchEngine {
             )
             .set_stored();
 
-        let field_content = schema_builder.add_text_field("content", text_options);
+        let field_content = schema_builder.add_text_field("content", text_options.clone());
+        let field_title = schema_builder.add_text_field("title", text_options);
         let field_book_id =
             schema_builder.add_i64_field("book_id", INDEXED | STORED);
         let field_toc_id =
@@ -99,6 +101,7 @@ impl SearchEngine {
             reader,
             schema,
             field_content,
+            field_title,
             field_book_id,
             field_toc_id,
             field_page,
@@ -140,8 +143,10 @@ impl SearchEngine {
                 Ok(entries) => {
                     toc_counts.insert(book_id, entries.len());
                     for entry in &entries {
+                        let clean_title = strip_html_tags(&entry.content);
                         writer.add_document(doc!(
                             self.field_content => entry.content.clone(),
+                            self.field_title => clean_title,
                             self.field_book_id => book_id,
                             self.field_toc_id => entry.id,
                             self.field_page => entry.page.clone(),
@@ -219,53 +224,52 @@ impl SearchEngine {
     }
 
     /// Search using a pre-translated query
+    /// Enhanced with: programmatic BooleanQuery, stemmer expansion, term-overlap reranking
     pub fn search_with_translated(&self, translated: &TranslatedQuery, limit: usize) -> Result<Vec<SearchResult>, String> {
         if !self.is_indexed() {
-            // Fallback to SQLite LIKE search
             return self.db.search_toc_fts(&translated.original, limit);
         }
 
-        let searcher = self.reader.searcher();
-        let query_parser = QueryParser::for_index(&self.index, vec![self.field_content]);
-
-        // Try translated query first
-        let query_text = if !translated.tantivy_query.is_empty() {
-            &translated.tantivy_query
+        // ─── Step 1: Expand Arabic terms with stemmer variants ───
+        let expanded_terms = if !translated.arabic_terms.is_empty() {
+            self.stemmer.expand_query_terms(&translated.arabic_terms)
         } else {
-            &translated.original
+            Vec::new()
         };
 
-        let query = match query_parser.parse_query(query_text) {
-            Ok(q) => q,
-            Err(_) => {
-                // Fallback: try individual Arabic terms
-                let fallback = translated.arabic_terms.join(" ");
-                if !fallback.is_empty() {
-                    query_parser
-                        .parse_query(&fallback)
-                        .map_err(|e| format!("Query parse error: {}", e))?
-                } else {
-                    // Final fallback: original query
-                    query_parser
-                        .parse_query(&translated.original)
-                        .map_err(|e| format!("Query parse error: {}", e))?
-                }
-            }
-        };
+        // ─── Step 2: Build programmatic query with field boosting ───
+        let query = self.build_boosted_query(&expanded_terms, &translated.arabic_terms, &translated.original);
 
-        // Fetch more candidates than needed for diversity filtering
-        let fetch_count = limit * 5;
+        let searcher = self.reader.searcher();
+
+        // Fetch more candidates for diversity filtering + reranking
+        let fetch_count = limit * 7;
         let top_docs = searcher
             .search(&query, &TopDocs::with_limit(fetch_count))
             .map_err(|e| format!("Search error: {}", e))?;
 
         let toc_counts = self.book_toc_counts.read();
+
+        // Collect phrase terms for term-overlap reranking
+        let phrase_terms: Vec<&String> = translated.arabic_terms.iter()
+            .filter(|t| t.contains(' '))
+            .collect();
+        let single_terms: Vec<&String> = translated.arabic_terms.iter()
+            .filter(|t| !t.contains(' '))
+            .collect();
+
         let mut all_results: Vec<SearchResult> = Vec::new();
 
         for (bm25_score, doc_address) in &top_docs {
             if let Ok(retrieved_doc) = searcher.doc::<TantivyDocument>(*doc_address) {
                 let content = retrieved_doc
                     .get_first(self.field_content)
+                    .and_then(|v: &tantivy::schema::OwnedValue| v.as_str())
+                    .unwrap_or("")
+                    .to_string();
+
+                let title_text = retrieved_doc
+                    .get_first(self.field_title)
                     .and_then(|v: &tantivy::schema::OwnedValue| v.as_str())
                     .unwrap_or("")
                     .to_string();
@@ -291,55 +295,90 @@ impl SearchEngine {
                     .and_then(|v: &tantivy::schema::OwnedValue| v.as_i64())
                     .unwrap_or(0);
 
-                // Get hierarchy
                 let hierarchy = self
                     .db
                     .get_toc_hierarchy(book_id, toc_id)
                     .unwrap_or_default();
 
-                // Get content snippet AND display page from book content table
                 let (content_snippet, display_page) = self
                     .db
-                    .get_content_snippet_with_page(book_id, &page)
+                    .get_content_snippet_with_page_and_terms(book_id, &page, &translated.arabic_terms)
                     .unwrap_or_default();
 
-                // Get book metadata (name + author)
                 let meta = self.db.get_book_metadata(book_id);
 
-                // ─── Scoring adjustments ───
+                // ─── Scoring: BM25 + structural boosts + term-overlap reranking ───
                 
-                // Hierarchy boost: deeper = more specific = higher boost
+                // Hierarchy depth boost (deeper = more specific)
                 let depth_boost = hierarchy.len() as f32 * 0.1;
                 
-                // Parent relevance boost: if parent is not root, moderate boost
+                // Parent relevance boost
                 let parent_boost = if parent > 0 { 0.15 } else { 0.0 };
 
-                // Large-book penalty: encyclopedic fatwa collections with >10K entries
-                // get a slight penalty to prevent them from dominating results.
-                // Books with >50K entries (like فتاوى الشبكة الإسلامية with 92K) get
-                // the strongest penalty.
+                // Large-book penalty
                 let toc_count = toc_counts.get(&book_id).copied().unwrap_or(0);
                 let size_factor = if toc_count > 50_000 {
-                    0.75  // -25% for massive encyclopedic collections
+                    0.75
                 } else if toc_count > 20_000 {
-                    0.85  // -15% for large collections
+                    0.85
                 } else if toc_count > 10_000 {
-                    0.92  // -8% for big books
+                    0.92
                 } else {
-                    1.0   // No penalty for normal books
+                    1.0
                 };
 
-                let adjusted_score = (bm25_score + depth_boost + parent_boost) * size_factor;
+                // ─── Term-overlap reranking ───
+                // Check how many of the original Arabic search terms actually
+                // appear in the retrieved title + content. This rewards results
+                // that match the specific query intent, not just generic high-TF terms.
+                let searchable_text = format!("{} {}", title_text, content_snippet);
+                
+                let phrase_hit_count = phrase_terms.iter()
+                    .filter(|pt| searchable_text.contains(pt.as_str()))
+                    .count();
+                let single_hit_count = single_terms.iter()
+                    .filter(|st| searchable_text.contains(st.as_str()))
+                    .count();
+                
+                let total_query_terms = phrase_terms.len() + single_terms.len();
+                let term_overlap_boost = if total_query_terms > 0 {
+                    // Phrase hits count 3× more than single-word hits
+                    let weighted_hits = (phrase_hit_count * 3 + single_hit_count) as f32;
+                    let max_possible = (phrase_terms.len() * 3 + single_terms.len()) as f32;
+                    (weighted_hits / max_possible) * 0.5 // up to +0.5 boost
+                } else {
+                    0.0
+                };
 
-                // Strip HTML tags from TOC title
-                let clean_title = strip_html_tags(&content);
+                // Title match bonus: if a phrase term appears in the TOC title itself,
+                // that's a very strong signal this chapter is directly about the topic
+                let title_match_bonus = if !phrase_terms.is_empty() {
+                    let title_hits = phrase_terms.iter()
+                        .filter(|pt| title_text.contains(pt.as_str()))
+                        .count();
+                    title_hits as f32 * 0.3
+                } else {
+                    let title_hits = single_terms.iter()
+                        .filter(|st| title_text.contains(st.as_str()))
+                        .count();
+                    (title_hits as f32 * 0.15).min(0.45)
+                };
+
+                let adjusted_score = (bm25_score + depth_boost + parent_boost 
+                    + term_overlap_boost + title_match_bonus) * size_factor;
+
+                let clean_title = if !title_text.is_empty() {
+                    title_text
+                } else {
+                    strip_html_tags(&content)
+                };
 
                 all_results.push(SearchResult {
                     book_id,
                     toc_id,
                     title: clean_title,
                     content_snippet,
-                    page: display_page,  // Now shows actual display page, not row ID
+                    page: display_page,
                     part: String::new(),
                     score: adjusted_score,
                     hierarchy,
@@ -355,8 +394,6 @@ impl SearchEngine {
         all_results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
 
         // ─── Per-book diversity limit ───
-        // Allow at most MAX_PER_BOOK results from the same book.
-        // This ensures users see references from different kitab/authors.
         let mut book_count: HashMap<i64, usize> = HashMap::new();
         let mut diverse_results: Vec<SearchResult> = Vec::new();
         
@@ -381,13 +418,90 @@ impl SearchEngine {
         }
 
         info!(
-            "Search: {} candidates → {} diverse results (from {} unique books)",
+            "Search: {} candidates → {} diverse results (from {} unique books), stemmer expanded {} → {} terms",
             top_docs.len(),
             diverse_results.len(),
-            book_count.len()
+            book_count.len(),
+            translated.arabic_terms.len(),
+            expanded_terms.len(),
         );
 
         Ok(diverse_results)
+    }
+
+    /// Build a programmatic BooleanQuery with field boosting.
+    /// - Phrase Arabic terms → PhraseQuery on content (boost 5×) + title (boost 8×)
+    /// - Single Arabic terms → TermQuery on content (boost 2×) + title (boost 4×)
+    /// - Fallback: parse original query string
+    fn build_boosted_query(
+        &self,
+        expanded_terms: &[String],
+        original_arabic_terms: &[String],
+        raw_query: &str,
+    ) -> Box<dyn tantivy::query::Query> {
+        let mut subqueries: Vec<(Occur, Box<dyn tantivy::query::Query>)> = Vec::new();
+
+        // Group terms: phrases (contain spaces) vs. single words
+        let phrase_terms: Vec<&String> = original_arabic_terms.iter()
+            .filter(|t| t.contains(' '))
+            .collect();
+        let single_terms: Vec<&String> = expanded_terms.iter()
+            .filter(|t| !t.contains(' '))
+            .collect();
+
+        // ─── Phrase queries (highest boost) ───
+        for phrase in &phrase_terms {
+            let words: Vec<&str> = phrase.split_whitespace().collect();
+            if words.len() >= 2 {
+                // PhraseQuery on content field (boost 5×)
+                let content_terms: Vec<Term> = words.iter()
+                    .map(|w| Term::from_field_text(self.field_content, w))
+                    .collect();
+                let content_phrase = PhraseQuery::new(content_terms);
+                let boosted_content = BoostQuery::new(Box::new(content_phrase), 5.0);
+                subqueries.push((Occur::Should, Box::new(boosted_content)));
+
+                // PhraseQuery on title field (boost 8×)
+                let title_terms: Vec<Term> = words.iter()
+                    .map(|w| Term::from_field_text(self.field_title, w))
+                    .collect();
+                let title_phrase = PhraseQuery::new(title_terms);
+                let boosted_title = BoostQuery::new(Box::new(title_phrase), 8.0);
+                subqueries.push((Occur::Should, Box::new(boosted_title)));
+            }
+        }
+
+        // ─── Single-word term queries ───
+        for term_str in &single_terms {
+            // TermQuery on content (boost 2×)
+            let content_term = Term::from_field_text(self.field_content, term_str);
+            let content_tq = TermQuery::new(content_term, IndexRecordOption::WithFreqsAndPositions);
+            let boosted_content = BoostQuery::new(Box::new(content_tq), 2.0);
+            subqueries.push((Occur::Should, Box::new(boosted_content)));
+
+            // TermQuery on title (boost 4×)
+            let title_term = Term::from_field_text(self.field_title, term_str);
+            let title_tq = TermQuery::new(title_term, IndexRecordOption::WithFreqsAndPositions);
+            let boosted_title = BoostQuery::new(Box::new(title_tq), 4.0);
+            subqueries.push((Occur::Should, Box::new(boosted_title)));
+        }
+
+        if subqueries.is_empty() {
+            // Fallback: use query parser on both fields
+            let query_parser = QueryParser::for_index(
+                &self.index,
+                vec![self.field_content, self.field_title],
+            );
+            match query_parser.parse_query(raw_query) {
+                Ok(q) => q,
+                Err(_) => {
+                    // Last resort: match nothing
+                    Box::new(BooleanQuery::new(vec![]))
+                }
+            }
+        } else {
+            Box::new(BooleanQuery::new(subqueries))
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -458,7 +572,7 @@ impl SearchEngine {
         }
 
         let searcher = self.reader.searcher();
-        let query_parser = QueryParser::for_index(&self.index, vec![self.field_content]);
+        let query_parser = QueryParser::for_index(&self.index, vec![self.field_content, self.field_title]);
 
         let query_text = if !translated.tantivy_query.is_empty() {
             &translated.tantivy_query
@@ -523,6 +637,12 @@ impl SearchEngine {
                 let (content_snippet, display_page) = self.db.get_content_snippet_with_page(book_id, &page).unwrap_or_default();
                 let meta = self.db.get_book_metadata(book_id);
 
+                let title_text = retrieved_doc
+                    .get_first(self.field_title)
+                    .and_then(|v: &tantivy::schema::OwnedValue| v.as_str())
+                    .unwrap_or("")
+                    .to_string();
+
                 // ─── Configurable scoring ───
                 let adjusted_score = if config.raw_bm25_only {
                     // Raw BM25 baseline — no adjustments whatsoever
@@ -558,7 +678,11 @@ impl SearchEngine {
                     (bm25_score + depth_boost + parent_boost) * size_factor
                 };
 
-                let clean_title = strip_html_tags(&content);
+                let clean_title = if !title_text.is_empty() {
+                    title_text
+                } else {
+                    strip_html_tags(&content)
+                };
 
                 all_results.push(SearchResult {
                     book_id,

@@ -41,7 +41,7 @@ impl AiClient {
             .map(|t| &t.detected_language)
             .unwrap_or(&QueryLang::Indonesian);
 
-        // Build rich context from search results with book name + author
+        // Build rich context from search results with book name + author + hierarchy
         let context: String = results
             .iter()
             .take(10)
@@ -55,10 +55,17 @@ impl AiClient {
                     format!("📖 كتاب رقم {}, ص {}", r.book_id, r.page)
                 };
 
+                let hierarchy_path = if !r.hierarchy.is_empty() {
+                    format!("\nالباب: {}", r.hierarchy.join(" > "))
+                } else {
+                    String::new()
+                };
+
                 format!(
-                    "{}. {}\nالعنوان: {}\nالنص: {}\n",
+                    "{}. {}{}\nالعنوان: {}\nالنص: {}\n",
                     i + 1,
                     book_info,
+                    hierarchy_path,
                     r.title,
                     if r.content_snippet.is_empty() {
                         &r.title
@@ -542,6 +549,7 @@ fn build_user_prompt(
 }
 
 /// Build rich context string from search results for AI prompts
+/// Includes hierarchy (chapter path) for better contextual understanding
 fn build_rich_context(results: &[crate::models::SearchResult]) -> String {
     results
         .iter()
@@ -556,12 +564,28 @@ fn build_rich_context(results: &[crate::models::SearchResult]) -> String {
                 format!("📖 كتاب رقم {}, ص {}", r.book_id, r.page)
             };
 
+            let hierarchy_path = if !r.hierarchy.is_empty() {
+                format!("\nالباب: {}", r.hierarchy.join(" > "))
+            } else {
+                String::new()
+            };
+
+            let content = if r.content_snippet.is_empty() { &r.title } else { &r.content_snippet };
+            // Provide more text to AI for better synthesis (up to 600 chars)
+            let truncated_content = if content.chars().count() > 600 {
+                let t: String = content.chars().take(600).collect();
+                format!("{}...", t)
+            } else {
+                content.to_string()
+            };
+
             format!(
-                "{}. {}\nالعنوان: {}\nالنص: {}\n",
+                "{}. {}{}\nالعنوان: {}\nالنص: {}\n",
                 i + 1,
                 book_info,
+                hierarchy_path,
                 r.title,
-                if r.content_snippet.is_empty() { &r.title } else { &r.content_snippet }
+                truncated_content,
             )
         })
         .collect()

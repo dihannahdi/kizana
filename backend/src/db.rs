@@ -790,6 +790,17 @@ impl Database {
     /// The `toc_page` parameter is the TOC's page field (= b{N}.id row ID).
     /// We look up b{N}.page to get the actual display page number.
     pub fn get_content_snippet_with_page(&self, book_id: i64, toc_page: &str) -> Result<(String, String), String> {
+        self.get_content_snippet_with_page_and_terms(book_id, toc_page, &[])
+    }
+
+    /// Enhanced snippet extraction: fetches content rows and finds the window
+    /// that best matches the given Arabic search terms.
+    pub fn get_content_snippet_with_page_and_terms(
+        &self,
+        book_id: i64,
+        toc_page: &str,
+        arabic_terms: &[String],
+    ) -> Result<(String, String), String> {
         let row_id: i64 = toc_page.trim().parse().unwrap_or(0);
         if row_id == 0 {
             return Ok((String::new(), String::new()));
@@ -797,15 +808,16 @@ impl Database {
         let conn = self.conn.lock();
         let table = format!("b{}", book_id);
         
-        // Get content AND display page for this row and up to 4 subsequent rows
+        // Fetch more rows (up to 10) so we can find the best matching window
+        let fetch_range = if arabic_terms.is_empty() { 4 } else { 9 };
         let sql = format!(
-            "SELECT content, page FROM \"{}\" WHERE id >= ?1 AND id <= ?2 AND (is_deleted = '0' OR is_deleted IS NULL) ORDER BY id LIMIT 5",
-            table
+            "SELECT content, page FROM \"{}\" WHERE id >= ?1 AND id <= ?2 AND (is_deleted = '0' OR is_deleted IS NULL) ORDER BY id LIMIT {}",
+            table, fetch_range + 1
         );
         
         let rows: Vec<(String, String)> = match conn.prepare(&sql) {
             Ok(mut stmt) => {
-                match stmt.query_map(params![row_id, row_id + 4], |row| {
+                match stmt.query_map(params![row_id, row_id + fetch_range as i64], |row| {
                     Ok((
                         row.get::<_, String>(0).unwrap_or_default(),
                         row.get::<_, String>(1).unwrap_or_default(),
@@ -824,25 +836,70 @@ impl Database {
             }
         };
 
-        // Display page from the first row
         let display_page = rows.first()
             .map(|(_, p)| p.clone())
             .unwrap_or_default();
 
-        let combined: String = rows.iter().map(|(c, _)| c.as_str()).collect::<Vec<_>>().join(" ");
-        let plain = strip_html(&combined);
-
-        if plain.trim().chars().count() < 5 {
+        if rows.is_empty() {
             return Ok((String::new(), display_page));
         }
 
-        let snippet = if plain.chars().count() > 400 {
-            let truncated: String = plain.chars().take(400).collect();
+        // If we have search terms, find the best window of ~5 rows that contains the most matches
+        let (snippet_text, best_page) = if !arabic_terms.is_empty() && rows.len() > 5 {
+            let mut best_score = 0usize;
+            let mut best_start = 0usize;
+            let window_size = 5.min(rows.len());
+            
+            for start in 0..=(rows.len() - window_size) {
+                let window_text: String = rows[start..start + window_size]
+                    .iter()
+                    .map(|(c, _)| strip_html(c))
+                    .collect::<Vec<_>>()
+                    .join(" ");
+                
+                let score: usize = arabic_terms.iter()
+                    .map(|term| {
+                        if term.contains(' ') {
+                            // Phrase match counts 3×
+                            if window_text.contains(term.as_str()) { 3 } else { 0 }
+                        } else {
+                            if window_text.contains(term.as_str()) { 1 } else { 0 }
+                        }
+                    })
+                    .sum();
+                
+                if score > best_score {
+                    best_score = score;
+                    best_start = start;
+                }
+            }
+            
+            let best_window: String = rows[best_start..best_start + window_size]
+                .iter()
+                .map(|(c, _)| c.as_str())
+                .collect::<Vec<_>>()
+                .join(" ");
+            let best_pg = rows[best_start].1.clone();
+            (best_window, best_pg)
+        } else {
+            // Default: first 5 rows
+            let combined: String = rows.iter().take(5).map(|(c, _)| c.as_str()).collect::<Vec<_>>().join(" ");
+            (combined, display_page.clone())
+        };
+
+        let plain = strip_html(&snippet_text);
+
+        if plain.trim().chars().count() < 5 {
+            return Ok((String::new(), if best_page.is_empty() { display_page } else { best_page }));
+        }
+
+        let snippet = if plain.chars().count() > 500 {
+            let truncated: String = plain.chars().take(500).collect();
             format!("{}...", truncated)
         } else {
             plain
         };
-        Ok((snippet, display_page))
+        Ok((snippet, if best_page.is_empty() { display_page } else { best_page }))
     }
 
     // ─── FTS5 fallback search on TOC ───
