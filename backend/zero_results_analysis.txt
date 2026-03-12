@@ -1,0 +1,13 @@
+﻿d:/nahdi/bahtsulmasail/.venv/Scripts/python.exe : Traceback (most recent call 
+last):
+At line:1 char:1
++ d:/nahdi/bahtsulmasail/.venv/Scripts/python.exe extract_zeros.py 2>&1 ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last) 
+   ::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "D:\nahdi\bahtsulmasail\backend\extract_zeros.py", line 19, in <module>
+    "query": r["query"],
+             ~^^^^^^^^^
+KeyError: 'query'

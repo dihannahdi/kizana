@@ -6,7 +6,7 @@ use log::{info, warn};
 use std::collections::HashMap;
 use std::sync::Arc;
 use tantivy::collector::TopDocs;
-use tantivy::query::{BooleanQuery, BoostQuery, Occur, PhraseQuery, QueryParser, TermQuery};
+use tantivy::query::{BooleanQuery, BoostQuery, FuzzyTermQuery, Occur, PhraseQuery, QueryParser, TermQuery};
 use tantivy::schema::*;
 use tantivy::{doc, Index, IndexWriter, ReloadPolicy, TantivyDocument, Term};
 use parking_lot::RwLock;
@@ -144,9 +144,18 @@ impl SearchEngine {
                     toc_counts.insert(book_id, entries.len());
                     for entry in &entries {
                         let clean_title = strip_html_tags(&entry.content);
+                        // ═══ NOVEL v15: Arabic normalization at index time ═══
+                        // Normalize Arabic text before indexing to ensure consistent
+                        // token matching. SimpleTokenizer treats diacritics (tashkeel)
+                        // as word boundaries, fragmenting Arabic tokens. By stripping
+                        // diacritics, normalizing hamza variants (أ/إ/آ→ا), and
+                        // removing tatweel before indexing, we get clean tokens that
+                        // match query terms produced by the translator.
+                        let normalized_content = self.stemmer.normalize(&entry.content);
+                        let normalized_title = self.stemmer.normalize(&clean_title);
                         writer.add_document(doc!(
-                            self.field_content => entry.content.clone(),
-                            self.field_title => clean_title,
+                            self.field_content => normalized_content,
+                            self.field_title => normalized_title,
                             self.field_book_id => book_id,
                             self.field_toc_id => entry.id,
                             self.field_page => entry.page.clone(),
@@ -258,6 +267,14 @@ impl SearchEngine {
             .filter(|t| !t.contains(' '))
             .collect();
 
+        // Pre-normalize query terms for scoring (avoid re-normalizing per doc)
+        let normalized_phrases: Vec<String> = phrase_terms.iter()
+            .map(|t| self.stemmer.normalize(t))
+            .collect();
+        let normalized_singles: Vec<String> = single_terms.iter()
+            .map(|t| self.stemmer.normalize(t))
+            .collect();
+
         let mut all_results: Vec<SearchResult> = Vec::new();
 
         for (bm25_score, doc_address) in &top_docs {
@@ -307,13 +324,18 @@ impl SearchEngine {
 
                 let meta = self.db.get_book_metadata(book_id);
 
-                // ─── Scoring: BM25 + structural boosts + term-overlap reranking ───
-                
+                // ─── Scoring: BM25 × relevance multiplier × size factor ───
+                // ═══ NOVEL v15: Multiplicative scoring instead of additive ═══
+                // Additive boosts (+0.15, +0.4, +0.3) are weak compared to BM25 scores
+                // that range 0-20+. Multiplicative ensures high-BM25 docs get proportionally
+                // larger benefit from structural/term-overlap signals, while low-BM25 docs
+                // can't be promoted by boosts alone.
+
                 // Hierarchy depth boost (deeper = more specific)
-                let depth_boost = hierarchy.len() as f32 * 0.1;
+                let depth_boost = (hierarchy.len() as f32 * 0.08).min(0.4);
                 
                 // Parent relevance boost
-                let parent_boost = if parent > 0 { 0.15 } else { 0.0 };
+                let parent_boost = if parent > 0 { 0.12 } else { 0.0 };
 
                 // Large-book penalty
                 let toc_count = toc_counts.get(&book_id).copied().unwrap_or(0);
@@ -327,45 +349,110 @@ impl SearchEngine {
                     1.0
                 };
 
-                // ─── Term-overlap reranking ───
-                // Check how many of the original Arabic search terms actually
-                // appear in the retrieved title + content. This rewards results
-                // that match the specific query intent, not just generic high-TF terms.
-                let searchable_text = format!("{} {}", title_text, content_snippet);
+                // ─── Term-overlap reranking (specificity-weighted) ───
+                // ═══ v15: Also normalize searchable_text for consistent matching ═══
+                let normalized_searchable = self.stemmer.normalize(&format!("{} {}", title_text, content_snippet));
                 
-                let phrase_hit_count = phrase_terms.iter()
-                    .filter(|pt| searchable_text.contains(pt.as_str()))
-                    .count();
-                let single_hit_count = single_terms.iter()
-                    .filter(|st| searchable_text.contains(st.as_str()))
-                    .count();
-                
-                let total_query_terms = phrase_terms.len() + single_terms.len();
-                let term_overlap_boost = if total_query_terms > 0 {
-                    // Phrase hits count 3× more than single-word hits
-                    let weighted_hits = (phrase_hit_count * 3 + single_hit_count) as f32;
-                    let max_possible = (phrase_terms.len() * 3 + single_terms.len()) as f32;
-                    (weighted_hits / max_possible) * 0.5 // up to +0.5 boost
-                } else {
-                    0.0
+                let term_overlap_boost = {
+                    let mut weighted_hits = 0.0f32;
+                    let mut max_weights = 0.0f32;
+                    
+                    // Phrase matches: weight = word_count × 2.0 (multi-word = more specific)
+                    for (i, _pt) in phrase_terms.iter().enumerate() {
+                        let weight = phrase_terms[i].split_whitespace().count() as f32 * 2.0;
+                        max_weights += weight;
+                        if normalized_searchable.contains(&normalized_phrases[i]) {
+                            weighted_hits += weight;
+                        }
+                    }
+                    
+                    // Single-word matches: weight by Arabic word length (longer = more specific)
+                    for (i, st) in single_terms.iter().enumerate() {
+                        let char_count = st.chars().count();
+                        let weight = if char_count >= 6 { 1.5 } else if char_count >= 4 { 1.0 } else { 0.5 };
+                        max_weights += weight;
+                        if normalized_searchable.contains(&normalized_singles[i]) {
+                            weighted_hits += weight;
+                        }
+                    }
+                    
+                    if max_weights > 0.0 {
+                        (weighted_hits / max_weights) * 0.8 // up to +0.8 multiplier component
+                    } else {
+                        0.0
+                    }
                 };
 
                 // Title match bonus: if a phrase term appears in the TOC title itself,
                 // that's a very strong signal this chapter is directly about the topic
-                let title_match_bonus = if !phrase_terms.is_empty() {
-                    let title_hits = phrase_terms.iter()
-                        .filter(|pt| title_text.contains(pt.as_str()))
+                let normalized_title_check = self.stemmer.normalize(&title_text);
+                let title_match_bonus = if !normalized_phrases.is_empty() {
+                    let title_hits = normalized_phrases.iter()
+                        .filter(|npt| normalized_title_check.contains(npt.as_str()))
                         .count();
-                    title_hits as f32 * 0.3
+                    (title_hits as f32 * 0.35).min(0.7)
                 } else {
-                    let title_hits = single_terms.iter()
-                        .filter(|st| title_text.contains(st.as_str()))
+                    let title_hits = normalized_singles.iter()
+                        .filter(|nst| normalized_title_check.contains(nst.as_str()))
                         .count();
                     (title_hits as f32 * 0.15).min(0.45)
                 };
 
-                let adjusted_score = (bm25_score + depth_boost + parent_boost 
-                    + term_overlap_boost + title_match_bonus) * size_factor;
+                // ═══ v15 NOVEL: Continuous query coverage scoring ═══
+                // Replaces step-function with smooth curve for more granular ranking.
+                // Uses sqrt(coverage) to give diminishing returns — matching the first
+                // few terms matters more than the last few.
+                let query_coverage_boost = if !normalized_singles.is_empty() {
+                    let total_terms = normalized_singles.len();
+                    let matched_terms = normalized_singles.iter()
+                        .filter(|nst| normalized_searchable.contains(nst.as_str()))
+                        .count();
+                    let coverage_ratio = matched_terms as f32 / total_terms as f32;
+                    // Smooth curve: sqrt gives diminishing returns
+                    coverage_ratio.sqrt() * 0.6
+                } else {
+                    0.0
+                };
+
+                // ═══ v15 NOVEL: Term proximity scoring ═══
+                // When multiple query terms appear close together in the text,
+                // the passage discusses their combined concept (e.g., صلاة + جماعة
+                // within 100 chars = "congregational prayer"). This is a stronger
+                // relevance signal than terms scattered across a long document.
+                let proximity_boost = if normalized_singles.len() >= 2 {
+                    let mut positions: Vec<usize> = Vec::new();
+                    for nst in &normalized_singles {
+                        if let Some(pos) = normalized_searchable.find(nst.as_str()) {
+                            positions.push(pos);
+                        }
+                    }
+                    if positions.len() >= 2 {
+                        let min_pos = *positions.iter().min().unwrap();
+                        let max_pos = *positions.iter().max().unwrap();
+                        let span = max_pos - min_pos;
+                        if span <= 100 {
+                            0.4 // terms very close: strong topical focus
+                        } else if span <= 300 {
+                            0.2
+                        } else if span <= 600 {
+                            0.1
+                        } else {
+                            0.0
+                        }
+                    } else {
+                        0.0
+                    }
+                } else {
+                    0.0
+                };
+
+                // ═══ v15 NOVEL: Multiplicative scoring formula ═══
+                // Score = BM25 × (1 + sum_of_boosts) × size_factor
+                // This preserves BM25 ordering while amplifying by relevance signals
+                let relevance_multiplier = 1.0 + depth_boost + parent_boost 
+                    + term_overlap_boost + title_match_bonus + query_coverage_boost
+                    + proximity_boost;
+                let adjusted_score = bm25_score * relevance_multiplier * size_factor;
 
                 let clean_title = if !title_text.is_empty() {
                     title_text
@@ -388,6 +475,7 @@ impl SearchEngine {
                     category: String::new(),
                     citation: String::new(),
                     similarity_score: 0.0,
+                    toc_page: page.clone(),
                 });
             }
         }
@@ -396,12 +484,22 @@ impl SearchEngine {
         all_results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
 
         // ─── Per-book diversity limit ───
+        // ═══ v15 NOVEL: Adaptive diversity — narrow queries allow more per book ═══
+        // For narrow/specific queries (few unique terms), the matching book is likely
+        // the authoritative source. For broad queries, we need more book diversity.
+        let effective_max_per_book = if single_terms.len() <= 2 && phrase_terms.len() <= 1 {
+            MAX_PER_BOOK + 2  // narrow: allow 5 per book
+        } else if single_terms.len() <= 4 {
+            MAX_PER_BOOK + 1  // medium: allow 4 per book
+        } else {
+            MAX_PER_BOOK      // broad: standard 3 per book
+        };
         let mut book_count: HashMap<i64, usize> = HashMap::new();
         let mut diverse_results: Vec<SearchResult> = Vec::new();
         
         for result in all_results {
             let count = book_count.entry(result.book_id).or_insert(0);
-            if *count < MAX_PER_BOOK {
+            if *count < effective_max_per_book {
                 *count += 1;
                 diverse_results.push(result);
                 if diverse_results.len() >= limit {
@@ -431,9 +529,12 @@ impl SearchEngine {
         Ok(diverse_results)
     }
 
-    /// Build a programmatic BooleanQuery with field boosting.
-    /// - Phrase Arabic terms → PhraseQuery on content (boost 5×) + title (boost 8×)
-    /// - Single Arabic terms → TermQuery on content (boost 2×) + title (boost 4×)
+    /// Build a programmatic BooleanQuery with tiered field boosting.
+    /// 
+    /// Boost tiers (novel: differentiated original vs. stemmer-variant scoring):
+    /// - Phrase Arabic terms → PhraseQuery on content (5×) + title (8×)
+    /// - Original single Arabic terms → TermQuery content (3×) + title (5×) + FuzzyTermQuery (1×)
+    /// - Stemmer-variant terms → TermQuery content (1.5×) + title (2.5×)
     /// - Fallback: parse original query string
     fn build_boosted_query(
         &self,
@@ -443,12 +544,28 @@ impl SearchEngine {
     ) -> Box<dyn tantivy::query::Query> {
         let mut subqueries: Vec<(Occur, Box<dyn tantivy::query::Query>)> = Vec::new();
 
-        // Group terms: phrases (contain spaces) vs. single words
-        let phrase_terms: Vec<&String> = original_arabic_terms.iter()
+        // ═══ NOVEL v15: Normalize all terms to match index-time normalization ═══
+        let normalized_originals: Vec<String> = original_arabic_terms.iter()
+            .map(|t| self.stemmer.normalize(t))
+            .collect();
+        let normalized_expanded: Vec<String> = expanded_terms.iter()
+            .map(|t| self.stemmer.normalize(t))
+            .collect();
+
+        // ─── Separate original terms by type ───
+        let phrase_terms: Vec<&String> = normalized_originals.iter()
             .filter(|t| t.contains(' '))
             .collect();
-        let single_terms: Vec<&String> = expanded_terms.iter()
+        let original_singles: Vec<&String> = normalized_originals.iter()
             .filter(|t| !t.contains(' '))
+            .collect();
+
+        // Variant terms = stemmer-expanded terms NOT in original set
+        let original_set: std::collections::HashSet<&str> = normalized_originals.iter()
+            .map(|s| s.as_str())
+            .collect();
+        let variant_singles: Vec<&String> = normalized_expanded.iter()
+            .filter(|t| !t.contains(' ') && !original_set.contains(t.as_str()))
             .collect();
 
         // ─── Phrase queries (highest boost) ───
@@ -460,32 +577,51 @@ impl SearchEngine {
                     .map(|w| Term::from_field_text(self.field_content, w))
                     .collect();
                 let content_phrase = PhraseQuery::new(content_terms);
-                let boosted_content = BoostQuery::new(Box::new(content_phrase), 5.0);
-                subqueries.push((Occur::Should, Box::new(boosted_content)));
+                subqueries.push((Occur::Should, Box::new(BoostQuery::new(Box::new(content_phrase), 5.0))));
 
                 // PhraseQuery on title field (boost 8×)
                 let title_terms: Vec<Term> = words.iter()
                     .map(|w| Term::from_field_text(self.field_title, w))
                     .collect();
                 let title_phrase = PhraseQuery::new(title_terms);
-                let boosted_title = BoostQuery::new(Box::new(title_phrase), 8.0);
-                subqueries.push((Occur::Should, Box::new(boosted_title)));
+                subqueries.push((Occur::Should, Box::new(BoostQuery::new(Box::new(title_phrase), 8.0))));
             }
         }
 
-        // ─── Single-word term queries ───
-        for term_str in &single_terms {
-            // TermQuery on content (boost 2×)
+        // ─── Original single-word terms (HIGH boost — direct translations) ───
+        for term_str in &original_singles {
+            // TermQuery on content (boost 3×)
             let content_term = Term::from_field_text(self.field_content, term_str);
             let content_tq = TermQuery::new(content_term, IndexRecordOption::WithFreqsAndPositions);
-            let boosted_content = BoostQuery::new(Box::new(content_tq), 2.0);
-            subqueries.push((Occur::Should, Box::new(boosted_content)));
+            subqueries.push((Occur::Should, Box::new(BoostQuery::new(Box::new(content_tq), 3.0))));
 
-            // TermQuery on title (boost 4×)
+            // TermQuery on title (boost 5×)
             let title_term = Term::from_field_text(self.field_title, term_str);
             let title_tq = TermQuery::new(title_term, IndexRecordOption::WithFreqsAndPositions);
-            let boosted_title = BoostQuery::new(Box::new(title_tq), 4.0);
-            subqueries.push((Occur::Should, Box::new(boosted_title)));
+            subqueries.push((Occur::Should, Box::new(BoostQuery::new(Box::new(title_tq), 5.0))));
+
+            // FuzzyTermQuery for Arabic words ≥ 5 chars (catches orthographic/scribal variants)
+            // Edit distance 1 with transposition — safe for longer Arabic words
+            if term_str.chars().count() >= 5
+                && term_str.chars().any(|c| ('\u{0600}'..='\u{06FF}').contains(&c))
+            {
+                let fuzzy_term = Term::from_field_text(self.field_content, term_str);
+                let fuzzy_q = FuzzyTermQuery::new(fuzzy_term, 1, true);
+                subqueries.push((Occur::Should, Box::new(BoostQuery::new(Box::new(fuzzy_q), 1.0))));
+            }
+        }
+
+        // ─── Variant/stemmer terms (LOWER boost — derived morphological forms) ───
+        for term_str in &variant_singles {
+            // TermQuery on content (boost 1.5×)
+            let content_term = Term::from_field_text(self.field_content, term_str);
+            let content_tq = TermQuery::new(content_term, IndexRecordOption::WithFreqsAndPositions);
+            subqueries.push((Occur::Should, Box::new(BoostQuery::new(Box::new(content_tq), 1.5))));
+
+            // TermQuery on title (boost 2.5×)
+            let title_term = Term::from_field_text(self.field_title, term_str);
+            let title_tq = TermQuery::new(title_term, IndexRecordOption::WithFreqsAndPositions);
+            subqueries.push((Occur::Should, Box::new(BoostQuery::new(Box::new(title_tq), 2.5))));
         }
 
         if subqueries.is_empty() {
@@ -557,8 +693,20 @@ impl SearchEngine {
             translated
         };
 
-        // Step 3: Search with configurable scoring
-        let results = self.search_with_eval_config(&final_translated, limit, config)?;
+        // Step 3: Search — use full boosted search pipeline unless ablation flags are set
+        let is_default_config = !config.disable_book_penalty
+            && !config.disable_hierarchy_boost
+            && !config.disable_parent_boost
+            && !config.disable_diversity_cap
+            && !config.raw_bm25_only;
+
+        let results = if is_default_config {
+            // Use the same boosted query + scoring as production search
+            self.search_with_translated(&final_translated, limit)?
+        } else {
+            // Ablation mode: simpler search for comparison
+            self.search_with_eval_config(&final_translated, limit, config)?
+        };
         Ok((results, final_translated))
     }
 
@@ -701,6 +849,7 @@ impl SearchEngine {
                     category: String::new(),
                     citation: String::new(),
                     similarity_score: 0.0,
+                    toc_page: page.clone(),
                 });
             }
         }

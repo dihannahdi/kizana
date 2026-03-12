@@ -1,7 +1,7 @@
 <script>
   import { auth, searchResults, aiAnswer, isLoading, error, showReader, bookData, currentSession } from '$lib/stores.js';
-  import { sendQuery, sendQueryStream, readBook, login as apiLogin, register as apiRegister, getSessions, getSession, deleteSession, renameSession } from '$lib/api.js';
-  import { onMount, onDestroy } from 'svelte';
+  import { sendQuery, sendQueryStream, readBook, getProdukHukumDetail, login as apiLogin, register as apiRegister, getSessions, getSession, deleteSession, renameSession } from '$lib/api.js';
+  import { onMount, onDestroy, tick } from 'svelte';
   import { marked } from 'marked';
   import DOMPurify from 'dompurify';
 
@@ -27,6 +27,14 @@
   let highlightSnippet = $state('');
   let showMobileToc = $state(false);
 
+  // Produk Hukum viewer state
+  let produkHukumData = $state(null);
+  let produkHukumLoading = $state(false);
+  let showProdukHukumViewer = $state(false);
+
+  // Reader panel closing animation
+  let readerClosing = $state(false);
+
   let isAuth = $state(false);
   let authUser = $state(null);
   let results = $state([]);
@@ -40,6 +48,17 @@
   let translatedTerms = $state([]);
   let isStreaming = $state(false);
   let streamingAnswer = $state('');
+
+  // ─── Chat Thread (Multi-Turn) ───
+  let chatMessages = $state([]); // Array of { role, content, results, query, mode, confidence, translatedTerms, detectedDomain, detectedLanguage }
+  let chatContainerEl = $state(null);
+
+  async function scrollToBottom() {
+    await tick();
+    if (chatContainerEl) {
+      chatContainerEl.scrollTo({ top: chatContainerEl.scrollHeight, behavior: 'smooth' });
+    }
+  }
 
   // ─── New Features State ───
   // Task 1: Resizable panels
@@ -68,6 +87,19 @@
   let showExportMenu = $state(false);
   let exportLoading = $state(false);
 
+  // Result filters
+  let filterSource = $state('all'); // 'all' | 'kitab' | 'produk_hukum'
+  let filterMinScore = $state(0); // 0 | 40 | 70
+
+  function filterResults(resultsList) {
+    if (!resultsList) return [];
+    return resultsList.filter(r => {
+      if (filterSource !== 'all' && r.source_type !== filterSource) return false;
+      if (r.score < filterMinScore) return false;
+      return true;
+    });
+  }
+
   // Task 8: Quick actions
   let showQuickActions = $state(false);
   const quickActionSuggestions = [
@@ -79,6 +111,140 @@
     { label: 'Hukum riba dalam Islam', icon: '🏦' },
   ];
 
+  // ─── Multimodal Response System ───
+  // Response modes: ringkas (Q&A), ibaroh (citations), lengkap (report), bahtsul-masail (formal BM)
+  let responseMode = $state('auto');
+  let detectedMode = $state('ringkas');
+  let activeMode = $derived(responseMode === 'auto' ? detectedMode : responseMode);
+  let showFollowUps = $state(false);
+  let copyToast = $state('');
+
+  const responseModes = [
+    { id: 'auto', label: 'Auto', icon: '✨', desc: 'Otomatis sesuai pertanyaan' },
+    { id: 'ringkas', label: 'Ringkas', icon: '💬', desc: 'Jawaban singkat & langsung' },
+    { id: 'ibaroh', label: 'Ibaroh', icon: '📜', desc: 'Kutipan teks Arab asli' },
+    { id: 'lengkap', label: 'Lengkap', icon: '📋', desc: 'Analisis mendalam & terstruktur' },
+    { id: 'bahtsul-masail', label: 'Bahtsul Masail', icon: '⚖️', desc: 'Format BM resmi' },
+  ];
+
+  // Intent detection from query text
+  function detectQueryMode(q) {
+    if (!q) return 'ringkas';
+    const lower = q.toLowerCase();
+    // Ibaroh mode
+    if (/\b(ibar[oh]+|ibarat|nash|dalil|عبارة|نص|kutipan|rujukan|teks arab|arabic text)\b/i.test(q)) {
+      return 'ibaroh';
+    }
+    // Bahtsul Masail mode
+    if (/\b(bahtsul\s*masail|format\s*bm|rumusan\s*masalah|deskripsi\s*masalah)\b/i.test(q)) {
+      return 'bahtsul-masail';
+    }
+    // Lengkap/Report mode
+    if (/\b(analis[ia]s|bandingkan|perbandingan|jelaskan\s+secara|lengkap|pandangan\s+(empat|4)\s*madz?hab|kompar|komprehensif|detail|systematic)\b/i.test(q)) {
+      return 'lengkap';
+    }
+    // Default: ringkas
+    return 'ringkas';
+  }
+
+  // Follow-up suggestions based on current query and results
+  let followUpSuggestions = $derived.by(() => {
+    if (!results.length || !query) return [];
+    const suggestions = [];
+    const q = query.toLowerCase();
+
+    // If not in ibaroh mode, suggest it
+    if (activeMode !== 'ibaroh') {
+      suggestions.push({ label: 'Tampilkan ibaroh terkait', icon: '📜', query: `ibaroh ${query}` });
+    }
+    // If not in lengkap mode, suggest deeper analysis
+    if (activeMode !== 'lengkap') {
+      suggestions.push({ label: 'Analisis lebih mendalam', icon: '📋', query: `jelaskan secara lengkap ${query}` });
+    }
+    // Mazhab-specific suggestions
+    if (!/syafi.?i|شافعي/i.test(q)) {
+      suggestions.push({ label: 'Menurut mazhab Syafi\'i', icon: '🏛️', query: `${query} menurut mazhab Syafi'i` });
+    }
+    if (!/hanafi|حنفي/i.test(q)) {
+      suggestions.push({ label: 'Menurut mazhab Hanafi', icon: '🏛️', query: `${query} menurut mazhab Hanafi` });
+    }
+    // Bahtsul Masail format
+    if (activeMode !== 'bahtsul-masail') {
+      suggestions.push({ label: 'Format Bahtsul Masail', icon: '⚖️', query: `bahtsul masail: ${query}` });
+    }
+    return suggestions.slice(0, 4);
+  });
+
+  // Detect confidence tier from AI answer content 
+  function detectConfidenceTier(answerText, resultsList) {
+    if (!answerText || !resultsList.length) return null;
+    const highScoreResults = resultsList.filter(r => r.score >= 70).length;
+    const hasDirectIbaroh = /[«»「」]|📖|عبارة|نص|قال/.test(answerText);
+    const hasDisclaimer = /لم (أجد|نجد)|tidak ditemukan|not found|لا يوجد/i.test(answerText);
+    
+    if (hasDisclaimer || resultsList.length === 0) {
+      return { tier: 'ghaib', label: 'Tidak Cukup Referensi', icon: '🔴', desc: 'Tidak ditemukan referensi yang memadai' };
+    }
+    if (highScoreResults >= 3 && hasDirectIbaroh) {
+      return { tier: 'qathi', label: 'Referensi Kuat', icon: '🟢', desc: 'Ditemukan langsung di kitab dengan tingkat relevansi tinggi' };
+    }
+    return { tier: 'zhanni', label: 'Berdasarkan Prinsip Umum', icon: '🟡', desc: 'Berdasarkan referensi yang relevan secara umum' };
+  }
+
+  // Copy text to clipboard with toast feedback
+  async function copyToClipboard(text, label = 'Teks') {
+    try {
+      await navigator.clipboard.writeText(text);
+      copyToast = `${label} disalin!`;
+      setTimeout(() => copyToast = '', 2000);
+    } catch {
+      copyToast = 'Gagal menyalin';
+      setTimeout(() => copyToast = '', 2000);
+    }
+  }
+
+  // Parse structured AI answer into sections
+  function parseAnswerSections(text) {
+    if (!text) return [];
+    const sections = [];
+    // Split by ## headings
+    const parts = text.split(/(?=^## )/m);
+    for (const part of parts) {
+      const headerMatch = part.match(/^## (.+?)$/m);
+      if (headerMatch) {
+        const title = headerMatch[1].trim();
+        const content = part.replace(/^## .+$/m, '').trim();
+        // Detect section type
+        let type = 'general';
+        if (/jawaban|answer|الجواب|✅/.test(title)) type = 'jawaban';
+        else if (/ibar[oh]+|dalil|evidence|عبارات|📖/.test(title)) type = 'ibaroh';
+        else if (/khilaf|perbedaan|differences|خلاف|⚖️/.test(title)) type = 'khilaf';
+        else if (/kesimpulan|conclusion|خلاصة|📝/.test(title)) type = 'kesimpulan';
+        sections.push({ title, content, type });
+      } else if (part.trim()) {
+        sections.push({ title: '', content: part.trim(), type: 'intro' });
+      }
+    }
+    return sections;
+  }
+
+  // Extract ibaroh blocks from text (Arabic quotes with sources)
+  function extractIbarohBlocks(text) {
+    if (!text) return [];
+    const blocks = [];
+    // Match blockquote patterns with source lines
+    const regex = /(?:^>\s*.+$(?:\n^>\s*.+$)*)/gm;
+    const matches = text.match(regex);
+    if (matches) {
+      for (const m of matches) {
+        const clean = m.replace(/^>\s*/gm, '').trim();
+        // Try to find source reference nearby
+        blocks.push({ text: clean, source: '' });
+      }
+    }
+    return blocks;
+  }
+
   // Subscribe to stores
   auth.subscribe(v => { isAuth = v.isAuthenticated; authUser = v.user; });
   searchResults.subscribe(v => results = v);
@@ -89,8 +255,13 @@
 
   function renderMarkdown(text) {
     if (!text) return '';
-    // Make references clickable: [Kitab X, hal. Y] → clickable link
+    // Make [N] references clickable — links to search result N
     let processed = text.replace(
+      /\[(\d{1,2})\]/g,
+      '<button class="ai-inline-ref" data-ref-index="$1" title="Buka referensi [$1]">[$1]</button>'
+    );
+    // Make [Kitab X, hal. Y] references clickable
+    processed = processed.replace(
       /\[([^\]]*?(?:Kitab|kitab|كتاب)[^\]]*?)\]/g,
       '<span class="ai-ref" title="Klik untuk detail">📖 $1</span>'
     );
@@ -98,8 +269,8 @@
     return DOMPurify.sanitize(html, {
       ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
                      'ul', 'ol', 'li', 'blockquote', 'code', 'pre', 'hr',
-                     'span', 'mark', 'a', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'div', 'sup', 'sub'],
-      ALLOWED_ATTR: ['class', 'href', 'title', 'dir', 'id'],
+                     'span', 'mark', 'a', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'div', 'sup', 'sub', 'button'],
+      ALLOWED_ATTR: ['class', 'href', 'title', 'dir', 'id', 'data-ref-index'],
       FORBID_ATTR: ['onclick', 'onerror', 'onload', 'onmouseover']
     });
   }
@@ -131,47 +302,91 @@
       return;
     }
 
+    const currentQuery = query;
+    // Auto-detect response mode from query
+    detectedMode = detectQueryMode(currentQuery);
+    showFollowUps = false;
+
+    // Add user message to chat thread
+    chatMessages = [...chatMessages, { role: 'user', content: currentQuery }];
+    scrollToBottom();
+
+    // Add a placeholder assistant message that will be filled during streaming
+    const assistantIdx = chatMessages.length;
+    chatMessages = [...chatMessages, {
+      role: 'assistant',
+      content: '',
+      results: [],
+      query: currentQuery,
+      mode: activeMode,
+      confidence: null,
+      translatedTerms: [],
+      detectedDomain: '',
+      detectedLanguage: '',
+      isStreaming: true,
+    }];
+
     isLoading.set(true);
     error.set('');
     showQuickActions = false;
     aiAnswer.set('');
     streamingAnswer = '';
     isStreaming = true;
+    query = '';
 
     try {
-      await sendQueryStream(query, sessionId, {
+      await sendQueryStream(currentQuery, sessionId, {
         onResults(data) {
           searchResults.set(data.results);
           detectedLanguage = data.detected_language || '';
           detectedDomain = data.detected_domain || '';
           translatedTerms = data.translated_terms || [];
-          // Results arrived — stop full loading spinner, keep streaming indicator
+          // Update the assistant message with results
+          chatMessages = chatMessages.map((m, i) => i === assistantIdx
+            ? { ...m, results: data.results, translatedTerms: data.translated_terms || [], detectedDomain: data.detected_domain || '', detectedLanguage: data.detected_language || '' }
+            : m);
           isLoading.set(false);
+          scrollToBottom();
         },
         onChunk(content) {
           streamingAnswer += content;
+          // Live-update the assistant message content
+          chatMessages = chatMessages.map((m, i) => i === assistantIdx
+            ? { ...m, content: streamingAnswer }
+            : m);
+          scrollToBottom();
         },
         onDone(data) {
-          // Final complete answer + session
-          aiAnswer.set(data.ai_answer || streamingAnswer);
+          const finalAnswer = data.ai_answer || streamingAnswer;
+          aiAnswer.set(finalAnswer);
           sessionId = data.session_id;
           isStreaming = false;
           streamingAnswer = '';
+          const conf = detectConfidenceTier(finalAnswer, chatMessages[assistantIdx]?.results || []);
+          chatMessages = chatMessages.map((m, i) => i === assistantIdx
+            ? { ...m, content: finalAnswer, confidence: conf, isStreaming: false, mode: activeMode }
+            : m);
           currentSession.set(data);
           loadSessions();
+          showFollowUps = true;
+          scrollToBottom();
         }
       });
     } catch (e) {
       error.set(e.message);
-      // Fallback to non-streaming
       try {
-        const data = await sendQuery(query, sessionId);
+        const data = await sendQuery(currentQuery, sessionId);
         searchResults.set(data.results);
-        aiAnswer.set(data.ai_answer);
+        const finalAnswer = data.ai_answer;
+        aiAnswer.set(finalAnswer);
         sessionId = data.session_id;
         detectedLanguage = data.detected_language || '';
         detectedDomain = data.detected_domain || '';
         translatedTerms = data.translated_terms || [];
+        const conf = detectConfidenceTier(finalAnswer, data.results);
+        chatMessages = chatMessages.map((m, i) => i === assistantIdx
+          ? { ...m, content: finalAnswer, results: data.results, confidence: conf, isStreaming: false, translatedTerms: data.translated_terms || [], detectedDomain: data.detected_domain || '', detectedLanguage: data.detected_language || '' }
+          : m);
         currentSession.set(data);
         loadSessions();
       } catch (e2) {
@@ -200,28 +415,66 @@
       sessionId = session.id;
       currentSession.set(session);
 
-      // Find the last user query to display
-      const userMsgs = (session.messages || []).filter(m => m.role === 'user');
-      const assistantMsgs = (session.messages || []).filter(m => m.role === 'assistant');
-      const lastUserMsg = userMsgs.length > 0 ? userMsgs[userMsgs.length - 1] : null;
-      const lastAssistantMsg = assistantMsgs.length > 0 ? assistantMsgs[assistantMsgs.length - 1] : null;
-
-      if (lastAssistantMsg) {
-        aiAnswer.set(lastAssistantMsg.content);
+      // Rebuild chat thread from session messages
+      const msgs = session.messages || [];
+      const newChatMessages = [];
+      
+      for (const msg of msgs) {
+        if (msg.role === 'user') {
+          newChatMessages.push({ role: 'user', content: msg.content });
+        } else if (msg.role === 'assistant') {
+          newChatMessages.push({
+            role: 'assistant',
+            content: msg.content,
+            results: [],
+            query: '',
+            mode: 'ringkas',
+            confidence: null,
+            translatedTerms: [],
+            detectedDomain: '',
+            detectedLanguage: '',
+            isStreaming: false,
+          });
+        }
       }
 
-      // Re-run the last query to get search results
+      // Re-run the last user query to get search results for the latest answer
+      const userMsgs = msgs.filter(m => m.role === 'user');
+      const lastUserMsg = userMsgs.length > 0 ? userMsgs[userMsgs.length - 1] : null;
+
       if (lastUserMsg) {
         query = lastUserMsg.content;
-        const data = await sendQuery(lastUserMsg.content, session.id);
-        searchResults.set(data.results);
-        aiAnswer.set(data.ai_answer);
-        detectedLanguage = data.detected_language || '';
-        detectedDomain = data.detected_domain || '';
-        translatedTerms = data.translated_terms || [];
+        try {
+          const data = await sendQuery(lastUserMsg.content, session.id);
+          searchResults.set(data.results);
+          detectedLanguage = data.detected_language || '';
+          detectedDomain = data.detected_domain || '';
+          translatedTerms = data.translated_terms || [];
+          
+          // Enrich the last assistant message with search results
+          if (newChatMessages.length > 0) {
+            const lastIdx = newChatMessages.length - 1;
+            if (newChatMessages[lastIdx].role === 'assistant') {
+              newChatMessages[lastIdx] = {
+                ...newChatMessages[lastIdx],
+                results: data.results,
+                translatedTerms: data.translated_terms || [],
+                detectedDomain: data.detected_domain || '',
+                detectedLanguage: data.detected_language || '',
+                confidence: detectConfidenceTier(newChatMessages[lastIdx].content, data.results),
+              };
+            }
+          }
+          aiAnswer.set(data.ai_answer || (newChatMessages.length > 0 ? newChatMessages[newChatMessages.length - 1].content : ''));
+        } catch {
+          // If re-running fails, still show cached messages
+        }
       } else {
         searchResults.set([]);
       }
+
+      chatMessages = newChatMessages;
+      scrollToBottom();
     } catch (e) {
       error.set('Gagal memuat sesi: ' + e.message);
     } finally {
@@ -263,14 +516,16 @@
     saveProjects();
   }
 
-  async function openBook(bookId, page, bookName = '', snippet = '') {
+  async function openBook(bookId, page, bookName = '', snippet = '', rowId = null) {
     readerLoading = true;
     readerBookId = bookId;
     readerBookName = bookName;
     highlightSnippet = snippet;
+    showProdukHukumViewer = false;
+    produkHukumData = null;
     try {
-      readerData = await readBook(bookId, page);
-      readerPage = page;
+      readerData = await readBook(bookId, page, rowId);
+      readerPage = readerData.current_page || page;
       if (readerData.book_name) {
         readerBookName = readerData.book_name;
       }
@@ -285,6 +540,46 @@
       error.set('Gagal memuat kitab: ' + e.message);
     } finally {
       readerLoading = false;
+    }
+  }
+
+  function closeReader() {
+    readerClosing = true;
+    setTimeout(() => {
+      showReader.set(false);
+      readerClosing = false;
+    }, 280);
+  }
+
+  async function openProdukHukum(docId, snippet = '') {
+    produkHukumLoading = true;
+    showProdukHukumViewer = true;
+    showReader.set(false);
+    try {
+      produkHukumData = await getProdukHukumDetail(docId);
+    } catch (e) {
+      error.set('Gagal memuat dokumen: ' + e.message);
+      showProdukHukumViewer = false;
+    } finally {
+      produkHukumLoading = false;
+    }
+  }
+
+  function closeProdukHukumViewer() {
+    readerClosing = true;
+    setTimeout(() => {
+      showProdukHukumViewer = false;
+      produkHukumData = null;
+      readerClosing = false;
+    }, 280);
+  }
+
+  function openResult(result) {
+    if (result.source_type === 'produk_hukum') {
+      openProdukHukum(result.toc_id, result.content_snippet || result.title || '');
+    } else {
+      const rowId = result.toc_page ? parseInt(result.toc_page, 10) : null;
+      openBook(result.book_id, result.page, result.book_name, result.content_snippet || result.title || '', rowId);
     }
   }
 
@@ -322,13 +617,13 @@
     });
   }
 
-  async function navigatePage(page) {
+  async function navigatePage(page, rowId = null) {
     if (!readerBookId) return;
     readerLoading = true;
     highlightSnippet = '';
     try {
-      readerData = await readBook(readerBookId, page);
-      readerPage = page;
+      readerData = await readBook(readerBookId, page, rowId);
+      readerPage = readerData.current_page || page;
       showMobileToc = false;
     } catch (e) {
       // ignore
@@ -417,7 +712,9 @@
     aiAnswer.set('');
     query = '';
     sessionId = null;
+    chatMessages = [];
     showReader.set(false);
+    showFollowUps = false;
   }
 
   async function handleDeleteSession(id, event) {
@@ -457,6 +754,14 @@
   function handleQuickAction(text) {
     query = text;
     showQuickActions = false;
+    detectedMode = detectQueryMode(text);
+    handleQuery();
+  }
+
+  function handleFollowUp(suggestion) {
+    query = suggestion.query;
+    showFollowUps = false;
+    detectedMode = detectQueryMode(suggestion.query);
     handleQuery();
   }
 
@@ -603,14 +908,28 @@
     prevAuth = isAuth;
   });
 
+  // Event delegation handler for clickable inline references [1], [2], etc.
+  function handleRefClick(e) {
+    const refBtn = e.target.closest('.ai-inline-ref[data-ref-index]');
+    if (!refBtn) return;
+    const idx = parseInt(refBtn.dataset.refIndex, 10) - 1; // 1-based to 0-based
+    // Find the most recent assistant message with results
+    const lastAssistant = [...chatMessages].reverse().find(m => m.role === 'assistant' && m.results?.length > 0);
+    if (lastAssistant && lastAssistant.results[idx]) {
+      openResult(lastAssistant.results[idx]);
+    }
+  }
+
   onMount(() => {
     if (isAuth) { loadSessions(); loadProjects(); }
     window.addEventListener('keydown', handleGlobalKeydown);
+    document.addEventListener('click', handleRefClick);
   });
 
   onDestroy(() => {
     if (typeof window !== 'undefined') {
       window.removeEventListener('keydown', handleGlobalKeydown);
+      document.removeEventListener('click', handleRefClick);
     }
   });
 </script>
@@ -692,37 +1011,24 @@
 {/if}
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="layout" class:split-view={showReaderPanel} bind:this={layoutEl}>
+<div class="layout" class:split-view={showReaderPanel || showProdukHukumViewer} bind:this={layoutEl}>
   <!-- Chat Panel (Task 5: controlled max-width) -->
-  <div class="chat-panel" class:with-reader={showReaderPanel} style={showReaderPanel ? `flex: 0 0 ${panelRatio * 100}%` : ''}>
-    <!-- Header (Task 4: Redesigned) -->
-    <header class="header">
-      <div class="header-brand">
-        <button class="logo-btn" onclick={newChat} title="Obrolan baru">
-          <span class="logo-text">بحث المسائل</span>
-        </button>
-        <div class="header-meta">
-          <span class="brand-label">bahtsulmasail.tech</span>
-        </div>
-      </div>
-      <div class="header-actions">
-        {#if isAuth}
-          <button class="header-action-btn" onclick={() => showShortcuts = true} title="Pintasan (Ctrl+/)">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/></svg>
-          </button>
-          <button class="header-action-btn" onclick={() => { if (!showHistory) loadSessions(); showHistory = !showHistory; }} title="Riwayat (Ctrl+.)">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </button>
-          <div class="user-badge" title={authUser?.email}>
-            <span class="user-avatar">{(authUser?.display_name || authUser?.email || '?')[0].toUpperCase()}</span>
-            <span class="user-name">{authUser?.display_name || authUser?.email}</span>
-          </div>
-          <button class="btn btn-ghost btn-sm" onclick={handleLogout}>Keluar</button>
-        {:else}
-          <button class="btn btn-primary btn-sm" onclick={() => showAuth = true}>Masuk</button>
-        {/if}
-      </div>
-    </header>
+  <div class="chat-panel" class:with-reader={showReaderPanel || showProdukHukumViewer} style={(showReaderPanel || showProdukHukumViewer) ? `flex: 0 0 ${panelRatio * 100}%` : ''}>
+    <!-- Page Toolbar (page-specific actions only; auth/user in layout nav) -->
+    {#if isAuth}
+    <div class="page-toolbar">
+      <button class="toolbar-btn" onclick={newChat} title="Obrolan baru (Ctrl+N)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Baru
+      </button>
+      <button class="toolbar-btn" onclick={() => showShortcuts = true} title="Pintasan (Ctrl+/)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/></svg>
+      </button>
+      <button class="toolbar-btn" onclick={() => { if (!showHistory) loadSessions(); showHistory = !showHistory; }} title="Riwayat (Ctrl+.)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </button>
+    </div>
+    {/if}
 
     <!-- Chat History Sidebar (Task 9: with search, Task 10: with projects) -->
     {#if showHistory && isAuth}
@@ -804,8 +1110,8 @@
       </div>
     {/if}
 
-    <!-- Welcome / Search -->
-    {#if results.length === 0 && !answer && !loading}
+    <!-- Welcome / Chat Thread -->
+    {#if chatMessages.length === 0 && !loading}
       <div class="welcome fade-in">
         <div class="welcome-icon">
           <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
@@ -816,7 +1122,22 @@
         <h2>Bahtsul Masail</h2>
         <p>Cari referensi dari 7.800+ kitab Islam klasik</p>
         <p class="welcome-sub">Tanyakan masalah fikih dalam Bahasa Indonesia, English, atau العربية</p>
-        
+
+        <!-- Response Mode Selector -->
+        <div class="mode-selector">
+          {#each responseModes as mode}
+            <button
+              class="mode-chip"
+              class:active={responseMode === mode.id}
+              onclick={() => responseMode = mode.id}
+              title={mode.desc}
+            >
+              <span class="mode-icon">{mode.icon}</span>
+              <span class="mode-label">{mode.label}</span>
+            </button>
+          {/each}
+        </div>
+
         <!-- Quick Actions (Task 8) -->
         <div class="quick-actions">
           <p class="qa-label">Coba tanyakan:</p>
@@ -832,175 +1153,306 @@
       </div>
     {/if}
 
-    <!-- Results -->
-    {#if results.length > 0 || answer}
-      <div class="results-container fade-in">
-        <!-- Export buttons (Task 6) -->
-        <div class="export-bar">
-          <div class="export-bar-left">
-            <span class="export-label">💾 Ekspor hasil:</span>
-          </div>
-          <div class="export-buttons">
-            <button class="export-btn" onclick={exportMarkdown} title="Download Markdown">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              .md
-            </button>
-            <button class="export-btn" onclick={exportDocx} title="Download Word Document">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-              .docx
-            </button>
-            <button class="export-btn" onclick={exportPdf} title="Export sebagai PDF">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
-              .pdf
-            </button>
-            <button class="export-btn" onclick={exportPlainText} title="Download Plain Text">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
-              .txt
-            </button>
-          </div>
-        </div>
-
-        <!-- AI Answer (Task 2: deduplicated, with clickable refs) -->
-        {#if answer || isStreaming}
-          <div class="ai-answer card" class:streaming={isStreaming}>
-            <div class="ai-header">
-              <div class="ai-header-left">
-                <span class="ai-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M16 14a4 4 0 0 0-8 0v4h8v-4z"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg>
-                </span>
-                <h3>{isStreaming ? 'Menyintesis jawaban...' : 'Jawaban AI'}</h3>
-                {#if isStreaming}
-                  <span class="streaming-indicator">
-                    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-                  </span>
-                {/if}
-              </div>
-              {#if results.length > 0}
-                <span class="ai-source-count">Dari {results.length} referensi</span>
-              {/if}
-            </div>
-            <div class="ai-content markdown-body">
-              {#if isStreaming && streamingAnswer}
-                {@html renderMarkdown(streamingAnswer)}
-                <span class="typing-cursor">▊</span>
-              {:else if answer}
-                {@html renderMarkdown(answer)}
-              {:else if isStreaming}
-                <div class="ai-thinking">
-                  <span class="thinking-text">Menganalisis ibaroh dari kitab-kitab...</span>
-                </div>
-              {/if}
-            </div>
-            {#if !isStreaming && results.length > 0}
-              <div class="ai-refs">
-                <span class="ai-refs-label">Sumber:</span>
-                {#each results.slice(0, 5) as result, i}
-                  <button class="ai-ref-chip" onclick={() => scrollToResult(i)} title="Lihat referensi #{i+1}">
-                    [{i+1}] {result.book_name || `Kitab ${result.book_id}`}, hal. {result.page}
-                  </button>
-                {/each}
-              </div>
-            {/if}
-          </div>
-        {/if}
-
-        <!-- Search Results (Task 2: with IDs for scrolling) -->
-        {#if results.length > 0}
-          {#if translatedTerms.length > 0}
-            <div class="query-understood">
-              <span class="query-understood-label">🔍</span>
-              <span class="query-understood-text">{translatedTerms.slice(0, 5).join(' · ')}</span>
+    <!-- Chat Thread -->
+    {#if chatMessages.length > 0}
+      <div class="chat-thread" bind:this={chatContainerEl}>
+        {#each chatMessages as msg, msgIdx}
+          <!-- User Message -->
+          {#if msg.role === 'user'}
+            <div class="chat-bubble chat-user fade-in">
+              <div class="chat-bubble-content">{msg.content}</div>
             </div>
           {/if}
-          <h3 class="results-title">Hasil Pencarian ({results.length} referensi)</h3>
-          <div class="results-list">
-            {#each results as result, i}
-              <div
-                id="result-{i}"
-                class="result-card card"
-                class:produk-hukum={result.source_type === 'produk_hukum'}
-                onclick={() => openBook(result.book_id, result.page, result.book_name, result.content_snippet || result.title || '')}
-                onkeydown={(e) => { if (e.key === 'Enter') openBook(result.book_id, result.page, result.book_name, result.content_snippet || result.title || ''); }}
-                role="button"
-                tabindex="0"
-                style="animation-delay: {i * 0.05}s"
-              >
-                <div class="result-header">
-                  <span class="result-num">[{i+1}]</span>
-                  <span class="result-score" class:high={result.score >= 70} class:mid={result.score >= 40 && result.score < 70} class:low={result.score < 40} title="Relevansi: {Math.round(result.score)}%">
-                    {result.score >= 70 ? '●●●' : result.score >= 40 ? '●●○' : '●○○'}
-                  </span>
-                  {#if result.source_type === 'produk_hukum'}
-                    <span class="source-badge badge-produk">📋 Produk Hukum</span>
-                  {:else}
-                    <span class="source-badge badge-kitab">📚 Kitab</span>
-                  {/if}
-                  <h4 class="result-title arabic-text">{result.title}</h4>
+
+          <!-- Assistant Message -->
+          {#if msg.role === 'assistant'}
+            <div class="chat-bubble chat-assistant fade-in">
+              <!-- Translated Terms Chip -->
+              {#if msg.translatedTerms && msg.translatedTerms.length > 0}
+                <div class="query-understood">
+                  <span class="query-understood-label">🔍</span>
+                  <span class="query-understood-text">{msg.translatedTerms.slice(0, 5).join(' · ')}</span>
                 </div>
-                
-                {#if result.hierarchy && result.hierarchy.length > 0}
-                  <div class="result-hierarchy">
-                    {#each result.hierarchy as h, j}
-                      <span class="hierarchy-item">{h}</span>
-                      {#if j < result.hierarchy.length - 1}
-                        <span class="hierarchy-sep">›</span>
-                      {/if}
-                    {/each}
+              {/if}
+
+              <!-- Mode + Confidence bar -->
+              {#if msg.content || msg.results?.length > 0}
+                <div class="response-meta-bar">
+                  <div class="response-meta-left">
+                    <span class="active-mode-badge">
+                      {responseModes.find(m => m.id === (msg.mode || 'ringkas'))?.icon || '✨'} Mode: {responseModes.find(m => m.id === (msg.mode || 'ringkas'))?.label || 'Ringkas'}
+                    </span>
+                    <div class="inline-mode-switch">
+                      {#each responseModes.filter(m => m.id !== 'auto') as mode}
+                        <button class="mode-pill" class:active={(msg.mode || activeMode) === mode.id} onclick={() => responseMode = mode.id} title={mode.desc}>{mode.icon}</button>
+                      {/each}
+                    </div>
                   </div>
-                {/if}
-
-                {#if result.content_snippet}
-                  <p class="result-snippet arabic-text">{result.content_snippet}</p>
-                {/if}
-
-                <div class="result-meta">
-                  <span>📖 {result.book_name || `Kitab ${result.book_id}`}</span>
-                  {#if result.author_name}
-                    <span>👤 {result.author_name}</span>
+                  {#if !msg.isStreaming && msg.confidence}
+                    <span class="confidence-badge confidence-{msg.confidence.tier}" title={msg.confidence.desc}>
+                      {msg.confidence.icon} {msg.confidence.label}
+                    </span>
                   {/if}
-                  {#if result.category}
-                    <span>🏷️ {result.category}</span>
+                </div>
+              {/if}
+
+              <!-- AI Answer Content -->
+              {#if msg.content || msg.isStreaming}
+                <div class="ai-answer card mode-{msg.mode || activeMode}" class:streaming={msg.isStreaming}>
+                  <div class="ai-header">
+                    <div class="ai-header-left">
+                      <span class="ai-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M16 14a4 4 0 0 0-8 0v4h8v-4z"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg>
+                      </span>
+                      <h3>
+                        {#if msg.isStreaming}
+                          Menyintesis jawaban...
+                        {:else if (msg.mode || activeMode) === 'ibaroh'}
+                          Ibaroh & Kutipan
+                        {:else if (msg.mode || activeMode) === 'lengkap'}
+                          Analisis Lengkap
+                        {:else if (msg.mode || activeMode) === 'bahtsul-masail'}
+                          Rumusan Bahtsul Masail
+                        {:else}
+                          Jawaban
+                        {/if}
+                      </h3>
+                      {#if msg.isStreaming}
+                        <span class="streaming-indicator" role="status" aria-live="polite" aria-label="Sedang menyintesis jawaban">
+                          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                        </span>
+                      {/if}
+                    </div>
+                    <div class="ai-header-right">
+                      {#if msg.results?.length > 0}
+                        <span class="ai-source-count">Dari {msg.results.length} referensi</span>
+                      {/if}
+                      {#if !msg.isStreaming && msg.content}
+                        <button class="copy-answer-btn" onclick={() => copyToClipboard(msg.content, 'Jawaban')} title="Salin jawaban">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                      {/if}
+                    </div>
+                  </div>
+
+                  <div class="ai-content markdown-body">
+                    {#if msg.isStreaming && msg.content}
+                      {@html renderMarkdown(msg.content)}
+                      <span class="typing-cursor">▊</span>
+                    {:else if msg.content}
+                      {@const sections = parseAnswerSections(msg.content)}
+                      {#if sections.length > 1}
+                        {#each sections as section}
+                          {#if section.type === 'jawaban'}
+                            <div class="answer-section section-jawaban">
+                              <div class="section-header"><h4 class="section-title">{section.title}</h4></div>
+                              <div class="section-content">{@html renderMarkdown(section.content)}</div>
+                            </div>
+                          {:else if section.type === 'ibaroh'}
+                            <div class="answer-section section-ibaroh">
+                              <div class="section-header">
+                                <h4 class="section-title">{section.title}</h4>
+                                <button class="copy-section-btn" onclick={() => copyToClipboard(section.content, 'Ibaroh')} title="Salin ibaroh">
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                </button>
+                              </div>
+                              <div class="section-content ibaroh-content">{@html renderMarkdown(section.content)}</div>
+                            </div>
+                          {:else if section.type === 'khilaf'}
+                            <div class="answer-section section-khilaf">
+                              <div class="section-header"><h4 class="section-title">{section.title}</h4></div>
+                              <div class="section-content">{@html renderMarkdown(section.content)}</div>
+                            </div>
+                          {:else if section.type === 'kesimpulan'}
+                            <div class="answer-section section-kesimpulan">
+                              <div class="section-header"><h4 class="section-title">{section.title}</h4></div>
+                              <div class="section-content">{@html renderMarkdown(section.content)}</div>
+                            </div>
+                          {:else if section.type === 'intro'}
+                            <div class="section-content">{@html renderMarkdown(section.content)}</div>
+                          {:else}
+                            <div class="answer-section">
+                              {#if section.title}<div class="section-header"><h4 class="section-title">{section.title}</h4></div>{/if}
+                              <div class="section-content">{@html renderMarkdown(section.content)}</div>
+                            </div>
+                          {/if}
+                        {/each}
+                      {:else}
+                        {@html renderMarkdown(msg.content)}
+                      {/if}
+                    {:else if msg.isStreaming}
+                      <div class="ai-thinking">
+                        <span class="thinking-text">Menganalisis ibaroh dari kitab-kitab...</span>
+                      </div>
+                    {/if}
+                  </div>
+
+                  <!-- Source chips -->
+                  {#if !msg.isStreaming && msg.results?.length > 0}
+                    <div class="ai-refs">
+                      <span class="ai-refs-label">Sumber:</span>
+                      {#each msg.results.slice(0, 5) as result, i}
+                        <button class="ai-ref-chip" onclick={() => openResult(result)} title="Buka kitab">
+                          [{i+1}] {result.book_name || `Kitab ${result.book_id}`}, hal. {result.page}
+                        </button>
+                      {/each}
+                    </div>
                   {/if}
-                  <span>📄 Hal. {result.page}</span>
+                </div>
+              {/if}
+
+              <!-- Search Results for this message -->
+              {#if !msg.isStreaming && msg.results?.length > 0}
+                <div class="msg-results">
+                  <button class="toggle-results-btn" onclick={() => { msg.showResults = !msg.showResults; chatMessages = chatMessages; }}>
+                    {msg.showResults ? '▼' : '▶'} {msg.results.length} referensi ditemukan
+                  </button>
+                  {#if msg.showResults}
+                    <!-- Filter bar -->
+                    <div class="results-filter-bar">
+                      <div class="filter-group">
+                        <button class="filter-chip" class:active={filterSource === 'all'} onclick={() => filterSource = 'all'}>Semua</button>
+                        <button class="filter-chip" class:active={filterSource === 'kitab'} onclick={() => filterSource = 'kitab'}>📚 Kitab</button>
+                        <button class="filter-chip" class:active={filterSource === 'produk_hukum'} onclick={() => filterSource = 'produk_hukum'}>📋 Produk Hukum</button>
+                      </div>
+                      <div class="filter-group">
+                        <button class="filter-chip" class:active={filterMinScore === 0} onclick={() => filterMinScore = 0}>Semua skor</button>
+                        <button class="filter-chip" class:active={filterMinScore === 40} onclick={() => filterMinScore = 40}>●●○ 40+</button>
+                        <button class="filter-chip" class:active={filterMinScore === 70} onclick={() => filterMinScore = 70}>●●● 70+</button>
+                      </div>
+                    </div>
+                    {@const filtered = filterResults(msg.results)}
+                    {#if filtered.length === 0}
+                      <p class="filter-empty">Tidak ada hasil yang cocok dengan filter.</p>
+                    {/if}
+                    <div class="results-list results-collapsible fade-in">
+                      {#each filtered as result, i}
+                        <div
+                          class="result-card card"
+                          class:produk-hukum={result.source_type === 'produk_hukum'}
+                          onclick={() => openResult(result)}
+                          onkeydown={(e) => { if (e.key === 'Enter') openResult(result); }}
+                          role="button"
+                          tabindex="0"
+                        >
+                          <div class="result-header">
+                            <span class="result-num">[{i+1}]</span>
+                            <span class="result-score" class:high={result.score >= 70} class:mid={result.score >= 40 && result.score < 70} class:low={result.score < 40} title="Relevansi: {Math.round(result.score)}%">
+                              {result.score >= 70 ? '●●●' : result.score >= 40 ? '●●○' : '●○○'}
+                            </span>
+                            {#if result.source_type === 'produk_hukum'}
+                              <span class="source-badge badge-produk">📋 Produk Hukum</span>
+                            {:else}
+                              <span class="source-badge badge-kitab">📚 Kitab</span>
+                            {/if}
+                            <h4 class="result-title arabic-text" lang="ar">{result.title}</h4>
+                          </div>
+                          {#if result.hierarchy && result.hierarchy.length > 0}
+                            <div class="result-hierarchy">
+                              {#each result.hierarchy as h, j}
+                                <span class="hierarchy-item">{h}</span>
+                                {#if j < result.hierarchy.length - 1}<span class="hierarchy-sep">›</span>{/if}
+                              {/each}
+                            </div>
+                          {/if}
+                          {#if result.content_snippet}
+                            <p class="result-snippet arabic-text" lang="ar">{result.content_snippet}</p>
+                          {/if}
+                          <div class="result-meta">
+                            <span>📖 {result.book_name || `Kitab ${result.book_id}`}</span>
+                            {#if result.author_name}<span>👤 {result.author_name}</span>{/if}
+                            {#if result.category}<span>🏷️ {result.category}</span>{/if}
+                            <span>📄 Hal. {result.page}</span>
+                            <button class="cite-copy-btn" title="Salin referensi" onclick={(e) => { e.stopPropagation(); copyToClipboard(`${result.book_name || 'Kitab ' + result.book_id}, hal. ${result.page}${result.author_name ? ', ' + result.author_name : ''}`, 'Referensi'); }}>
+                              📋
+                            </button>
+                          </div>
+                        </div>
+                      {/each}
+                    </div>
+                  {/if}
+                </div>
+              {/if}
+            </div>
+
+            <!-- Follow-up Suggestions (only for last assistant message) -->
+            {#if msgIdx === chatMessages.length - 1 && showFollowUps && !msg.isStreaming && followUpSuggestions.length > 0}
+              <div class="follow-ups fade-in">
+                <span class="follow-ups-label">Lanjutkan pencarian:</span>
+                <div class="follow-ups-grid">
+                  {#each followUpSuggestions as suggestion}
+                    <button class="follow-up-chip" onclick={() => handleFollowUp(suggestion)}>
+                      <span class="follow-up-icon">{suggestion.icon}</span>
+                      {suggestion.label}
+                    </button>
+                  {/each}
                 </div>
               </div>
-            {/each}
-          </div>
-        {/if}
+            {/if}
+          {/if}
+        {/each}
       </div>
     {/if}
 
-    <!-- Loading -->
-    {#if loading}
-      <div class="loading-container">
-        <div class="loading-spinner"></div>
-        <p>Sedang mencari di kitab-kitab...</p>
+    <!-- Loading Skeleton (only shown when no messages yet) -->
+    {#if loading && chatMessages.length === 0}
+      <div class="loading-skeleton fade-in">
+        <div class="skeleton-bubble skeleton-user">
+          <div class="skeleton-line skeleton-short"></div>
+        </div>
+        <div class="skeleton-bubble skeleton-assistant">
+          <div class="skeleton-line skeleton-full"></div>
+          <div class="skeleton-line skeleton-medium"></div>
+          <div class="skeleton-line skeleton-long"></div>
+          <div class="skeleton-line skeleton-short"></div>
+        </div>
+        <p class="skeleton-label">Sedang mencari di kitab-kitab...</p>
       </div>
     {/if}
 
     <!-- Error -->
     {#if errorMsg}
-      <div class="alert alert-error fade-in">{errorMsg}</div>
+      <div class="alert alert-error fade-in">
+        {errorMsg}
+        <button class="btn btn-ghost btn-sm" onclick={() => error.set('')} style="margin-left: 8px;">✕</button>
+      </div>
     {/if}
 
     <!-- Search Input -->
     <div class="search-bar">
+      <!-- Compact mode selector when chat is active -->
+      {#if chatMessages.length > 0}
+        <div class="search-mode-bar">
+          {#each responseModes as mode}
+            <button
+              class="search-mode-chip"
+              class:active={responseMode === mode.id}
+              onclick={() => responseMode = mode.id}
+              title={mode.desc}
+            >
+              {mode.icon} {mode.label}
+            </button>
+          {/each}
+        </div>
+      {/if}
       <div class="search-input-wrapper">
         <textarea
           class="search-input"
           bind:value={query}
-          placeholder="Tanyakan masalah fikih... (Ctrl+K)"
+          placeholder={chatMessages.length > 0 ? 'Lanjutkan pertanyaan...' : 'Tanyakan masalah fikih... (Ctrl+K)'}
           onkeydown={handleKeydown}
           rows="1"
-          onfocus={() => { if (!query && results.length === 0 && !answer) showQuickActions = true; }}
+          aria-label="Pertanyaan fikih"
+          onfocus={() => { if (!query && chatMessages.length === 0) showQuickActions = true; }}
           onblur={() => setTimeout(() => showQuickActions = false, 200)}
         ></textarea>
         <button
           class="btn btn-primary search-btn"
           onclick={handleQuery}
-          disabled={loading || !query.trim()}
+          disabled={loading || isStreaming || !query.trim()}
+          aria-label="Kirim pertanyaan"
         >
-          {#if loading}
+          {#if loading || isStreaming}
             <svg class="spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
           {:else}
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -1013,6 +1465,28 @@
         <span>Shift+Enter baris baru</span>
       </div>
     </div>
+
+    <!-- Export Floating Button (when chat has content) -->
+    {#if chatMessages.length > 0 && !isStreaming}
+      <div class="export-float">
+        <button class="export-float-btn" onclick={() => showExportMenu = !showExportMenu} title="Ekspor hasil" aria-label="Ekspor hasil" aria-expanded={showExportMenu}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </button>
+        {#if showExportMenu}
+          <div class="export-dropdown fade-in">
+            <button class="export-option" onclick={exportMarkdown}>📝 Markdown (.md)</button>
+            <button class="export-option" onclick={exportDocx}>📄 Word (.doc)</button>
+            <button class="export-option" onclick={exportPdf}>📋 PDF</button>
+            <button class="export-option" onclick={exportPlainText}>📃 Plain Text</button>
+          </div>
+        {/if}
+      </div>
+    {/if}
+
+    <!-- Copy Toast -->
+    {#if copyToast}
+      <div class="copy-toast fade-in">{copyToast}</div>
+    {/if}
   </div>
 
   <!-- Resize Handle (Task 1) -->
@@ -1025,11 +1499,11 @@
 
   <!-- Book Reader Panel -->
   {#if showReaderPanel && readerData}
-    <div class="reader-panel fade-in">
+    <div class="reader-panel fade-in" class:closing={readerClosing}>
       <div class="reader-header">
-        <button class="btn btn-ghost close-btn" onclick={() => showReader.set(false)}>✕ Tutup</button>
-        <button class="btn btn-ghost toc-toggle-btn" onclick={() => showMobileToc = !showMobileToc}>📑 Daftar Isi</button>
-        <h3 class="reader-title arabic-text">
+        <button class="btn btn-ghost close-btn" onclick={closeReader} aria-label="Tutup panel pembaca">✕ Tutup</button>
+        <button class="btn btn-ghost toc-toggle-btn" onclick={() => showMobileToc = !showMobileToc} aria-label="Toggle daftar isi" aria-expanded={showMobileToc}>📑 Daftar Isi</button>
+        <h3 class="reader-title arabic-text" lang="ar">
           {readerBookName || `Kitab ${readerBookId}`}
           <span class="reader-page-badge">Hal. {readerPage || '1'}</span>
         </h3>
@@ -1045,19 +1519,19 @@
           <div class="toc-tree">
             {#each readerData.toc as node}
               <div class="toc-node">
-                <button class="toc-item" class:active={readerPage === node.page} onclick={() => navigatePage(node.page)}>
+                <button class="toc-item" class:active={readerPage === node.page} onclick={() => navigatePage(node.page, parseInt(node.page, 10) || null)}>
                   {node.content}
                 </button>
                 {#if node.children && node.children.length > 0}
                   <div class="toc-children">
                     {#each node.children as child}
-                      <button class="toc-item toc-child" class:active={readerPage === child.page} onclick={() => navigatePage(child.page)}>
+                      <button class="toc-item toc-child" class:active={readerPage === child.page} onclick={() => navigatePage(child.page, parseInt(child.page, 10) || null)}>
                         {child.content}
                       </button>
                       {#if child.children && child.children.length > 0}
                         <div class="toc-children">
                           {#each child.children as grandchild}
-                            <button class="toc-item toc-grandchild" class:active={readerPage === grandchild.page} onclick={() => navigatePage(grandchild.page)}>
+                            <button class="toc-item toc-grandchild" class:active={readerPage === grandchild.page} onclick={() => navigatePage(grandchild.page, parseInt(grandchild.page, 10) || null)}>
                               {grandchild.content}
                             </button>
                           {/each}
@@ -1078,7 +1552,7 @@
             </div>
           {:else}
             {#each readerData.pages as page}
-              <div class="page-content arabic-text">
+              <div class="page-content arabic-text" lang="ar">
                 {@html highlightContent(page.content.replace(/\^M/g, '<br/>'))}
               </div>
             {/each}
@@ -1087,13 +1561,89 @@
               <button class="btn btn-secondary" onclick={() => navigatePage(String(Math.max(1, parseInt(readerPage || '1') - 1)))} disabled={readerPage === '1'}>
                 ← Sebelumnya
               </button>
-              <span class="page-info">Halaman {readerPage || '1'} dari {readerData.total_pages}</span>
+              <span class="page-info">
+                Hal.
+                <input
+                  type="number"
+                  class="page-jump-input"
+                  value={readerPage || '1'}
+                  min="1"
+                  max={readerData.total_pages}
+                  onkeydown={(e) => { if (e.key === 'Enter') { const v = parseInt(e.target.value); if (v >= 1 && v <= readerData.total_pages) navigatePage(String(v)); } }}
+                  onchange={(e) => { const v = parseInt(e.target.value); if (v >= 1 && v <= readerData.total_pages) navigatePage(String(v)); }}
+                />
+                / {readerData.total_pages}
+              </span>
               <button class="btn btn-secondary" onclick={() => navigatePage(String(parseInt(readerPage || '1') + 1))}>
                 Berikutnya →
               </button>
             </div>
           {/if}
         </div>
+      </div>
+    </div>
+  {/if}
+
+  <!-- Produk Hukum Document Viewer Panel -->
+  {#if showProdukHukumViewer}
+    <div class="reader-panel fade-in" class:closing={readerClosing}>
+      <div class="reader-header">
+        <button class="btn btn-ghost close-btn" onclick={closeProdukHukumViewer} aria-label="Tutup panel dokumen">✕ Tutup</button>
+        <h3 class="reader-title">
+          {#if produkHukumData}
+            📋 {produkHukumData.title}
+          {:else}
+            📋 Memuat dokumen...
+          {/if}
+        </h3>
+      </div>
+      
+      <div class="reader-layout">
+        {#if produkHukumLoading}
+          <div class="reader-content">
+            <div class="loading-container">
+              <div class="loading-spinner"></div>
+            </div>
+          </div>
+        {:else if produkHukumData}
+          <div class="produk-hukum-sidebar">
+            <h4>Info Dokumen</h4>
+            <div class="ph-info-list">
+              <div class="ph-info-item">
+                <span class="ph-info-label">Kategori</span>
+                <span class="ph-info-value">{produkHukumData.category}</span>
+              </div>
+              {#if produkHukumData.subcategory}
+                <div class="ph-info-item">
+                  <span class="ph-info-label">Sub-kategori</span>
+                  <span class="ph-info-value">{produkHukumData.subcategory}</span>
+                </div>
+              {/if}
+              <div class="ph-info-item">
+                <span class="ph-info-label">Tipe File</span>
+                <span class="ph-info-value">{produkHukumData.file_type.toUpperCase()}</span>
+              </div>
+              <div class="ph-info-item">
+                <span class="ph-info-label">Halaman</span>
+                <span class="ph-info-value">{produkHukumData.page_count}</span>
+              </div>
+              {#if produkHukumData.source_file}
+                <div class="ph-info-item">
+                  <span class="ph-info-label">File Sumber</span>
+                  <span class="ph-info-value ph-source-file">{produkHukumData.source_file}</span>
+                </div>
+              {/if}
+            </div>
+          </div>
+          <div class="reader-content produk-hukum-content">
+            <div class="ph-document-body">
+              {@html DOMPurify.sanitize(produkHukumData.content.replace(/\n/g, '<br/>'), {
+                ALLOWED_TAGS: ['br', 'p', 'div', 'span', 'b', 'i', 'em', 'strong', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'mark', 'sup', 'sub', 'blockquote'],
+                ALLOWED_ATTR: ['class', 'dir', 'data-type', 'style']
+              })}
+            </div>
+          </div>
+        {/if}
       </div>
     </div>
   {/if}
@@ -1163,111 +1713,32 @@
     background: white;
   }
 
-  /* ─── Header (Task 4: Redesigned) ─── */
-  .header {
+  /* ─── Page Toolbar ─── */
+  .page-toolbar {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 12px 0;
+    gap: 4px;
+    padding: 6px 0;
     border-bottom: 1px solid var(--color-border);
-    gap: 12px;
   }
 
-  .header-brand {
+  .toolbar-btn {
     display: flex;
     align-items: center;
-    gap: 12px;
-    min-width: 0;
-  }
-
-  .logo-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 8px;
-    transition: background 0.15s;
-  }
-
-  .logo-btn:hover {
-    background: var(--color-bg-alt);
-  }
-
-  .logo-text {
-    font-family: var(--font-arabic);
-    font-size: 1.5rem;
-    color: var(--color-primary);
-    font-weight: 700;
-    white-space: nowrap;
-  }
-
-  .header-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .brand-label {
-    color: var(--color-text-muted);
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
-  }
-
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-  }
-
-  .header-action-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
+    gap: 4px;
+    padding: 5px 10px;
     border: none;
     background: none;
     cursor: pointer;
     border-radius: 8px;
     color: var(--color-text-light);
+    font-size: 0.8rem;
     transition: all 0.15s;
   }
 
-  .header-action-btn:hover {
+  .toolbar-btn:hover {
     background: var(--color-bg-alt);
     color: var(--color-primary);
-  }
-
-  .user-badge {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 10px 4px 4px;
-    border-radius: 20px;
-    background: var(--color-bg-alt);
-  }
-
-  .user-avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: var(--color-primary);
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 700;
-  }
-
-  .user-name {
-    font-size: 0.8rem;
-    color: var(--color-text-light);
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   /* ─── Welcome (Task 4, 8: with quick actions) ─── */
@@ -1350,6 +1821,363 @@
     flex-shrink: 0;
   }
 
+  /* ─── Response Mode Selector ─── */
+  .mode-selector {
+    display: flex;
+    gap: 6px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .mode-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--color-surface);
+    border: 1.5px solid var(--color-border);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    color: var(--color-text-light);
+    font-family: var(--font-ui);
+    transition: all 0.2s;
+  }
+
+  .mode-chip:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: #f0f9f4;
+  }
+
+  .mode-chip.active {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: white;
+  }
+
+  .mode-icon { font-size: 1rem; }
+  .mode-label { font-weight: 500; }
+
+  /* ─── Response Meta Bar ─── */
+  .response-meta-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .response-meta-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .active-mode-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    background: var(--color-bg-alt);
+    border-radius: 16px;
+    font-size: 0.78rem;
+    color: var(--color-text-light);
+    font-weight: 500;
+  }
+
+  .auto-tag {
+    font-size: 0.65rem;
+    padding: 1px 5px;
+    background: var(--color-primary);
+    color: white;
+    border-radius: 8px;
+    margin-left: 2px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .inline-mode-switch {
+    display: flex;
+    gap: 2px;
+    background: var(--color-bg-alt);
+    border-radius: 12px;
+    padding: 2px;
+  }
+
+  .mode-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.15s;
+  }
+
+  .mode-pill:hover {
+    background: var(--color-surface);
+  }
+
+  .mode-pill.active {
+    background: var(--color-primary);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  }
+
+  /* ─── Confidence Badge ─── */
+  .confidence-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .confidence-qathi {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  .confidence-zhanni {
+    background: #fff8e1;
+    color: #f57f17;
+  }
+
+  .confidence-ghaib {
+    background: #ffebee;
+    color: #c62828;
+  }
+
+  /* ─── Search Mode Bar (compact, in search bar area) ─── */
+  .search-mode-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .search-mode-chip {
+    padding: 4px 10px;
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-ui);
+    transition: all 0.15s;
+  }
+
+  .search-mode-chip:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .search-mode-chip.active {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: white;
+  }
+
+  /* ─── Enhanced AI Answer Sections ─── */
+  .ai-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .copy-answer-btn, .copy-section-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    transition: all 0.15s;
+  }
+
+  .copy-answer-btn:hover, .copy-section-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: #f0f9f4;
+  }
+
+  .copy-section-btn {
+    width: 24px;
+    height: 24px;
+  }
+
+  .answer-section {
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin: 0;
+    font-family: var(--font-ui);
+  }
+
+  /* Jawaban section — green accent */
+  .section-jawaban {
+    background: linear-gradient(135deg, #f0f9f4, #fff);
+    border-color: #c8e6c9;
+    border-left: 3px solid #4caf50;
+  }
+
+  .section-jawaban .section-title { color: #2e7d32; }
+
+  /* Ibaroh section — gold accent */
+  .section-ibaroh {
+    background: linear-gradient(135deg, #fffdf5, #fff);
+    border-color: #f5e6c8;
+    border-left: 3px solid var(--color-secondary);
+  }
+
+  .section-ibaroh .section-title { color: #8d6e00; }
+
+  .ibaroh-content {
+    font-family: var(--font-arabic);
+    line-height: 2.4;
+  }
+
+  .ibaroh-content :global(blockquote) {
+    margin: 10px 0;
+    padding: 14px 18px;
+    border-left: 4px solid var(--color-secondary);
+    background: rgba(201, 168, 76, 0.08);
+    border-radius: 0 8px 8px 0;
+    font-size: 1.1rem;
+    line-height: 2.4;
+    direction: rtl;
+    text-align: right;
+  }
+
+  /* Khilaf section — blue accent */
+  .section-khilaf {
+    background: linear-gradient(135deg, #f5f9ff, #fff);
+    border-color: #c8d6f5;
+    border-left: 3px solid #1976d2;
+  }
+
+  .section-khilaf .section-title { color: #1565c0; }
+
+  /* Kesimpulan section — primary accent */
+  .section-kesimpulan {
+    background: linear-gradient(135deg, #f5faf7, #fff);
+    border-color: #b8dcc8;
+    border-left: 3px solid var(--color-primary);
+  }
+
+  .section-kesimpulan .section-title { color: var(--color-primary); }
+
+  /* Mode-specific AI answer card variations */
+  .ai-answer.mode-ibaroh {
+    border-left-color: var(--color-secondary);
+  }
+
+  .ai-answer.mode-lengkap {
+    border-left-color: #1976d2;
+  }
+
+  .ai-answer.mode-bahtsul-masail {
+    border-left-color: #7b1fa2;
+    background: linear-gradient(135deg, #faf5ff, #fff);
+  }
+
+  /* ─── Follow-up Suggestions ─── */
+  .follow-ups {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: var(--color-bg-alt);
+    border-radius: var(--radius-sm);
+  }
+
+  .follow-ups-label {
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .follow-ups-grid {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .follow-up-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 0.78rem;
+    color: var(--color-text);
+    font-family: var(--font-ui);
+    transition: all 0.2s;
+  }
+
+  .follow-up-chip:hover {
+    border-color: var(--color-primary);
+    background: #f0f9f4;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+
+  .follow-up-icon { font-size: 0.9rem; }
+
+  /* ─── Copy Toast ─── */
+  .copy-toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 20px;
+    background: var(--color-primary);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    z-index: 1000;
+    animation: toastIn 0.3s ease-out;
+  }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
   /* ─── Search Bar ─── */
   .search-bar {
     position: sticky;
@@ -1421,6 +2249,262 @@
 
   .spin {
     animation: spin 0.8s linear infinite;
+  }
+
+  /* ─── Chat Thread ─── */
+  .chat-thread {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scroll-behavior: smooth;
+  }
+
+  .chat-bubble {
+    max-width: 95%;
+    animation: chatBubbleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  @keyframes chatBubbleIn {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .chat-user {
+    align-self: flex-end;
+  }
+
+  .chat-user .chat-bubble-content {
+    background: var(--color-primary);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 16px 16px 4px 16px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .chat-assistant {
+    align-self: flex-start;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    animation: chatBubbleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation-delay: 0.1s;
+  }
+
+  /* Inline reference buttons in AI response */
+  :global(.ai-inline-ref) {
+    display: inline;
+    background: var(--color-primary-bg, #e8f5e9);
+    color: var(--color-primary, #2e7d32);
+    border: 1px solid var(--color-primary, #2e7d32);
+    border-radius: 4px;
+    padding: 0 4px;
+    font-size: 0.85em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    vertical-align: baseline;
+    line-height: 1;
+  }
+  :global(.ai-inline-ref:hover) {
+    background: var(--color-primary, #2e7d32);
+    color: white;
+    transform: scale(1.1);
+  }
+
+  /* ─── Collapsible Results in Chat ─── */
+  .msg-results {
+    margin-top: 4px;
+  }
+
+  .toggle-results-btn {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: var(--font-ui);
+    width: 100%;
+    text-align: left;
+  }
+
+  .toggle-results-btn:hover {
+    background: var(--color-border);
+    color: var(--color-text);
+  }
+
+  .results-filter-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 8px 0;
+    margin-bottom: 4px;
+  }
+
+  .filter-group {
+    display: flex;
+    gap: 4px;
+  }
+
+  .filter-chip {
+    padding: 4px 10px;
+    border-radius: 14px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-light);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .filter-chip.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+  }
+
+  .filter-chip:hover:not(.active) {
+    border-color: var(--color-primary-light);
+    color: var(--color-primary);
+  }
+
+  .filter-empty {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    padding: 16px;
+  }
+
+  .results-collapsible {
+    margin-top: 8px;
+  }
+
+  /* ─── Skeleton Loader ─── */
+  .loading-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 32px 0;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .skeleton-bubble {
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .skeleton-user {
+    align-self: flex-end;
+    background: var(--color-primary);
+    opacity: 0.15;
+    max-width: 40%;
+  }
+
+  .skeleton-assistant {
+    align-self: flex-start;
+    background: var(--color-bg-alt);
+    width: 85%;
+  }
+
+  .skeleton-line {
+    height: 14px;
+    border-radius: 7px;
+    background: linear-gradient(90deg, var(--color-border) 25%, var(--color-bg) 50%, var(--color-border) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  .skeleton-short { width: 45%; }
+  .skeleton-medium { width: 65%; }
+  .skeleton-long { width: 85%; }
+  .skeleton-full { width: 100%; }
+
+  .skeleton-label {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    margin-top: 8px;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* ─── Export Float ─── */
+  .export-float {
+    position: fixed;
+    bottom: 90px;
+    right: 24px;
+    z-index: 50;
+  }
+
+  .export-float-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.2s;
+  }
+
+  .export-float-btn:hover {
+    transform: scale(1.1);
+    background: var(--color-primary-light);
+  }
+
+  .export-dropdown {
+    position: absolute;
+    bottom: 52px;
+    right: 0;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    min-width: 160px;
+    overflow: hidden;
+  }
+
+  .export-option {
+    display: block;
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: var(--font-ui);
+    transition: background 0.15s;
+  }
+
+  .export-option:hover {
+    background: var(--color-bg-alt);
   }
 
   /* ─── Results ─── */
@@ -1556,6 +2640,24 @@
     font-size: 0.78rem;
     color: var(--color-text-muted);
     flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .cite-copy-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    opacity: 0.5;
+    transition: opacity 0.15s;
+  }
+
+  .cite-copy-btn:hover {
+    opacity: 1;
+    background: var(--color-bg-alt);
   }
 
   /* ─── Query Understood Chip ─── */
@@ -1703,6 +2805,7 @@
     justify-content: space-between;
     gap: 8px;
     margin-bottom: 12px;
+    flex-wrap: wrap;
   }
 
   .ai-header-left {
@@ -2246,6 +3349,21 @@
     top: 0;
     background: var(--color-surface);
     min-width: 0;
+    animation: slideInPanel 0.3s ease-out;
+  }
+
+  .reader-panel.closing {
+    animation: slideOutPanel 0.28s ease-in forwards;
+  }
+
+  @keyframes slideInPanel {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes slideOutPanel {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(40px); }
   }
 
   .reader-header {
@@ -2386,9 +3504,89 @@
   .page-info {
     color: var(--color-text-muted);
     font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .page-jump-input {
+    width: 52px;
+    padding: 3px 6px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.85rem;
+    background: var(--color-surface);
+    color: var(--color-text);
+    -moz-appearance: textfield;
+  }
+
+  .page-jump-input::-webkit-outer-spin-button,
+  .page-jump-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 
   .toc-toggle-btn { display: none; }
+
+  /* ─── Produk Hukum Document Viewer ─── */
+  .produk-hukum-sidebar {
+    width: 240px;
+    border-right: 1px solid var(--color-border);
+    overflow-y: auto;
+    padding: 14px;
+    background: var(--color-bg);
+    flex-shrink: 0;
+  }
+
+  .produk-hukum-sidebar h4 {
+    margin-bottom: 12px;
+    color: var(--color-primary);
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+  }
+
+  .ph-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ph-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .ph-info-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-text-muted);
+    font-weight: 600;
+  }
+
+  .ph-info-value {
+    font-size: 0.85rem;
+    color: var(--color-text);
+  }
+
+  .ph-source-file {
+    word-break: break-all;
+    font-size: 0.78rem;
+    color: var(--color-text-light);
+  }
+
+  .produk-hukum-content {
+    direction: ltr;
+  }
+
+  .ph-document-body {
+    line-height: 1.9;
+    font-size: 1.05rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
 
   /* ─── Responsive ─── */
   @media (max-width: 768px) {
@@ -2400,17 +3598,9 @@
       min-width: unset;
     }
 
-    .header {
-      padding: 8px 0;
+    .page-toolbar {
+      padding: 4px 0;
     }
-
-    .brand-label { display: none; }
-    .user-name { display: none; }
-
-    .logo-text { font-size: 1.2rem; }
-
-    .header-actions { gap: 4px; }
-    .header-actions .btn { padding: 5px 8px; font-size: 0.78rem; }
 
     .welcome { padding: 32px 12px 24px; }
     .welcome h2 { font-size: 1.25rem; }
@@ -2498,6 +3688,20 @@
     .shortcuts-grid { grid-template-columns: 1fr; gap: 16px; }
 
     .modal { margin: 16px; padding: 20px; }
+
+    .mode-selector { gap: 4px; }
+    .mode-chip { padding: 6px 10px; font-size: 0.75rem; }
+    .mode-label { display: none; }
+    
+    .response-meta-bar { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .inline-mode-switch { display: none; }
+    
+    .follow-ups-grid { gap: 4px; }
+    .follow-up-chip { font-size: 0.72rem; padding: 5px 10px; }
+    
+    .search-mode-bar { display: none; }
+
+    .answer-section { padding: 10px 12px; }
   }
 
   @media (max-width: 360px) {

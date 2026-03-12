@@ -155,10 +155,12 @@ export async function sendQueryStream(query, sessionId = null, callbacks = {}) {
 }
 
 // Book
-export async function readBook(bookId, page = null) {
+export async function readBook(bookId, page = null, rowId = null) {
+  const body = { book_id: bookId, page };
+  if (rowId) body.row_id = rowId;
   return request('/book', {
     method: 'POST',
-    body: JSON.stringify({ book_id: bookId, page })
+    body: JSON.stringify(body)
   });
 }
 

@@ -119,6 +119,8 @@ pub struct SearchResult {
     pub citation: String,   // P3: Formatted citation (book, author, page)
     #[serde(default)]
     pub similarity_score: f32, // P4: Semantic similarity score
+    #[serde(default)]
+    pub toc_page: String, // Row ID anchor in b{N} for precise navigation
 }
 
 /// P2: User Feedback for search results
@@ -163,6 +165,7 @@ pub struct BookPage {
 pub struct BookReadRequest {
     pub book_id: i64,
     pub page: Option<String>,
+    pub row_id: Option<i64>, // Row ID anchor from TOC page for precise navigation
 }
 
 #[derive(Debug, Serialize)]

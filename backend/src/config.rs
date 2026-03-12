@@ -44,9 +44,9 @@ impl Config {
                 key
             },
             ai_api_url: std::env::var("AI_API_URL")
-                .unwrap_or_else(|_| "https://api.x.ai/v1/chat/completions".to_string()),
+                .unwrap_or_else(|_| "https://api.deepseek.com/v1/chat/completions".to_string()),
             ai_model: std::env::var("AI_MODEL")
-                .unwrap_or_else(|_| "grok-3-mini".to_string()),
+                .unwrap_or_else(|_| "deepseek-chat".to_string()),
             host: std::env::var("HOST").unwrap_or_else(|_| "0.0.0.0".to_string()),
             port: std::env::var("PORT")
                 .unwrap_or_else(|_| "8080".to_string())

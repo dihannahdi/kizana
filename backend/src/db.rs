@@ -6,6 +6,23 @@ use rusqlite::{params, Connection, OpenFlags};
 use std::collections::HashMap;
 use std::sync::Arc;
 
+/// Lightweight Arabic text normalization for snippet matching.
+/// Strips diacritics and normalizes common letter variants so that
+/// query terms (which are already normalized) can match raw Arabic text.
+fn normalize_arabic_light(s: &str) -> String {
+    s.chars()
+        .filter(|c| {
+            // Skip tashkeel (combining marks)
+            !matches!(*c, '\u{064B}'..='\u{065F}' | '\u{0670}' | '\u{0640}')
+        })
+        .map(|c| match c {
+            '\u{0623}' | '\u{0625}' | '\u{0622}' | '\u{0671}' => '\u{0627}', // أإآٱ→ا
+            '\u{0649}' => '\u{064A}', // ى→ي
+            _ => c,
+        })
+        .collect()
+}
+
 /// Book metadata extracted from page 1 content
 #[derive(Debug, Clone, Default)]
 pub struct BookMetadata {
@@ -671,8 +688,48 @@ impl Database {
         book_id: i64,
         page: Option<&str>,
     ) -> Result<Vec<BookPage>, String> {
+        self.get_book_pages_with_row_id(book_id, page, None)
+    }
+
+    /// Fetch book pages. When `row_id` is provided, fetches rows around that
+    /// row ID anchor (±margin) for precise navigation from search results.
+    /// Falls back to display page matching when only `page` is provided.
+    pub fn get_book_pages_with_row_id(
+        &self,
+        book_id: i64,
+        page: Option<&str>,
+        row_id: Option<i64>,
+    ) -> Result<Vec<BookPage>, String> {
         let conn = self.conn.lock();
         let table = format!("b{}", book_id);
+
+        // If row_id is provided, fetch rows around that anchor
+        if let Some(rid) = row_id {
+            let margin_back = 2i64;
+            let margin_forward = 25i64;
+            let start = (rid - margin_back).max(1);
+            let end = rid + margin_forward;
+            let sql = format!(
+                "SELECT id, content, page, COALESCE(part, '') FROM \"{}\"
+                 WHERE id >= ?1 AND id <= ?2 AND (is_deleted = '0' OR is_deleted IS NULL)
+                 ORDER BY id",
+                table
+            );
+            let mut stmt = conn.prepare(&sql).map_err(|e| e.to_string())?;
+            let pages: Vec<BookPage> = stmt
+                .query_map(params![start, end], |row| {
+                    Ok(BookPage {
+                        id: row.get(0)?,
+                        content: row.get(1)?,
+                        page: row.get(2)?,
+                        part: row.get(3)?,
+                    })
+                })
+                .map_err(|e| e.to_string())?
+                .filter_map(|r| r.ok())
+                .collect();
+            return Ok(pages);
+        }
 
         let (sql, page_val);
         if let Some(p) = page {
@@ -808,19 +865,25 @@ impl Database {
         let conn = self.conn.lock();
         let table = format!("b{}", book_id);
         
-        // Fetch more rows (up to 10) so we can find the best matching window
-        let fetch_range = if arabic_terms.is_empty() { 4 } else { 9 };
+        // Fetch a wider range to find relevant content
+        // Forward-biased: TOC entries mark chapter START, so content is ahead
+        let fetch_forward = if arabic_terms.is_empty() { 7 } else { 20 };
+        let back_rows = if arabic_terms.is_empty() { 0i64 } else { 2 };
+        let start_id = (row_id - back_rows).max(1);
+        let end_id = row_id + fetch_forward as i64;
+        let total_fetch = (fetch_forward + 1 + back_rows as usize) as usize;
         let sql = format!(
-            "SELECT content, page FROM \"{}\" WHERE id >= ?1 AND id <= ?2 AND (is_deleted = '0' OR is_deleted IS NULL) ORDER BY id LIMIT {}",
-            table, fetch_range + 1
+            "SELECT id, content, page FROM \"{}\" WHERE id >= ?1 AND id <= ?2 AND (is_deleted = '0' OR is_deleted IS NULL) ORDER BY id LIMIT {}",
+            table, total_fetch
         );
         
-        let rows: Vec<(String, String)> = match conn.prepare(&sql) {
+        let rows: Vec<(i64, String, String)> = match conn.prepare(&sql) {
             Ok(mut stmt) => {
-                match stmt.query_map(params![row_id, row_id + fetch_range as i64], |row| {
+                match stmt.query_map(params![start_id, end_id], |row| {
                     Ok((
-                        row.get::<_, String>(0).unwrap_or_default(),
+                        row.get::<_, i64>(0).unwrap_or(0),
                         row.get::<_, String>(1).unwrap_or_default(),
+                        row.get::<_, String>(2).unwrap_or_default(),
                     ))
                 }) {
                     Ok(mapped) => mapped.filter_map(|r| r.ok()).collect(),
@@ -836,34 +899,41 @@ impl Database {
             }
         };
 
-        let display_page = rows.first()
-            .map(|(_, p)| p.clone())
-            .unwrap_or_default();
-
         if rows.is_empty() {
-            return Ok((String::new(), display_page));
+            return Ok((String::new(), String::new()));
         }
 
-        // If we have search terms, find the best window of ~5 rows that contains the most matches
-        let (snippet_text, best_page) = if !arabic_terms.is_empty() && rows.len() > 5 {
+        // Find the index of the anchor row (row_id) in our fetched rows
+        let anchor_idx = rows.iter().position(|(id, _, _)| *id == row_id).unwrap_or(0);
+
+        // Find the display page at the anchor row
+        let anchor_display_page = rows.get(anchor_idx)
+            .map(|(_, _, p)| p.clone())
+            .unwrap_or_else(|| rows[0].2.clone());
+
+        // If we have search terms, find the best window of ~8 rows that contains the most matches
+        let window_size = 8.min(rows.len());
+        let (snippet_text, best_page) = if !arabic_terms.is_empty() && rows.len() > window_size {
             let mut best_score = 0usize;
-            let mut best_start = 0usize;
-            let window_size = 5.min(rows.len());
+            // Default to starting at anchor row (not before it)
+            let mut best_start = anchor_idx.min(rows.len().saturating_sub(window_size));
             
             for start in 0..=(rows.len() - window_size) {
                 let window_text: String = rows[start..start + window_size]
                     .iter()
-                    .map(|(c, _)| strip_html(c))
+                    .map(|(_, c, _)| strip_html(c))
                     .collect::<Vec<_>>()
                     .join(" ");
+                let normalized_window = normalize_arabic_light(&window_text);
                 
                 let score: usize = arabic_terms.iter()
                     .map(|term| {
+                        let normalized_term = normalize_arabic_light(term);
                         if term.contains(' ') {
                             // Phrase match counts 3×
-                            if window_text.contains(term.as_str()) { 3 } else { 0 }
+                            if normalized_window.contains(&normalized_term) { 3 } else { 0 }
                         } else {
-                            if window_text.contains(term.as_str()) { 1 } else { 0 }
+                            if normalized_window.contains(&normalized_term) { 1 } else { 0 }
                         }
                     })
                     .sum();
@@ -876,30 +946,42 @@ impl Database {
             
             let best_window: String = rows[best_start..best_start + window_size]
                 .iter()
-                .map(|(c, _)| c.as_str())
+                .map(|(_, c, _)| c.as_str())
                 .collect::<Vec<_>>()
                 .join(" ");
-            let best_pg = rows[best_start].1.clone();
+            let best_pg = rows[best_start].2.clone();
             (best_window, best_pg)
         } else {
-            // Default: first 5 rows
-            let combined: String = rows.iter().take(5).map(|(c, _)| c.as_str()).collect::<Vec<_>>().join(" ");
-            (combined, display_page.clone())
+            // No search terms or too few rows: start from anchor row forward
+            let start = anchor_idx;
+            let end = (start + window_size).min(rows.len());
+            let combined: String = rows[start..end].iter().map(|(_, c, _)| c.as_str()).collect::<Vec<_>>().join(" ");
+            (combined, anchor_display_page.clone())
         };
 
         let plain = strip_html(&snippet_text);
 
         if plain.trim().chars().count() < 5 {
-            return Ok((String::new(), if best_page.is_empty() { display_page } else { best_page }));
+            return Ok((String::new(), if best_page.is_empty() { anchor_display_page } else { best_page }));
         }
 
-        let snippet = if plain.chars().count() > 500 {
-            let truncated: String = plain.chars().take(500).collect();
-            format!("{}...", truncated)
+        // Truncate at Arabic sentence boundaries when possible (600 chars)
+        let snippet = if plain.chars().count() > 1200 {
+            let truncated: String = plain.chars().take(1200).collect();
+            // Try to break at last Arabic sentence-ending punctuation (. or ، or :)
+            if let Some(last_break) = truncated.rfind(|c: char| c == '.' || c == '\u{06D4}' || c == ':' || c == '\n') {
+                if last_break > 600 {
+                    format!("{}...", &truncated[..last_break + 1])
+                } else {
+                    format!("{}...", truncated)
+                }
+            } else {
+                format!("{}...", truncated)
+            }
         } else {
             plain
         };
-        Ok((snippet, if best_page.is_empty() { display_page } else { best_page }))
+        Ok((snippet, if best_page.is_empty() { anchor_display_page } else { best_page }))
     }
 
     // ─── FTS5 fallback search on TOC ───
@@ -944,7 +1026,7 @@ impl Database {
                             toc_id: row.0,
                             title: row.1.clone(),
                             content_snippet: String::new(),
-                            page: row.2,
+                            page: row.2.clone(),
                             part: String::new(),
                             score: 50.0, // base score for FTS
                             hierarchy: Vec::new(),
@@ -954,6 +1036,7 @@ impl Database {
                             category: String::new(),
                             citation: String::new(),
                             similarity_score: 0.0,
+                            toc_page: row.2,
                         });
                         if results.len() >= limit {
                             break;

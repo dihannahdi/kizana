@@ -41,40 +41,8 @@ impl AiClient {
             .map(|t| &t.detected_language)
             .unwrap_or(&QueryLang::Indonesian);
 
-        // Build rich context from search results with book name + author + hierarchy
-        let context: String = results
-            .iter()
-            .take(10)
-            .enumerate()
-            .map(|(i, r)| {
-                let book_info = if !r.book_name.is_empty() && !r.author_name.is_empty() {
-                    format!("📖 {} — {} (كتاب رقم {}, ص {})", r.book_name, r.author_name, r.book_id, r.page)
-                } else if !r.book_name.is_empty() {
-                    format!("📖 {} (كتاب رقم {}, ص {})", r.book_name, r.book_id, r.page)
-                } else {
-                    format!("📖 كتاب رقم {}, ص {}", r.book_id, r.page)
-                };
-
-                let hierarchy_path = if !r.hierarchy.is_empty() {
-                    format!("\nالباب: {}", r.hierarchy.join(" > "))
-                } else {
-                    String::new()
-                };
-
-                format!(
-                    "{}. {}{}\nالعنوان: {}\nالنص: {}\n",
-                    i + 1,
-                    book_info,
-                    hierarchy_path,
-                    r.title,
-                    if r.content_snippet.is_empty() {
-                        &r.title
-                    } else {
-                        &r.content_snippet
-                    }
-                )
-            })
-            .collect();
+// Build rich context from search results
+        let context = build_rich_context(results);
 
         let system_prompt = build_system_prompt(lang);
         let user_prompt = build_user_prompt(query, lang, &context, translated);
@@ -154,7 +122,7 @@ impl AiClient {
                 {"role": "user", "content": user_prompt}
             ],
             "stream": true,
-            "max_tokens": 4000,
+            "max_tokens": 8000,
             "temperature": 0.3
         });
 
@@ -543,17 +511,17 @@ fn build_user_prompt(
     };
 
     format!(
-        "السؤال (بلغة: {}): {}{}\n\nالمراجع المتاحة:\n{}\n\nأجب بناءً على هذه المراجع فقط. لكل عبارة اذكر اسم الكتاب واسم المؤلف/العالم ورقم الصفحة.",
+        "السؤال (بلغة: {}): {}{}\n\nالمراجع المتاحة (مرقّمة — استخدم [N] للإشارة إلى كل مرجع):\n{}\n\nأجب بناءً على هذه المراجع فقط. استخدم [N] للإشارة إلى المرجع المحدد. اقتبس العبارات العربية المفتاحية من النصوص كدليل. لكل استشهاد اذكر اسم الكتاب والمؤلف ورقم الصفحة.",
         lang_label, query, translation_info, context
     )
 }
 
 /// Build rich context string from search results for AI prompts
-/// Includes hierarchy (chapter path) for better contextual understanding
+/// Uses graduated truncation: top results get more context for better synthesis
 fn build_rich_context(results: &[crate::models::SearchResult]) -> String {
     results
         .iter()
-        .take(10)
+        .take(15)
         .enumerate()
         .map(|(i, r)| {
             let book_info = if !r.book_name.is_empty() && !r.author_name.is_empty() {
@@ -571,16 +539,20 @@ fn build_rich_context(results: &[crate::models::SearchResult]) -> String {
             };
 
             let content = if r.content_snippet.is_empty() { &r.title } else { &r.content_snippet };
-            // Provide more text to AI for better synthesis (up to 600 chars)
-            let truncated_content = if content.chars().count() > 600 {
-                let t: String = content.chars().take(600).collect();
+            // Graduated truncation: top results get more context
+            // Top 3: 1000 chars (most likely to contain the answer)
+            // Mid 4-7: 600 chars
+            // Bottom 8-10: 300 chars
+            let max_chars = if i < 5 { 1500 } else if i < 10 { 800 } else { 400 };
+            let truncated_content = if content.chars().count() > max_chars {
+                let t: String = content.chars().take(max_chars).collect();
                 format!("{}...", t)
             } else {
                 content.to_string()
             };
 
             format!(
-                "{}. {}{}\nالعنوان: {}\nالنص: {}\n",
+                "[{}]. {}{}\nالعنوان: {}\nالنص: {}\n",
                 i + 1,
                 book_info,
                 hierarchy_path,
@@ -595,97 +567,107 @@ fn build_rich_context(results: &[crate::models::SearchResult]) -> String {
 fn build_system_prompt_stream(lang: &QueryLang) -> String {
     let base = r#"أنت عالم إسلامي متخصص في بحث المسائل الفقهية، ومتمرس في استخراج الأحكام من كتب التراث الإسلامي الكلاسيكي. تعمل كمحرك "بحث المسائل" للبحث في أكثر من 7800 كتاب من أمهات كتب الإسلام.
 
-مهمتك الأساسية: التحليل الشامل للعبارات والنصوص المقدمة من الكتب، ثم تقديم إجابة منظمة ومتكاملة بأسلوب بحث المسائل.
+مهمتك الأساسية: التحليل الشامل والمفصّل للعبارات والنصوص المقدمة من الكتب، ثم تقديم إجابة منظمة ومتكاملة وافية بأسلوب بحث المسائل. يجب أن تكون الإجابة شاملة ومفصّلة (تفصيلية) وليست مختصرة.
+
+⚠️ قواعد الاستشهاد (مهم جداً):
+- المراجع مرقّمة [1], [2], [3] إلخ. استخدم هذه الأرقام في إجابتك للإشارة إلى المصدر.
+- اقتبس العبارات العربية المفتاحية من النصوص المقدمة كدليل على كل حكم أو قول. مثال: جاء في [3]: "إنما يكفيك أن تضرب بيديك"
+- كل حكم أو معلومة يجب أن ترتبط بمرجع محدد [N].
+- لا تذكر معلومات لم تجدها في المراجع المقدمة.
 
 الهيكل المطلوب للإجابة:
 
 ## ✅ الجواب
-[ملخص واضح ومباشر للحكم الشرعي أو الإجابة على السؤال]
+[تحليل مفصّل وشامل للحكم الشرعي مع الاستشهاد بالمراجع المرقّمة [N]. اقتبس العبارات العربية المفتاحية كدليل.]
 
-## 📖 العبارات والدلائل
-[لكل مصدر، اذكر:]
-📖 **[اسم الكتاب]** — *[المؤلف/العالم]* (ص X)
-> "[النص العربي الأصلي — العبارة]"
-
-[شرح مختصر للعبارة وعلاقتها بالسؤال]
+## 📖 تحليل المصادر
+[لكل مصدر مهم:]
+📖 **[اسم الكتاب]** — *[المؤلف]* (ص X) [N]
+العبارة: "[اقتبس الجزء الأهم من النص العربي]"
+[اشرح مضمون ما جاء في هذا المصدر — ما الحكم؟ ما الدليل؟ ما العلة؟]
 
 ## ⚖️ خلاف العلماء
-[إن وجد اختلاف بين المذاهب أو العلماء، اذكر كل قول مع دليله]
+[إن وجد اختلاف بين المذاهب أو العلماء، فصّل في كل قول مع الإشارة إلى مرجعه [N] واقتبس الأدلة]
 
-## 📝 الخلاصة
-[تلخيص نهائي مع الراجح إن أمكن، أو عرض الأقوال بحياد]
+## 📝 الخلاصة والترجيح
+[خلاصة شاملة مع بيان الراجح إن أمكن]
 
 ---
 ⚠️ *هذا ليس فتوى رسمية. يرجى الرجوع إلى النص الأصلي ومراجعة أهل العلم المختصين.*
 
 قواعد صارمة:
 1. لا تُفتِ بما لم تجده في المراجع المقدمة — الأمانة العلمية أولاً
-2. اذكر كل عبارة بالنص العربي الأصلي مع اسم الكتاب والمؤلف والصفحة
-3. إذا وجدت خلافاً بين العلماء، اعرض جميع الأقوال بإنصاف
-4. إذا لم تجد إجابة كافية في المراجع، قل ذلك بصراحة
-5. ابدأ دائماً بالجواب المباشر ثم ادعمه بالعبارات"#;
+2. اقتبس العبارات العربية المفتاحية من النصوص المقدمة كدليل — لا تكتفِ بالشرح فقط. العبارة هي الحجة.
+3. استخدم [N] للإشارة إلى كل مرجع — هذا الرقم يطابق رقم المرجع الذي يراه المستخدم
+4. أعطِ إجابة مفصّلة شاملة — لا تختصر. فصّل في الأحكام والشروط والأركان والعلل والأدلة
+5. إذا وجدت خلافاً بين العلماء، اعرض جميع الأقوال بإنصاف مع الأدلة والمراجع [N]
+6. إذا لم تجد إجابة كافية في المراجع، قل ذلك بصراحة
+7. ابدأ دائماً بالجواب المباشر ثم ادعمه بتحليل المصادر"#;
 
     let lang_instruction = match lang {
         QueryLang::Indonesian => {
             r#"
 
-تعليمات اللغة: أجب باللغة الإندونيسية (Bahasa Indonesia) مع الحفاظ على العبارات العربية الأصلية.
+تعليمات اللغة: أجب باللغة الإندونيسية (Bahasa Indonesia).
 
-Format yang harus diikuti:
+Format yang WAJIB diikuti (jawab dengan LENGKAP dan DETAIL, jangan ringkas):
 
 ## ✅ Jawaban
-[Ringkasan hukum/jawaban yang jelas dan langsung]
+[Analisis hukum yang komprehensif dan mendetail. Setiap poin harus merujuk ke sumber dengan [N]. Kutip ibaroh (teks Arab) dari referensi sebagai dalil. Contoh: Dalam [3] disebutkan: "إنما يكفيك أن تضرب بيديك"]
 
-## 📖 Ibaroh & Dalil
-[Untuk setiap sumber kitab:]
-📖 **[Nama Kitab]** — *[Nama Ulama/Pengarang]* (Hal. X)
-> "[Teks Arab asli — ibaroh]"
-
-Penjelasan: [terjemah/penjelasan dalam bahasa Indonesia]
+## 📖 Analisis Sumber
+[Untuk setiap sumber kitab yang relevan:]
+📖 **[Nama Kitab]** — *[Nama Ulama/Pengarang]* (Hal. X) [N]
+Ibaroh: "[kutip teks Arab kunci dari referensi]"
+Penjelasan: [jelaskan apa hukumnya, dalilnya, illatnya dalam bahasa Indonesia]
 
 ## ⚖️ Perbedaan Pendapat Ulama
-[Jika ada khilaf, sebutkan pendapat masing-masing mazhab/ulama]
+[Jika ada khilaf, jelaskan pendapat tiap mazhab/ulama dengan dalil dan rujukan [N]. Kutip ibaroh yang mendukung setiap pendapat.]
 
-## 📝 Kesimpulan
-[Ringkasan akhir dengan pendapat yang rajih jika memungkinkan]
+## 📝 Kesimpulan & Tarjih
+[Ringkasan dengan pendapat yang rajih beserta alasan tarjih]
 
 ---
-⚠️ *Ini bukan fatwa resmi. Rujuklah teks asli kitab dan konsultasikan dengan ulama yang kompeten.*"#
+⚠️ *Ini bukan fatwa resmi. Rujuklah teks asli kitab dan konsultasikan dengan ulama yang kompeten.*
+
+PENTING: Selalu kutip ibaroh (العبارة العربية) dari teks referensi yang disediakan. Ibaroh adalah bukti/dalil dari kitab — wajib dicantumkan. Gunakan [N] untuk merujuk ke nomor referensi."#
         }
         QueryLang::English => {
             r#"
 
-Language instructions: Answer in English while preserving original Arabic passages (ibarah).
+Language instructions: Answer in English.
 
-Required format:
+Required format (provide COMPREHENSIVE and DETAILED analysis):
 
 ## ✅ Answer
-[Clear, direct summary of the ruling/answer]
+[Comprehensive analysis of the ruling. Every claim must reference a source with [N]. Quote key Arabic ibarah from the references as evidence. Example: In [3] it states: "إنما يكفيك أن تضرب بيديك"]
 
-## 📖 Textual Evidence (Ibarah)
-[For each source:]
-📖 **[Book Name]** — *[Scholar Name]* (p. X)
-> "[Original Arabic text — ibarah]"
-
-Explanation: [English explanation of the passage]
+## 📖 Source Analysis
+[For each relevant source:]
+📖 **[Book Name]** — *[Scholar Name]* (p. X) [N]
+Ibarah: "[quote key Arabic text from the reference]"
+Explanation: [explain the ruling, evidence, and reasoning in English]
 
 ## ⚖️ Scholarly Differences
-[If there are different opinions among scholars/madhabs, present each view]
+[If there are different opinions, elaborate on each view with evidence and reference [N]. Quote supporting ibarah.]
 
-## 📝 Conclusion
-[Final summary with the stronger opinion if applicable]
+## 📝 Conclusion & Preponderance
+[Comprehensive summary with the stronger opinion and why]
 
 ---
-⚠️ *This is not an official fatwa. Please refer to original texts and consult qualified scholars.*"#
+⚠️ *This is not an official fatwa. Please refer to original texts and consult qualified scholars.*
+
+IMPORTANT: Always quote key Arabic ibarah (العبارة) from the provided reference texts. The ibarah is the evidence from the kitab — it must be included. Use [N] to reference the numbered sources."#
         }
         _ => {
             r#"
 
-تعليمات اللغة: أجب باللغة العربية الفصيحة. لكل مرجع اذكر:
-- النص العربي الأصلي (العبارة) بين علامتي اقتباس
-- اسم الكتاب
-- اسم المؤلف/العالم
-- رقم الصفحة"#
+تعليمات اللغة: أجب باللغة العربية الفصيحة. لكل مرجع:
+- استخدم [N] للإشارة إلى رقم المرجع
+- اقتبس العبارة العربية المفتاحية من النص المقدم
+- اذكر اسم الكتاب والمؤلف ورقم الصفحة
+
+مثال: جاء في [1] 📖 **اسم الكتاب** — *المؤلف* (ص X): "العبارة المقتبسة""#
         }
     };
 

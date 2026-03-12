@@ -17,11 +17,31 @@
   --color-highlight: #fff3cd;
   --font-arabic: 'Amiri', serif;
   --font-ui: 'Cairo', sans-serif;
+  --arabic-font-size: 16px;
   --radius: 12px;
   --radius-sm: 8px;
   --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Dark Mode ─── */
+[data-theme="dark"] {
+  --color-bg: #1a1a2e;
+  --color-bg-alt: #16213e;
+  --color-surface: #1f2937;
+  --color-text: #e5e7eb;
+  --color-text-light: #9ca3af;
+  --color-text-muted: #6b7280;
+  --color-border: #374151;
+  --color-highlight: #422006;
+  --color-primary: #34d399;
+  --color-primary-light: #6ee7b7;
+  --color-primary-dark: #059669;
+  --color-secondary: #fbbf24;
+  --color-secondary-light: #fcd34d;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -47,7 +67,7 @@ body {
 
 .arabic-text {
   font-family: var(--font-arabic);
-  font-size: 1.2rem;
+  font-size: var(--arabic-font-size, 1.2rem);
   line-height: 2;
   direction: rtl;
   text-align: right;

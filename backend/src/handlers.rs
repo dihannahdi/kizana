@@ -697,6 +697,7 @@ pub async fn read_book(
 
     let book_id = body.book_id;
     let page = body.page.as_deref();
+    let row_id = body.row_id;
 
     let toc = match data.db.build_toc_tree(book_id) {
         Ok(t) => t,
@@ -707,7 +708,7 @@ pub async fn read_book(
         }
     };
 
-    let pages = match data.db.get_book_pages(book_id, page) {
+    let pages = match data.db.get_book_pages_with_row_id(book_id, page, row_id) {
         Ok(p) => p,
         Err(e) => {
             return HttpResponse::InternalServerError().json(serde_json::json!({
@@ -717,7 +718,12 @@ pub async fn read_book(
     };
 
     let total_pages = data.db.get_total_pages(book_id).unwrap_or(0);
-    let current_page = page.unwrap_or("1").to_string();
+    // When navigating by row_id, derive current_page from the first returned page's display page
+    let current_page = if row_id.is_some() {
+        pages.first().map(|p| p.page.clone()).unwrap_or_else(|| "1".to_string())
+    } else {
+        page.unwrap_or("1").to_string()
+    };
     let meta = data.db.get_book_metadata(book_id);
 
     HttpResponse::Ok().json(BookReadResponse {

@@ -1,11 +1,13 @@
 <script>
   import { auth } from '$lib/stores.js';
+  import { updateProfile, changePassword as apiChangePassword } from '$lib/api.js';
 
   let isAuth = $state(false);
   let user = $state(null);
   let activeTab = $state('profil');
   let saving = $state(false);
   let message = $state('');
+  let messageType = $state('success'); // 'success' or 'error'
 
   // Profile form
   let displayName = $state('');
@@ -32,47 +34,77 @@
     }
   });
 
-  function showMessage(msg, duration = 3000) {
+  function showMessage(msg, type = 'success', duration = 3000) {
     message = msg;
+    messageType = type;
     setTimeout(() => message = '', duration);
   }
 
   async function saveProfile() {
     saving = true;
-    // Profile update would go through API
-    setTimeout(() => {
-      saving = false;
+    try {
+      const data = await updateProfile(displayName || null, email || null);
+      // Update local auth state with new user info
+      const currentAuth = { token: null, user: null };
+      auth.subscribe(v => { currentAuth.token = v.token; currentAuth.user = v.user; })();
+      if (currentAuth.token && currentAuth.user) {
+        auth.login(currentAuth.token, { ...currentAuth.user, username: displayName || currentAuth.user.username, email: email || currentAuth.user.email });
+      }
       showMessage('Profil berhasil disimpan');
-    }, 500);
+    } catch (e) {
+      showMessage(e.message || 'Gagal menyimpan profil', 'error');
+    } finally {
+      saving = false;
+    }
   }
 
   async function changePassword() {
     if (newPassword !== confirmPassword) {
-      showMessage('Password baru tidak cocok');
+      showMessage('Password baru tidak cocok', 'error');
       return;
     }
     if (newPassword.length < 8) {
-      showMessage('Password minimal 8 karakter');
+      showMessage('Password minimal 8 karakter', 'error');
       return;
     }
     saving = true;
-    setTimeout(() => {
-      saving = false;
+    try {
+      await apiChangePassword(currentPassword, newPassword);
       currentPassword = '';
       newPassword = '';
       confirmPassword = '';
       showMessage('Password berhasil diubah');
-    }, 500);
+    } catch (e) {
+      showMessage(e.message || 'Gagal mengubah password', 'error');
+    } finally {
+      saving = false;
+    }
+  }
+
+  // Font size mapping
+  const fontSizeMap = { small: '14px', normal: '16px', large: '18px', xlarge: '22px' };
+
+  function applyPreferences() {
+    if (typeof document === 'undefined') return;
+    // Apply font size to root
+    document.documentElement.style.setProperty('--arabic-font-size', fontSizeMap[fontSize] || '16px');
+    // Apply dark mode
+    if (darkMode) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
   }
 
   function savePreferences() {
     localStorage.setItem('bm_prefs', JSON.stringify({
       searchLang, resultsPerPage, includeAi, darkMode, fontSize
     }));
+    applyPreferences();
     showMessage('Preferensi disimpan');
   }
 
-  // Load preferences
+  // Load and apply preferences
   $effect(() => {
     try {
       const saved = localStorage.getItem('bm_prefs');
@@ -83,6 +115,7 @@
         includeAi = p.includeAi !== false;
         darkMode = p.darkMode || false;
         fontSize = p.fontSize || 'normal';
+        applyPreferences();
       }
     } catch {}
   });
@@ -101,7 +134,7 @@
     </header>
 
     {#if message}
-      <div class="toast">{message}</div>
+      <div class="toast" class:toast-error={messageType === 'error'}>{message}</div>
     {/if}
 
     {#if !isAuth}
@@ -201,7 +234,7 @@
             <div class="form-group checkbox-group">
               <label>
                 <input type="checkbox" bind:checked={darkMode} />
-                Mode Gelap (segera hadir)
+                Mode Gelap
               </label>
             </div>
 
@@ -266,6 +299,10 @@
     text-align: center;
     font-size: 0.9rem;
     animation: slideIn 0.2s ease;
+  }
+
+  .toast-error {
+    background: var(--color-error);
   }
 
   @keyframes slideIn {

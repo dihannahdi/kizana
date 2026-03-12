@@ -393,6 +393,7 @@ impl ProdukHukumDb {
                     category,
                     citation: String::new(),
                     similarity_score: 0.0,
+                    toc_page: String::new(),
                 })
             })
             .map_err(|e| format!("Search error: {}", e))?

@@ -6,14 +6,39 @@
 
   let { children } = $props();
   let menuOpen = $state(false);
+  let isAuth = $state(false);
+  let authUser = $state(null);
 
   onMount(() => {
     auth.restore();
+    // Apply saved preferences (dark mode, font size) globally
+    try {
+      const saved = localStorage.getItem('kizana-preferences');
+      if (saved) {
+        const prefs = JSON.parse(saved);
+        const fontSizeMap = { small: '14px', normal: '16px', large: '18px', xlarge: '22px' };
+        if (prefs.fontSize) {
+          document.documentElement.style.setProperty('--arabic-font-size', fontSizeMap[prefs.fontSize] || '16px');
+        }
+        if (prefs.darkMode) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+      }
+    } catch {}
   });
+
+  auth.subscribe(v => { isAuth = v.isAuthenticated; authUser = v.user; });
 
   let currentPath = $derived(page.url?.pathname || '/');
 
   function closeMenu() {
+    menuOpen = false;
+  }
+
+  function handleLogout() {
+    auth.logout();
     menuOpen = false;
   }
 </script>
@@ -53,6 +78,31 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           Bantuan
         </a>
+
+        <!-- Mobile-only: settings & auth links inside hamburger -->
+        {#if isAuth}
+          <a href="/pengaturan" class="nav-link nav-link-mobile" class:active={currentPath === '/pengaturan'} onclick={closeMenu}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            Pengaturan
+          </a>
+          <button class="nav-link nav-link-mobile nav-logout-mobile" onclick={handleLogout}>Keluar</button>
+        {/if}
+      </div>
+
+      <!-- User section (desktop) -->
+      <div class="nav-user">
+        {#if isAuth}
+          <a href="/pengaturan" class="nav-settings-btn" title="Pengaturan" aria-label="Pengaturan">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </a>
+          <div class="nav-user-badge" title={authUser?.email}>
+            <span class="nav-user-avatar">{(authUser?.display_name || authUser?.email || '?')[0].toUpperCase()}</span>
+            <span class="nav-user-name">{authUser?.display_name || authUser?.email}</span>
+          </div>
+          <button class="nav-logout-btn" onclick={handleLogout}>Keluar</button>
+        {:else}
+          <a href="/" class="nav-login-btn">Masuk</a>
+        {/if}
       </div>
     </div>
   </nav>
@@ -173,6 +223,108 @@
     flex-shrink: 0;
   }
 
+  /* Desktop-only: hide mobile-only nav items */
+  .nav-link-mobile {
+    display: none;
+  }
+
+  /* ─── User Section (right side of nav) ─── */
+  .nav-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .nav-settings-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    color: var(--color-text-light);
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+
+  .nav-settings-btn:hover {
+    background: var(--color-bg-alt);
+    color: var(--color-primary);
+  }
+
+  .nav-user-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px 4px 4px;
+    border-radius: 20px;
+    background: var(--color-bg-alt);
+  }
+
+  .nav-user-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .nav-user-name {
+    font-size: 0.8rem;
+    color: var(--color-text-light);
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .nav-logout-btn {
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+
+  .nav-logout-btn:hover {
+    color: var(--color-error);
+    background: var(--color-bg-alt);
+  }
+
+  .nav-login-btn {
+    padding: 6px 16px;
+    background: var(--color-primary);
+    color: white;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+
+  .nav-login-btn:hover {
+    background: var(--color-primary-light);
+  }
+
+  .nav-logout-mobile {
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    color: var(--color-error);
+  }
+
   .app-main {
     flex: 1;
   }
@@ -267,6 +419,16 @@
 
     .nav-links.open {
       display: flex;
+    }
+
+    /* Show mobile-only items in hamburger */
+    .nav-link-mobile {
+      display: flex;
+    }
+
+    /* Hide desktop user section on mobile */
+    .nav-user {
+      display: none;
     }
 
     .nav-link {

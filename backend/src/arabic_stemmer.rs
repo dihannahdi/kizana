@@ -26,6 +26,16 @@ const TASHKEEL: &[char] = &[
     '\u{0653}', // MADDAH ABOVE
     '\u{0654}', // HAMZA ABOVE
     '\u{0655}', // HAMZA BELOW
+    '\u{0656}', // SUBSCRIPT ALEF
+    '\u{0657}', // INVERTED DAMMA
+    '\u{0658}', // NOON GHUNNA MARK
+    '\u{0659}', // ZWARAKAY
+    '\u{065A}', // VOWEL SIGN SMALL V ABOVE
+    '\u{065B}', // VOWEL SIGN INVERTED SMALL V ABOVE
+    '\u{065C}', // VOWEL SIGN DOT BELOW
+    '\u{065D}', // REVERSED DAMMA
+    '\u{065E}', // FATHA WITH TWO DOTS
+    '\u{065F}', // WAVY HAMZA BELOW
     '\u{0670}', // SUPERSCRIPT ALEF
 ];
 

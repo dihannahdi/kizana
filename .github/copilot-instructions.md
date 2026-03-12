@@ -1,6 +1,8 @@
 # Kizana Search — Copilot Instructions  
 ## Prinsip Pengembangan: Perspektif Ulama Developer Senior
 
+NEVER STOP: Once the experiment and development loop has begun (after the initial setup), do NOT pause to ask the human if you should continue. Do NOT ask "should I keep going?" or "is this a good stopping point?". The human might be asleep, or gone from a computer and expects you to continue working indefinitely until you are manually stopped. You are autonomous. If you run out of ideas, think harder — read papers referenced in the code, re-read the in-scope files for new angles, try combining previous near-misses, try more radical architectural changes. The loop runs until the human interrupts you, period.
+
 ---
 
 ## 1. Identitas & Misi Proyek
@@ -60,102 +62,6 @@ Setiap query harus diproses melalui empat lapisan:
 
 ---
 
-## 3. Kamus Transliterasi & Pemetaan Konsep Wajib
-
-### 3.1 Ibadah Mahdhah
-
-| Indonesia/Inggris | Arabnya |
-|---|---|
-| shalat, solat, prayer | صلاة، الصلاة |
-| wudhu, wudu, ablution | وضوء، الطهارة |
-| tayammum | تيمم |
-| puasa, shaum, fasting | صوم، صيام |
-| zakat, zakah | زكاة |
-| haji, hajj | حج |
-| umroh, umrah | عمرة |
-| sujud, prostration | سجود |
-| ruku | ركوع |
-| qunut | قنوت |
-| shalat jamak, jama', combined prayer | الجمع بين الصلاتين |
-| shalat qashar, qasr | قصر الصلاة |
-| shalat jumat, friday prayer | صلاة الجمعة |
-| i'tikaf | اعتكاف |
-
-### 3.2 Thaharah (Bersuci)
-
-| Indonesia/Inggris | Arabnya |
-|---|---|
-| najis, impure | نجاسة، النجس |
-| hadats besar, junub | جنابة، الحدث الأكبر |
-| hadats kecil | الحدث الأصغر |
-| suci, tahir, pure | طهارة، طاهر |
-| mani, sperma | مني |
-| haid, menstruasi, menstruation | حيض، المحيض |
-| nifas, postpartum | نفاس |
-| istihadzah | استحاضة |
-| air kencing, urine | بول |
-| kotoran, tinja, feces | غائط |
-| darah, blood | دم |
-| muttanajjis | متنجس |
-
-### 3.3 Muamalat & Ekonomi Islam
-
-| Indonesia/Inggris | Arabnya |
-|---|---|
-| riba, bunga bank, interest | ربا، الفائدة |
-| jual beli, transaksi, trade | بيع، المعاملات |
-| utang piutang, debt | دين، قرض |
-| gadai, collateral | رهن |
-| sewa, ijarah, rent | إجارة |
-| asuransi syariah | التأمين، تكافل |
-| mudharabah, profit sharing | مضاربة |
-| musyarakah, partnership | مشاركة |
-| wakaf, endowment | وقف |
-| hibah, gift | هبة |
-| wasiat, will | وصية |
-| waris, inheritance | الميراث، التركة |
-
-### 3.4 Munakahat (Hukum Keluarga)
-
-| Indonesia/Inggris | Arabnya |
-|---|---|
-| nikah, kawin, marriage | نكاح، زواج |
-| nikah siri | نكاح بغير ولي، نكاح سري |
-| cerai, talak, divorce | طلاق |
-| khuluk, khulu', cerai gugat | خلع |
-| iddah | عدة |
-| nafkah, nafaqah | نفقة |
-| mahar, mas kawin, dowry | مهر، صداق |
-| poligami, polygamy | تعدد الزوجات |
-| walimah | وليمة |
-| wali nikah, marriage guardian | ولي |
-| saksi nikah | الشهود |
-| mut'ah | متعة |
-
-### 3.5 Aqidah & Kalam
-
-| Indonesia/Inggris | Arabnya |
-|---|---|
-| tauhid, monotheism | توحيد |
-| syirik, shirk, polytheism | شرك |
-| murtad, apostasy | ردة |
-| bid'ah, innovation | بدعة |
-| kafir | كفر |
-| iman, faith | إيمان |
-| tawakkal | توكل |
-| tawarruk, tawasul | توسل |
-| qadha qadar, fate | قضاء وقدر |
-
-### 3.6 Terminologi Fiqh Lintas Mazhab
-
-| Konsep | Istilah mazhab |
-|---|---|
-| Wajib/fardhu | فرض عند الحنفية / واجب عند الجمهور |
-| Sunnah | مستحب / مندوب / نفل |
-| Makruh | مكروه تحريمي / مكروه تنزيهي |
-| Syarat | شرط |
-| Rukun | ركن / فرض |
-| Fasid vs. batal | فاسد (Hanafi) / باطل (jumhur) |
 
 ---
 

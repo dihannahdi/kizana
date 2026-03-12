@@ -1,0 +1,4848 @@
+{
+  "total_queries": 120,
+  "queries_with_results": 117,
+  "queries_no_results": 3,
+  "avg_results_per_query": 9.8,
+  "avg_search_time_ms": 505.9,
+  "avg_top_score": 97.5,
+  "score_distribution": {
+    "90-100": 677,
+    "70-89": 430,
+    "50-69": 43,
+    "30-49": 20,
+    "0-29": 0
+  },
+  "domain_distribution": {
+    "عبادات": 41,
+    "عام": 24,
+    "مناكحات": 15,
+    "طهارة": 11,
+    "معاملات": 16,
+    "تفسير": 1,
+    "عقيدة": 7,
+    "تصوف": 2,
+    "جنايات": 3
+  },
+  "language_distribution": {
+    "id": 101,
+    "en": 13,
+    "ar": 6
+  },
+  "translation_coverage": {
+    "translated": 117,
+    "empty": 3
+  },
+  "snippet_quality": {
+    "has_snippet": 1169,
+    "empty_snippet": 0,
+    "short_snippet": 1
+  },
+  "diversity": {
+    "avg_unique_books_per_query": 8.5,
+    "unique_books_total": 408
+  },
+  "by_query": [
+    {
+      "id": "ib01",
+      "text": "hukum shalat jumat",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "أحكام",
+        "الجمعة",
+        "الحكم",
+        "الصلاة",
+        "الصلوات",
+        "حكم",
+        "صلاة",
+        "صلاة الجمعة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 290,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "أحكام صلاة الجمعة",
+          "book": "شرح زاد المستقنع",
+          "score": 100.0,
+          "page": "2",
+          "snippet_len": 516
+        },
+        {
+          "title": "أحكام صلاة الجمعة",
+          "book": "شرح زاد المستقنع",
+          "score": 100.0,
+          "page": "2",
+          "snippet_len": 472
+        },
+        {
+          "title": "حكم صلاة الجمعة",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 93.7,
+          "page": "379",
+          "snippet_len": 334
+        }
+      ]
+    },
+    {
+      "id": "ib02",
+      "text": "syarat sah shalat",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الشروط",
+        "الصحة",
+        "الصلاة",
+        "الصلوات",
+        "شرط",
+        "صحة",
+        "صحيح",
+        "صلاة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 523,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "[شرط صحة الصلاة هنا: ]",
+          "book": "جواهر الدرر في حل ألفاظ المختصر",
+          "score": 100.0,
+          "page": "250",
+          "snippet_len": 506
+        },
+        {
+          "title": "الحديث العشرون: شرط صحة الصلاة.",
+          "book": "بهجة قلوب الأبرار وقرة عيون الأخيار في شرح جوامع الأخبار",
+          "score": 92.4,
+          "page": "57",
+          "snippet_len": 462
+        },
+        {
+          "title": "الوقت شرط في صحة صلاة الجمعة",
+          "book": "دروس وفتاوى الحرم المدني لعام ١٤١٦هـ[١",
+          "score": 89.2,
+          "page": "3",
+          "snippet_len": 590
+        }
+      ]
+    },
+    {
+      "id": "ib03",
+      "text": "shalat jamak qashar dalam perjalanan",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الجمع بين الصلاتين",
+        "السفر",
+        "الصلاة",
+        "الصلوات",
+        "العصر",
+        "القصر",
+        "المسافر",
+        "جمع الصلاة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 278,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "باب قصر الصلاة في السفر وما جاء في الجمع بين الصلاتين",
+          "book": "المطالب العالية بزوائد المسانيد الثمانية",
+          "score": 100.0,
+          "page": "72",
+          "snippet_len": 603
+        },
+        {
+          "title": "١٥ - [باب قصر الصلاة في السفر] وما جاء في الجمع بين الصلاتين",
+          "book": "المطَالبُ العَاليَةُ",
+          "score": 95.2,
+          "page": "72",
+          "snippet_len": 500
+        },
+        {
+          "title": "صلاة العصر",
+          "book": "كتاب 13251",
+          "score": 94.0,
+          "page": "184",
+          "snippet_len": 455
+        }
+      ]
+    },
+    {
+      "id": "ib04",
+      "text": "bacaan qunut shalat subuh",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "القنوت في صلاة الصبح",
+        "دعاء القنوت",
+        "صلاة الصبح",
+        "صلاة الفجر",
+        "قنوت الصبح",
+        "قنوت الفجر",
+        "الصبح",
+        "الصلاة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 824,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "بيان حكم دعاء القنوت في صلاة الصبح والوتر",
+          "book": "كتاب 107",
+          "score": 100.0,
+          "page": "224",
+          "snippet_len": 543
+        },
+        {
+          "title": "[القنوت في صلاة الصبح]",
+          "book": "حاشيتا قليوبي وعميرة",
+          "score": 99.6,
+          "page": "178",
+          "snippet_len": 556
+        },
+        {
+          "title": "القنوت في صلاة الصبح",
+          "book": "مَعْرِفَةُ السُّنَنِ وَالْآثَارِ لِلْبَيْهَقِيِّ",
+          "score": 99.6,
+          "page": "109",
+          "snippet_len": 578
+        }
+      ]
+    },
+    {
+      "id": "ib05",
+      "text": "hukum meninggalkan shalat",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "أحكام",
+        "الحكم",
+        "الصلاة",
+        "الصلوات",
+        "حكم",
+        "صلاة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 167,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "أحكام الصلوات الخمس",
+          "book": "نتائج البحوث وخواتيم الكتب",
+          "score": 100.0,
+          "page": "324",
+          "snippet_len": 558
+        },
+        {
+          "title": "فقه الصلاة_أحكام صلاة المسافر",
+          "book": "عبر من الأحداث",
+          "score": 98.3,
+          "page": "1",
+          "snippet_len": 579
+        },
+        {
+          "title": "فقه الصلاة_أحكام صلاة الجماعة",
+          "book": "عبر من الأحداث",
+          "score": 98.3,
+          "page": "1",
+          "snippet_len": 496
+        }
+      ]
+    },
+    {
+      "id": "ib06",
+      "text": "shalat berjamaah di rumah",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الصلاة",
+        "الصلوات",
+        "صلاة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 448,
+      "top_score": 100.0,
+      "unique_books": 6,
+      "top3": [
+        {
+          "title": "صلاة العصر هي أفضل الصلوات",
+          "book": "لقاء الباب المفتوح",
+          "score": 100.0,
+          "page": "17",
+          "snippet_len": 569
+        },
+        {
+          "title": "وجوب الصلاة وأجر الصلوات الخمس",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الثانية",
+          "score": 95.4,
+          "page": "3",
+          "snippet_len": 581
+        },
+        {
+          "title": "باب الصلاة الوسطى أي الصلوات؟",
+          "book": "شرح معاني الآثار",
+          "score": 95.2,
+          "page": "167",
+          "snippet_len": 459
+        }
+      ]
+    },
+    {
+      "id": "ib07",
+      "text": "rukun shalat menurut syafi'i",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الأركان",
+        "الشافعي",
+        "الصلاة",
+        "الصلوات",
+        "ركن",
+        "شافعي",
+        "صلاة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 567,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "[ركن صلاة الجنازة: ]",
+          "book": "جواهر الدرر في حل ألفاظ المختصر",
+          "score": 100.0,
+          "page": "523",
+          "snippet_len": 563
+        },
+        {
+          "title": "الصلاة أحد الأركان الخمسة",
+          "book": "جامع تراث العلامة الألباني في الفقه",
+          "score": 97.1,
+          "page": "7",
+          "snippet_len": 600
+        },
+        {
+          "title": "تعديل الأركان في الصلاة",
+          "book": "المجددي البركتي",
+          "score": 96.9,
+          "page": "58",
+          "snippet_len": 563
+        }
+      ]
+    },
+    {
+      "id": "ib08",
+      "text": "sujud sahwi karena lupa",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [
+        "السجود",
+        "سجود"
+      ],
+      "num_results": 10,
+      "search_time_ms": 411,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "[شروط السجود في سجود التلاوة]",
+          "book": "كتاب 21619",
+          "score": 100.0,
+          "page": "35",
+          "snippet_len": 584
+        },
+        {
+          "title": "باب سجود المريض وفضيلة السجود",
+          "book": "رَبِّ يَسِّرْ يَا كَرِيمُ",
+          "score": 99.7,
+          "page": "278",
+          "snippet_len": 558
+        },
+        {
+          "title": "باب سجود القرآن السجود في ص",
+          "book": "حكم الألباني] صحيح ق وليس عند خ العدد",
+          "score": 92.9,
+          "page": "159",
+          "snippet_len": 587
+        }
+      ]
+    },
+    {
+      "id": "ib09",
+      "text": "shalat tahajud cara dan waktunya",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الصلاة",
+        "الصلوات",
+        "الكيفية",
+        "صلاة",
+        "كيفية"
+      ],
+      "num_results": 10,
+      "search_time_ms": 383,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "كيفية قضاء الصلوات المتروكة",
+          "book": "إجمال موضوعات السيرة النبوية",
+          "score": 100.0,
+          "page": "22",
+          "snippet_len": 517
+        },
+        {
+          "title": "كيفية قضاء الصلوات الفائتة",
+          "book": "العدة شرح العمدة",
+          "score": 100.0,
+          "page": "4",
+          "snippet_len": 515
+        },
+        {
+          "title": "كيفية قضاء الصلوات الفائتة",
+          "book": "فتاوى إسلامية",
+          "score": 99.8,
+          "page": "256",
+          "snippet_len": 596
+        }
+      ]
+    },
+    {
+      "id": "ib10",
+      "text": "shalat jenazah ghaib",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الجنازة",
+        "الصلاة",
+        "الصلوات",
+        "الميت",
+        "جنازة",
+        "صلاة",
+        "صلاة الجنازة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 185,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "صلاة الجنازة",
+          "book": "كتاب 13251",
+          "score": 100.0,
+          "page": "391",
+          "snippet_len": 417
+        },
+        {
+          "title": "صلاة الجنازة",
+          "book": "كتاب 13251",
+          "score": 99.8,
+          "page": "426",
+          "snippet_len": 511
+        },
+        {
+          "title": "صلاة الجنازة",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 99.8,
+          "page": "15",
+          "snippet_len": 593
+        }
+      ]
+    },
+    {
+      "id": "ib11",
+      "text": "hukum shalat witir",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "أحكام",
+        "الحكم",
+        "الصلاة",
+        "الصلوات",
+        "الوتر",
+        "حكم",
+        "صلاة",
+        "صلاة الوتر"
+      ],
+      "num_results": 10,
+      "search_time_ms": 187,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "حكم صلاة الوتر",
+          "book": "كتاب 13251",
+          "score": 100.0,
+          "page": "88",
+          "snippet_len": 586
+        },
+        {
+          "title": "حكم صلاة الوتر",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 100.0,
+          "page": "86",
+          "snippet_len": 497
+        },
+        {
+          "title": "حكم صلاة الوتر",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الثانية",
+          "score": 99.8,
+          "page": "54",
+          "snippet_len": 562
+        }
+      ]
+    },
+    {
+      "id": "ib12",
+      "text": "shalat sambil duduk karena sakit",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الصلاة جالسا",
+        "رخص الصلاة",
+        "صلاة القاعد",
+        "صلاة المريض",
+        "كيفية صلاة المريض",
+        "الأمراض",
+        "الجلوس",
+        "الصلاة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 252,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "كيفية صلاة المريض",
+          "book": "مجموع فتاوى العلامة عبد العزيز بن باز رحمه الله",
+          "score": 100.0,
+          "page": "242",
+          "snippet_len": 596
+        },
+        {
+          "title": "كيفية صلاة المريض",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الثانية",
+          "score": 100.0,
+          "page": "378",
+          "snippet_len": 504
+        },
+        {
+          "title": "كيفية صلاة المريض",
+          "book": "شرح زاد المستقنع",
+          "score": 100.0,
+          "page": "3",
+          "snippet_len": 574
+        }
+      ]
+    },
+    {
+      "id": "ib13",
+      "text": "imam shalat perempuan boleh gak",
+      "lang": "id",
+      "domain": "مناكحات",
+      "translated_terms": [
+        "إمام",
+        "الإمام",
+        "الإناث",
+        "البنت",
+        "الجواز",
+        "الصلاة",
+        "الصلوات",
+        "النساء"
+      ],
+      "num_results": 10,
+      "search_time_ms": 512,
+      "top_score": 100.0,
+      "unique_books": 7,
+      "top3": [
+        {
+          "title": "جواز صلاة النساء تبعا للرجال",
+          "book": "اللقاء الشهري",
+          "score": 100.0,
+          "page": "17",
+          "snippet_len": 583
+        },
+        {
+          "title": "ضابط جواز صلاة الإمام جالسا",
+          "book": "جامع تراث العلامة الألباني في الفقه",
+          "score": 98.1,
+          "page": "462",
+          "snippet_len": 598
+        },
+        {
+          "title": "الزوج وبنتا بنت البنت مع بنت ابن بنت البنت",
+          "book": "كتاب 432",
+          "score": 97.7,
+          "page": "458",
+          "snippet_len": 557
+        }
+      ]
+    },
+    {
+      "id": "ib14",
+      "text": "prayer while traveling in Islam",
+      "lang": "en",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الصلاة",
+        "الصلوات",
+        "صلاة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 409,
+      "top_score": 100.0,
+      "unique_books": 6,
+      "top3": [
+        {
+          "title": "صلاة العصر هي أفضل الصلوات",
+          "book": "لقاء الباب المفتوح",
+          "score": 100.0,
+          "page": "17",
+          "snippet_len": 569
+        },
+        {
+          "title": "وجوب الصلاة وأجر الصلوات الخمس",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الثانية",
+          "score": 95.4,
+          "page": "3",
+          "snippet_len": 581
+        },
+        {
+          "title": "باب الصلاة الوسطى أي الصلوات؟",
+          "book": "شرح معاني الآثار",
+          "score": 95.2,
+          "page": "167",
+          "snippet_len": 459
+        }
+      ]
+    },
+    {
+      "id": "ib15",
+      "text": "صلاة الجمعة أحكامها",
+      "lang": "ar",
+      "domain": "عبادات",
+      "translated_terms": [
+        "أحكامها",
+        "الجمعة",
+        "صلاة",
+        "صلاة الجمعة أحكامها"
+      ],
+      "num_results": 10,
+      "search_time_ms": 155,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "فصل في صفة صلاة الجمعة وبعض أحكامها",
+          "book": "حاشية الروض المربع شرح زاد المستقنع",
+          "score": 100.0,
+          "page": "460",
+          "snippet_len": 544
+        },
+        {
+          "title": "[أحكامها]",
+          "book": "كتاب 12895",
+          "score": 78.4,
+          "page": "202",
+          "snippet_len": 443
+        },
+        {
+          "title": "أحكامها",
+          "book": "كتاب 384",
+          "score": 78.4,
+          "page": "4856",
+          "snippet_len": 600
+        }
+      ]
+    },
+    {
+      "id": "th01",
+      "text": "cara wudhu yang benar",
+      "lang": "id",
+      "domain": "طهارة",
+      "translated_terms": [
+        "الطهارة",
+        "الكيفية",
+        "الوضوء",
+        "كيفية",
+        "وضوء"
+      ],
+      "num_results": 10,
+      "search_time_ms": 544,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "الطهارة/ الوضوء",
+          "book": "مُعْجَمُ البِدَع",
+          "score": 100.0,
+          "page": "382",
+          "snippet_len": 600
+        },
+        {
+          "title": "كيفية الوضوء",
+          "book": "مجموع فتاوى العلامة عبد العزيز بن باز رحمه الله",
+          "score": 94.3,
+          "page": "21",
+          "snippet_len": 513
+        },
+        {
+          "title": "كيفية الوضوء",
+          "book": "جعله الله خالصا لوجهه الكريم ووسيلة إلى النعيم المقيم",
+          "score": 94.3,
+          "page": "132",
+          "snippet_len": 174
+        }
+      ]
+    },
+    {
+      "id": "th02",
+      "text": "tayammum syarat dan caranya",
+      "lang": "id",
+      "domain": "طهارة",
+      "translated_terms": [
+        "التيمم",
+        "الشروط",
+        "تيمم",
+        "شرط"
+      ],
+      "num_results": 10,
+      "search_time_ms": 441,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "شرط التيمم",
+          "book": "كتاب 21644",
+          "score": 100.0,
+          "page": "39",
+          "snippet_len": 174
+        },
+        {
+          "title": "شرط الصداق أحق الشروط",
+          "book": "فتاوى إسلامية",
+          "score": 86.5,
+          "page": "177",
+          "snippet_len": 580
+        },
+        {
+          "title": "الترتيب بين أعضاء التيمم شرط",
+          "book": "قناديل العلم",
+          "score": 78.1,
+          "page": "441",
+          "snippet_len": 596
+        }
+      ]
+    },
+    {
+      "id": "th03",
+      "text": "najis mughallazhah dan cara membersihkannya",
+      "lang": "id",
+      "domain": "طهارة",
+      "translated_terms": [
+        "الكيفية",
+        "المتنجس",
+        "النجس",
+        "كيفية",
+        "نجاسة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 596,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "١١ - نجاسة الماء النجس حكمية",
+          "book": "اختيارات شيخ الإسلام ابن تيمية الفقهية",
+          "score": 100.0,
+          "page": "58",
+          "snippet_len": 592
+        },
+        {
+          "title": "[كيفية تطهير المحل النجس: ]",
+          "book": "جواهر الدرر في حل ألفاظ المختصر",
+          "score": 95.8,
+          "page": "258",
+          "snippet_len": 462
+        },
+        {
+          "title": "المبحث الأول في كيفية تطهير الماء المتنجس",
+          "book": "موسوعة",
+          "score": 84.8,
+          "page": "500",
+          "snippet_len": 585
+        }
+      ]
+    },
+    {
+      "id": "th04",
+      "text": "hukum menyentuh mushaf tanpa wudhu",
+      "lang": "id",
+      "domain": "طهارة",
+      "translated_terms": [
+        "أحكام",
+        "الحكم",
+        "الطهارة",
+        "الوضوء",
+        "بدون",
+        "بغير",
+        "حكم",
+        "وضوء"
+      ],
+      "num_results": 10,
+      "search_time_ms": 570,
+      "top_score": 100.0,
+      "unique_books": 7,
+      "top3": [
+        {
+          "title": "حكم الطواف بدون وضوء",
+          "book": "الابتداع في دين الله",
+          "score": 100.0,
+          "page": "18",
+          "snippet_len": 596
+        },
+        {
+          "title": "حكم الأذان بغير وضوء",
+          "book": "كتاب 107",
+          "score": 94.3,
+          "page": "345",
+          "snippet_len": 597
+        },
+        {
+          "title": "حكم الصلاة بغير وضوء",
+          "book": "فتاوى منوعة",
+          "score": 94.0,
+          "page": "41",
+          "snippet_len": 551
+        }
+      ]
+    },
+    {
+      "id": "th05",
+      "text": "mandi junub tata cara",
+      "lang": "id",
+      "domain": "طهارة",
+      "translated_terms": [
+        "الحدث الأكبر",
+        "الغسل",
+        "الكيفية",
+        "جنابة",
+        "غسل",
+        "كيفية"
+      ],
+      "num_results": 10,
+      "search_time_ms": 496,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "الحدث الأكبر",
+          "book": "كتاب 13251",
+          "score": 100.0,
+          "page": "308",
+          "snippet_len": 524
+        },
+        {
+          "title": "موانع الحدث الأكبر",
+          "book": "فَاتِحَة",
+          "score": 90.9,
+          "page": "31",
+          "snippet_len": 273
+        },
+        {
+          "title": "فصل في ما يوجب الغسل (الحدث الأكبر)",
+          "book": "موسوعة",
+          "score": 86.9,
+          "page": "81",
+          "snippet_len": 593
+        }
+      ]
+    },
+    {
+      "id": "th06",
+      "text": "haid dan istihadzah perbedaannya",
+      "lang": "id",
+      "domain": "طهارة",
+      "translated_terms": [
+        "استحاضة",
+        "الاستحاضة",
+        "الحيض",
+        "المحيض",
+        "المستحاضة",
+        "حيض"
+      ],
+      "num_results": 10,
+      "search_time_ms": 521,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "دم الإسقاط حيض أم استحاضة؟",
+          "book": "القرآن الكريم وعلومه",
+          "score": 100.0,
+          "page": "189",
+          "snippet_len": 317
+        },
+        {
+          "title": "حكم دم الحيض ودم الاستحاضة",
+          "book": "شرح مقدمة ابن حجر رحمه الله",
+          "score": 81.7,
+          "page": "157",
+          "snippet_len": 591
+        },
+        {
+          "title": "الفصل السابع: الحيض، النفاس، الاستحاضة",
+          "book": "كتاب 384",
+          "score": 81.7,
+          "page": "610",
+          "snippet_len": 566
+        }
+      ]
+    },
+    {
+      "id": "th07",
+      "text": "air mutanajjis boleh untuk wudhu",
+      "lang": "id",
+      "domain": "طهارة",
+      "translated_terms": [
+        "الجواز",
+        "الطهارة",
+        "الوضوء",
+        "جواز",
+        "حلال",
+        "وضوء",
+        "يجوز"
+      ],
+      "num_results": 10,
+      "search_time_ms": 174,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "الطهارة/ الوضوء",
+          "book": "مُعْجَمُ البِدَع",
+          "score": 100.0,
+          "page": "382",
+          "snippet_len": 600
+        },
+        {
+          "title": "الوضوء بفضل وضوء المرأة",
+          "book": "الإحسان في تقريب صحيح ابن حبان",
+          "score": 88.3,
+          "page": "71",
+          "snippet_len": 594
+        },
+        {
+          "title": "الوضوء بفضل وضوء النصراني",
+          "book": "كتاب 21751",
+          "score": 88.1,
+          "page": "33",
+          "snippet_len": 447
+        }
+      ]
+    },
+    {
+      "id": "th08",
+      "text": "wudhu batal karena apa saja",
+      "lang": "id",
+      "domain": "طهارة",
+      "translated_terms": [
+        "البطلان",
+        "الطهارة",
+        "الوضوء",
+        "باطل",
+        "بطلان",
+        "نواقض الوضوء",
+        "وضوء",
+        "ينقض الوضوء"
+      ],
+      "num_results": 10,
+      "search_time_ms": 134,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "نواقض الوضوء",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 100.0,
+          "page": "20",
+          "snippet_len": 181
+        },
+        {
+          "title": "نواقض الوضوء",
+          "book": "كتاب 13251",
+          "score": 100.0,
+          "page": "320",
+          "snippet_len": 548
+        },
+        {
+          "title": "نواقض الوضوء",
+          "book": "مدونة الحنابلة (١)",
+          "score": 100.0,
+          "page": "24",
+          "snippet_len": 599
+        }
+      ]
+    },
+    {
+      "id": "th09",
+      "text": "darah keluar apakah batal wudhu",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "البطلان",
+        "الدم",
+        "الطهارة",
+        "الوضوء",
+        "باطل",
+        "بطلان",
+        "دم",
+        "نواقض الوضوء"
+      ],
+      "num_results": 10,
+      "search_time_ms": 138,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "هل الدم ينقض الوضوء؟",
+          "book": "القرآن الكريم وعلومه",
+          "score": 100.0,
+          "page": "84",
+          "snippet_len": 493
+        },
+        {
+          "title": "نواقض الوضوء",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 95.5,
+          "page": "20",
+          "snippet_len": 181
+        },
+        {
+          "title": "نواقض الوضوء",
+          "book": "كتاب 13251",
+          "score": 95.5,
+          "page": "320",
+          "snippet_len": 548
+        }
+      ]
+    },
+    {
+      "id": "th10",
+      "text": "purification rules in Islamic law",
+      "lang": "en",
+      "domain": "عام",
+      "translated_terms": [
+        "أحكام",
+        "التطهير",
+        "الحكم",
+        "الطهارة",
+        "حكم",
+        "طهارة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 216,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "أحكام الطهارة",
+          "book": "الفقه المنهجي على مذهب الإمام الشافعي رحمه الله تعالى",
+          "score": 100.0,
+          "page": "27",
+          "snippet_len": 494
+        },
+        {
+          "title": "أحكام الطهارة",
+          "book": "إجمال موضوعات السيرة النبوية",
+          "score": 100.0,
+          "page": "7",
+          "snippet_len": 568
+        },
+        {
+          "title": "أحكام الطهارة",
+          "book": "فتاوى في المسح على الخفين",
+          "score": 99.7,
+          "page": "1",
+          "snippet_len": 390
+        }
+      ]
+    },
+    {
+      "id": "pu01",
+      "text": "hal yang membatalkan puasa",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الصيام",
+        "صوم",
+        "صيام"
+      ],
+      "num_results": 10,
+      "search_time_ms": 539,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "باب: أفضل الصيام صيام داوود, صوم يوم وإفطار يوم",
+          "book": "مختصر صحيح مسلم",
+          "score": 100.0,
+          "page": "167",
+          "snippet_len": 595
+        },
+        {
+          "title": "أفضل الصيام صيام داود",
+          "book": "شرح أخصر المختصرات",
+          "score": 92.9,
+          "page": "20",
+          "snippet_len": 507
+        },
+        {
+          "title": "الصيام عن الزوجة وعليه صيام",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الثانية",
+          "score": 86.3,
+          "page": "261",
+          "snippet_len": 602
+        }
+      ]
+    },
+    {
+      "id": "pu02",
+      "text": "puasa sunnah senin kamis",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الصيام",
+        "سنة",
+        "صوم",
+        "صيام",
+        "مستحب",
+        "مندوب"
+      ],
+      "num_results": 10,
+      "search_time_ms": 626,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "اجتماع صوم واجب مع مستحب",
+          "book": "لقاء الباب المفتوح",
+          "score": 100.0,
+          "page": "6",
+          "snippet_len": 394
+        },
+        {
+          "title": "باب: أفضل الصيام صيام داوود, صوم يوم وإفطار يوم",
+          "book": "مختصر صحيح مسلم",
+          "score": 94.6,
+          "page": "167",
+          "snippet_len": 595
+        },
+        {
+          "title": "الصيام في الاعتكاف مستحب وليس بواجب",
+          "book": "شرح أخصر المختصرات",
+          "score": 92.6,
+          "page": "9",
+          "snippet_len": 580
+        }
+      ]
+    },
+    {
+      "id": "pu03",
+      "text": "fidyah puasa orang tua",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الصيام",
+        "العجوز",
+        "الفدية",
+        "شيخ",
+        "صوم",
+        "صيام",
+        "فدية",
+        "كبير السن"
+      ],
+      "num_results": 10,
+      "search_time_ms": 594,
+      "top_score": 100.0,
+      "unique_books": 7,
+      "top3": [
+        {
+          "title": "صيام كبير السن",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الثانية",
+          "score": 100.0,
+          "page": "79",
+          "snippet_len": 600
+        },
+        {
+          "title": "صيام الرجل كبير السن",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الأولى",
+          "score": 92.2,
+          "page": "162",
+          "snippet_len": 554
+        },
+        {
+          "title": "كبير السن والتعلم",
+          "book": "نبذة تفصيلية عن المؤلف",
+          "score": 78.4,
+          "page": "346",
+          "snippet_len": 493
+        }
+      ]
+    },
+    {
+      "id": "pu04",
+      "text": "niat puasa ramadhan kapan dibaca",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الصيام",
+        "النية",
+        "رمضان",
+        "شهر رمضان",
+        "صوم",
+        "صوم رمضان",
+        "صيام",
+        "صيام رمضان"
+      ],
+      "num_results": 10,
+      "search_time_ms": 120,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "النية في صوم رمضان",
+          "book": "مجموع فتاوى فضيلة الشيخ صالح بن فوزان",
+          "score": 100.0,
+          "page": "389",
+          "snippet_len": 450
+        },
+        {
+          "title": "صوم رمضان",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 97.1,
+          "page": "153",
+          "snippet_len": 555
+        },
+        {
+          "title": "صوم رمضان",
+          "book": "كتاب 13251",
+          "score": 97.1,
+          "page": "170",
+          "snippet_len": 276
+        }
+      ]
+    },
+    {
+      "id": "pu05",
+      "text": "hukum berpuasa bagi ibu hamil",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "أحكام",
+        "أم",
+        "إفطار الحامل",
+        "الأم",
+        "الحامل",
+        "الحكم",
+        "الحمل",
+        "المرأة الحامل"
+      ],
+      "num_results": 10,
+      "search_time_ms": 594,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "حكم صوم الحامل والمرضع",
+          "book": "الفِقهُ الميَسَّر",
+          "score": 100.0,
+          "page": "82",
+          "snippet_len": 520
+        },
+        {
+          "title": "حكم صوم الحامل والمرضع",
+          "book": "العدة شرح العمدة",
+          "score": 99.9,
+          "page": "4",
+          "snippet_len": 547
+        },
+        {
+          "title": "حكم إفطار الحامل والمرضع",
+          "book": "اللقاء الشهري",
+          "score": 95.9,
+          "page": "43",
+          "snippet_len": 181
+        }
+      ]
+    },
+    {
+      "id": "pu06",
+      "text": "puasa arafah hukumnya",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الصيام",
+        "صوم",
+        "صيام"
+      ],
+      "num_results": 10,
+      "search_time_ms": 494,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "باب: أفضل الصيام صيام داوود, صوم يوم وإفطار يوم",
+          "book": "مختصر صحيح مسلم",
+          "score": 100.0,
+          "page": "167",
+          "snippet_len": 595
+        },
+        {
+          "title": "أفضل الصيام صيام داود",
+          "book": "شرح أخصر المختصرات",
+          "score": 92.9,
+          "page": "20",
+          "snippet_len": 507
+        },
+        {
+          "title": "الصيام عن الزوجة وعليه صيام",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الثانية",
+          "score": 86.3,
+          "page": "261",
+          "snippet_len": 602
+        }
+      ]
+    },
+    {
+      "id": "pu07",
+      "text": "makan sahur sebelum imsak",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "أكل",
+        "الأطعمة",
+        "الأكل",
+        "الطعام"
+      ],
+      "num_results": 10,
+      "search_time_ms": 584,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "أكل الطعام",
+          "book": "كتاب 6178",
+          "score": 100.0,
+          "page": "391",
+          "snippet_len": 567
+        },
+        {
+          "title": "أكل فضلة الطعام",
+          "book": "القرآن الكريم وعلومه",
+          "score": 91.6,
+          "page": "154",
+          "snippet_len": 295
+        },
+        {
+          "title": "الأكل من حافتي الطعام",
+          "book": "التعليقاتُ الرَّضية",
+          "score": 87.7,
+          "page": "80",
+          "snippet_len": 555
+        }
+      ]
+    },
+    {
+      "id": "pu08",
+      "text": "kafarat berbuka puasa sengaja",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الصيام",
+        "الكفارات",
+        "الكفارة",
+        "صوم",
+        "صيام",
+        "كفارة",
+        "كفارة الإفطار",
+        "كفارة الصيام"
+      ],
+      "num_results": 10,
+      "search_time_ms": 759,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "كفارة الصيام",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الثانية",
+          "score": 100.0,
+          "page": "218",
+          "snippet_len": 603
+        },
+        {
+          "title": "فصل في كفارة الصيام",
+          "book": "التفريع",
+          "score": 84.2,
+          "page": "41",
+          "snippet_len": 573
+        },
+        {
+          "title": "[كفارة الإفطار في رمضان]",
+          "book": "كتاب 21607",
+          "score": 74.0,
+          "page": "706",
+          "snippet_len": 486
+        }
+      ]
+    },
+    {
+      "id": "zk01",
+      "text": "nisab zakat mal berapa",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الزكاة",
+        "النصاب",
+        "حول الزكاة",
+        "زكاة",
+        "زكاة المال",
+        "نصاب",
+        "نصاب الزكاة",
+        "نصاب المال"
+      ],
+      "num_results": 10,
+      "search_time_ms": 510,
+      "top_score": 100.0,
+      "unique_books": 7,
+      "top3": [
+        {
+          "title": "نصاب الزكاة",
+          "book": "معالم الدعوة إلى الله",
+          "score": 100.0,
+          "page": "34",
+          "snippet_len": 369
+        },
+        {
+          "title": "نصاب الزكاة",
+          "book": "فتاوى إسلامية",
+          "score": 100.0,
+          "page": "75",
+          "snippet_len": 407
+        },
+        {
+          "title": "نصاب الزكاة في المعادن",
+          "book": "الفِقهُ الميَسَّر",
+          "score": 84.4,
+          "page": "92",
+          "snippet_len": 404
+        }
+      ]
+    },
+    {
+      "id": "zk02",
+      "text": "zakat fitrah beras atau uang",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الأموال",
+        "الزكاة",
+        "المال",
+        "زكاة",
+        "زكاة الفطر",
+        "زكاة المال",
+        "صدقة الفطر",
+        "مال"
+      ],
+      "num_results": 10,
+      "search_time_ms": 743,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "١٦- زكاة الفطر، أو صدقة الفطر",
+          "book": "الصوم جُنَّة",
+          "score": 100.0,
+          "page": "176",
+          "snippet_len": 381
+        },
+        {
+          "title": "فصل في زكاة الفطر ويقال صدقة الفطر",
+          "book": "كتاب 6121",
+          "score": 93.6,
+          "page": "226",
+          "snippet_len": 416
+        },
+        {
+          "title": "زكاة المال",
+          "book": "كتاب 13251",
+          "score": 92.2,
+          "page": "54",
+          "snippet_len": 528
+        }
+      ]
+    },
+    {
+      "id": "zk03",
+      "text": "delapan golongan penerima zakat",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الزكاة",
+        "زكاة",
+        "زكاة المال"
+      ],
+      "num_results": 10,
+      "search_time_ms": 704,
+      "top_score": 100.0,
+      "unique_books": 6,
+      "top3": [
+        {
+          "title": "زكاة المال",
+          "book": "كتاب 13251",
+          "score": 100.0,
+          "page": "54",
+          "snippet_len": 528
+        },
+        {
+          "title": "زكاة المال",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 100.0,
+          "page": "366",
+          "snippet_len": 536
+        },
+        {
+          "title": "(زكاة المال)",
+          "book": "فتاوى إسلامية",
+          "score": 99.8,
+          "page": "73",
+          "snippet_len": 598
+        }
+      ]
+    },
+    {
+      "id": "zk04",
+      "text": "zakat emas dan perak nisabnya",
+      "lang": "id",
+      "domain": "معاملات",
+      "translated_terms": [
+        "الذهب",
+        "الزكاة",
+        "الفضة",
+        "ذهب",
+        "زكاة",
+        "زكاة الذهب",
+        "زكاة المال",
+        "فضة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 402,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "زكاة الذهب",
+          "book": "كتاب 13251",
+          "score": 100.0,
+          "page": "54",
+          "snippet_len": 528
+        },
+        {
+          "title": "زكاة الذهب",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 100.0,
+          "page": "366",
+          "snippet_len": 536
+        },
+        {
+          "title": "زكاة الذهب",
+          "book": "شرح الغريب",
+          "score": 99.9,
+          "page": "358",
+          "snippet_len": 550
+        }
+      ]
+    },
+    {
+      "id": "zk05",
+      "text": "zakat profesi hukumnya",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الزكاة",
+        "زكاة",
+        "زكاة المال"
+      ],
+      "num_results": 10,
+      "search_time_ms": 728,
+      "top_score": 100.0,
+      "unique_books": 6,
+      "top3": [
+        {
+          "title": "زكاة المال",
+          "book": "كتاب 13251",
+          "score": 100.0,
+          "page": "54",
+          "snippet_len": 528
+        },
+        {
+          "title": "زكاة المال",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 100.0,
+          "page": "366",
+          "snippet_len": 536
+        },
+        {
+          "title": "(زكاة المال)",
+          "book": "فتاوى إسلامية",
+          "score": 99.8,
+          "page": "73",
+          "snippet_len": 598
+        }
+      ]
+    },
+    {
+      "id": "zk06",
+      "text": "mustahik zakat menurut quran",
+      "lang": "id",
+      "domain": "تفسير",
+      "translated_terms": [
+        "الزكاة",
+        "زكاة",
+        "زكاة المال"
+      ],
+      "num_results": 10,
+      "search_time_ms": 728,
+      "top_score": 100.0,
+      "unique_books": 6,
+      "top3": [
+        {
+          "title": "زكاة المال",
+          "book": "كتاب 13251",
+          "score": 100.0,
+          "page": "54",
+          "snippet_len": 528
+        },
+        {
+          "title": "زكاة المال",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 100.0,
+          "page": "366",
+          "snippet_len": 536
+        },
+        {
+          "title": "(زكاة المال)",
+          "book": "فتاوى إسلامية",
+          "score": 99.8,
+          "page": "73",
+          "snippet_len": 598
+        }
+      ]
+    },
+    {
+      "id": "hj01",
+      "text": "rukun haji wajib dan sunnahnya",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الأركان",
+        "الحج",
+        "المناسك",
+        "الوجوب",
+        "حج",
+        "ركن",
+        "فرض",
+        "واجب"
+      ],
+      "num_results": 10,
+      "search_time_ms": 217,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "ركن الحج",
+          "book": "كتاب 384",
+          "score": 100.0,
+          "page": "2146",
+          "snippet_len": 600
+        },
+        {
+          "title": "واجب الحج",
+          "book": "كتاب 21644",
+          "score": 94.5,
+          "page": "263",
+          "snippet_len": 498
+        },
+        {
+          "title": "[فائدة الحلق في الحج هل هو ركن أو واجب]",
+          "book": "كتاب 11036",
+          "score": 93.0,
+          "page": "114",
+          "snippet_len": 500
+        }
+      ]
+    },
+    {
+      "id": "hj02",
+      "text": "dam haji jenis dan hukumnya",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الحج",
+        "المناسك",
+        "حج"
+      ],
+      "num_results": 10,
+      "search_time_ms": 957,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "كتاب المناسك في الحج",
+          "book": "الإشراف",
+          "score": 100.0,
+          "page": "457",
+          "snippet_len": 584
+        },
+        {
+          "title": "من وحي المناسك في الحج",
+          "book": "هُمُ الْمُفْلِحُونَ} [الأعراف: ١٧٥] ، والتابعين لهم بإحسان إ",
+          "score": 93.2,
+          "page": "110",
+          "snippet_len": 558
+        },
+        {
+          "title": "فصل في حج إبراهيم وتعليم جبريل إياه المناسك",
+          "book": "مرآة الزمان في تواريخ الأعيان",
+          "score": 86.5,
+          "page": "399",
+          "snippet_len": 574
+        }
+      ]
+    },
+    {
+      "id": "hj03",
+      "text": "ihram dari miqat",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [],
+      "num_results": 0,
+      "search_time_ms": 0,
+      "top_score": 0,
+      "unique_books": 0,
+      "top3": []
+    },
+    {
+      "id": "hj04",
+      "text": "tawaf ifadhah wajib atau rukun",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الأركان",
+        "الوجوب",
+        "ركن",
+        "فرض",
+        "واجب"
+      ],
+      "num_results": 10,
+      "search_time_ms": 356,
+      "top_score": 100.0,
+      "unique_books": 7,
+      "top3": [
+        {
+          "title": "مسألة العقيقة فرض واجب",
+          "book": "كتاب 767",
+          "score": 100.0,
+          "page": "234",
+          "snippet_len": 408
+        },
+        {
+          "title": "السعي في العمرة ركن أم واجب",
+          "book": "جامع تراث العلامة الألباني في الفقه",
+          "score": 92.4,
+          "page": "231",
+          "snippet_len": 603
+        },
+        {
+          "title": "حكم قياس عمل صالح على ركن من الأركان",
+          "book": "لقاء الباب المفتوح",
+          "score": 91.2,
+          "page": "13",
+          "snippet_len": 575
+        }
+      ]
+    },
+    {
+      "id": "hj05",
+      "text": "badal haji untuk orang meninggal",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "أحكام الميت",
+        "الجنازة",
+        "الحج",
+        "المتوفى",
+        "المناسك",
+        "الموت",
+        "الميت",
+        "الوفاة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 338,
+      "top_score": 100.0,
+      "unique_books": 7,
+      "top3": [
+        {
+          "title": "تغسيل الميت:",
+          "book": "كتاب 12895",
+          "score": 100.0,
+          "page": "484",
+          "snippet_len": 544
+        },
+        {
+          "title": "تغسيل الميت",
+          "book": "مجموع فتاوى ورسائل فضيلة الشيخ محمد بن صالح العثيمين",
+          "score": 99.9,
+          "page": "85",
+          "snippet_len": 549
+        },
+        {
+          "title": "تغسيل الميت",
+          "book": "شرح متن أبي شجاع",
+          "score": 99.9,
+          "page": "6",
+          "snippet_len": 542
+        }
+      ]
+    },
+    {
+      "id": "nk01",
+      "text": "syarat sah nikah dalam islam",
+      "lang": "id",
+      "domain": "مناكحات",
+      "translated_terms": [
+        "التزويج",
+        "الشروط",
+        "الصحة",
+        "زواج",
+        "شرط",
+        "صحة",
+        "صحيح",
+        "عقد النكاح"
+      ],
+      "num_results": 10,
+      "search_time_ms": 806,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "مجمل شرط عقد النكاح:",
+          "book": "الزواج في ظل الإسلام",
+          "score": 100.0,
+          "page": "70",
+          "snippet_len": 569
+        },
+        {
+          "title": "شروط صحة عقد النكاح",
+          "book": "كتاب 13251",
+          "score": 99.9,
+          "page": "420",
+          "snippet_len": 528
+        },
+        {
+          "title": "شروط صحة عقد النكاح",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 99.9,
+          "page": "161",
+          "snippet_len": 436
+        }
+      ]
+    },
+    {
+      "id": "nk02",
+      "text": "nikah siri hukumnya menurut ulama",
+      "lang": "id",
+      "domain": "مناكحات",
+      "translated_terms": [
+        "التزويج",
+        "العلماء",
+        "زواج",
+        "عالم",
+        "عقد النكاح",
+        "علماء",
+        "نكاح",
+        "نكاح بغير شهود"
+      ],
+      "num_results": 10,
+      "search_time_ms": 438,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "* عقد النكاح",
+          "book": "الإنحراف العقدي في أدب الحداثة وفكرها",
+          "score": 100.0,
+          "page": "1790",
+          "snippet_len": 602
+        },
+        {
+          "title": "عقد النكاح",
+          "book": "شرح زاد المستقنع",
+          "score": 99.9,
+          "page": "16",
+          "snippet_len": 419
+        },
+        {
+          "title": "عقد النكاح",
+          "book": "العدة شرح العمدة",
+          "score": 99.9,
+          "page": "6",
+          "snippet_len": 586
+        }
+      ]
+    },
+    {
+      "id": "nk03",
+      "text": "wali nikah siapa yang berhak",
+      "lang": "id",
+      "domain": "مناكحات",
+      "translated_terms": [
+        "التزويج",
+        "الولاية",
+        "الولي",
+        "الولي في النكاح",
+        "زواج",
+        "عقد النكاح",
+        "نكاح",
+        "ولاية النكاح"
+      ],
+      "num_results": 10,
+      "search_time_ms": 481,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "الولي في النكاح",
+          "book": "كتاب 13251",
+          "score": 100.0,
+          "page": "466",
+          "snippet_len": 538
+        },
+        {
+          "title": "الولي في النكاح",
+          "book": "القرآن الكريم وعلومه",
+          "score": 99.9,
+          "page": "48",
+          "snippet_len": 598
+        },
+        {
+          "title": "[الولي في النكاح]",
+          "book": "نَيْلُ المَآرِب",
+          "score": 99.8,
+          "page": "147",
+          "snippet_len": 510
+        }
+      ]
+    },
+    {
+      "id": "nk04",
+      "text": "mahar nikah minimal berapa",
+      "lang": "id",
+      "domain": "مناكحات",
+      "translated_terms": [
+        "التزويج",
+        "الصداق",
+        "المهر",
+        "زواج",
+        "صداق",
+        "عقد النكاح",
+        "مهر",
+        "نكاح"
+      ],
+      "num_results": 10,
+      "search_time_ms": 518,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "عقد النكاح بلا صداق",
+          "book": "مجموع الفتاوى",
+          "score": 100.0,
+          "page": "53",
+          "snippet_len": 507
+        },
+        {
+          "title": "من شروط صحة عقد النكاح المهر",
+          "book": "كتاب 13251",
+          "score": 82.8,
+          "page": "2",
+          "snippet_len": 561
+        },
+        {
+          "title": "المهر ليس ركنا في عقد النكاح",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الأولى",
+          "score": 82.6,
+          "page": "53",
+          "snippet_len": 600
+        }
+      ]
+    },
+    {
+      "id": "nk05",
+      "text": "talak tiga sekaligus jatuh berapa",
+      "lang": "id",
+      "domain": "مناكحات",
+      "translated_terms": [
+        "الطلاق",
+        "طلاق",
+        "فراق"
+      ],
+      "num_results": 10,
+      "search_time_ms": 607,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "باب طلاق السنة وكيف الطلاق",
+          "book": "مجمع الزوائد ومنبع الفوائد",
+          "score": 100.0,
+          "page": "335",
+          "snippet_len": 548
+        },
+        {
+          "title": "باب طلاق السنة وكيف الطلاق",
+          "book": "غاية المقصد فى زوائد المسند",
+          "score": 100.0,
+          "page": "266",
+          "snippet_len": 426
+        },
+        {
+          "title": "فراق",
+          "book": "مجلة الرسالة",
+          "score": 99.6,
+          "page": "55",
+          "snippet_len": 592
+        }
+      ]
+    },
+    {
+      "id": "nk06",
+      "text": "iddah cerai mati berapa lama",
+      "lang": "id",
+      "domain": "مناكحات",
+      "translated_terms": [
+        "الطلاق",
+        "العدة",
+        "المتوفى",
+        "الموت",
+        "الميت",
+        "الوفاة",
+        "طلاق",
+        "عدة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 778,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "(ب) العدة (عدة الوفاة) :",
+          "book": "الزواج في ظل الإسلام",
+          "score": 100.0,
+          "page": "122",
+          "snippet_len": 511
+        },
+        {
+          "title": "حالات تقديم عدة الطلاق على عدة الوفاة",
+          "book": "شرح زاد المستقنع",
+          "score": 85.3,
+          "page": "9",
+          "snippet_len": 543
+        },
+        {
+          "title": "من لا عدة عليها من الطلاق وعليها العدة من الوفاة",
+          "book": "قُلْتُ: فَمَا قَوْلُهُ فِي الْفُولِ وَالْعَدَسِ وَالْحِنْطَة",
+          "score": 85.1,
+          "page": "37",
+          "snippet_len": 360
+        }
+      ]
+    },
+    {
+      "id": "nk07",
+      "text": "khuluk cerai gugat istri",
+      "lang": "id",
+      "domain": "مناكحات",
+      "translated_terms": [
+        "الخلع",
+        "الزوجة",
+        "الطلاق",
+        "خلع",
+        "زوجة",
+        "شقاق",
+        "طلاق",
+        "طلب الطلاق"
+      ],
+      "num_results": 10,
+      "search_time_ms": 2066,
+      "top_score": 100.0,
+      "unique_books": 5,
+      "top3": [
+        {
+          "title": "طلب الطلاق..والخلع",
+          "book": "القرآن الكريم وعلومه",
+          "score": 100.0,
+          "page": "352",
+          "snippet_len": 412
+        },
+        {
+          "title": "يجوز طلب الطلاق",
+          "book": "القرآن الكريم وعلومه",
+          "score": 100.0,
+          "page": "188",
+          "snippet_len": 190
+        },
+        {
+          "title": "طلب الطلاق من العقيم",
+          "book": "القرآن الكريم وعلومه",
+          "score": 92.1,
+          "page": "122",
+          "snippet_len": 429
+        }
+      ]
+    },
+    {
+      "id": "nk08",
+      "text": "nafkah suami kepada istri",
+      "lang": "en",
+      "domain": "مناكحات",
+      "translated_terms": [
+        "الزوج",
+        "الزوج والزوجة",
+        "الزوجة",
+        "العشرة بين الزوجين",
+        "النفقة",
+        "حقوق الزوجين",
+        "زوج",
+        "زوجة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 303,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "الزوج والزوجة",
+          "book": "الزوج والزوجة",
+          "score": 100.0,
+          "page": "4",
+          "snippet_len": 495
+        },
+        {
+          "title": "دعوة الزوج والزوجة",
+          "book": "القرآن الكريم وعلومه",
+          "score": 91.7,
+          "page": "354",
+          "snippet_len": 506
+        },
+        {
+          "title": "[شروط الزوج والزوجة]",
+          "book": "كتاب 21607",
+          "score": 91.6,
+          "page": "374",
+          "snippet_len": 543
+        }
+      ]
+    },
+    {
+      "id": "nk09",
+      "text": "poligami syarat dan hukumnya",
+      "lang": "id",
+      "domain": "مناكحات",
+      "translated_terms": [
+        "التعدد",
+        "الشروط",
+        "تعدد الزوجات",
+        "شرط"
+      ],
+      "num_results": 10,
+      "search_time_ms": 185,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "شرط إباحة تعدد الزوجات",
+          "book": "آدم في الجنة",
+          "score": 100.0,
+          "page": "30",
+          "snippet_len": 599
+        },
+        {
+          "title": "تعدد الزوجات",
+          "book": "التفسير والمُفَسِّرون",
+          "score": 92.6,
+          "page": "453",
+          "snippet_len": 592
+        },
+        {
+          "title": "تعدد الزوجات",
+          "book": "القرآن الكريم وعلومه",
+          "score": 92.6,
+          "page": "158",
+          "snippet_len": 582
+        }
+      ]
+    },
+    {
+      "id": "nk10",
+      "text": "nikah mut'ah halal atau haram",
+      "lang": "id",
+      "domain": "مناكحات",
+      "translated_terms": [
+        "التزويج",
+        "الحرام",
+        "الحلال",
+        "المباح",
+        "المتعة",
+        "المحرم",
+        "حرام",
+        "حلال"
+      ],
+      "num_results": 10,
+      "search_time_ms": 159,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "نكاح المتعة",
+          "book": "كتاب 384",
+          "score": 100.0,
+          "page": "6611",
+          "snippet_len": 593
+        },
+        {
+          "title": "نكاح المتعة",
+          "book": "كتاب 384",
+          "score": 100.0,
+          "page": "6551",
+          "snippet_len": 559
+        },
+        {
+          "title": "- نكاح المتعة",
+          "book": "كتاب 384",
+          "score": 100.0,
+          "page": "6612",
+          "snippet_len": 555
+        }
+      ]
+    },
+    {
+      "id": "nk11",
+      "text": "cerai karena suami impoten",
+      "lang": "id",
+      "domain": "مناكحات",
+      "translated_terms": [
+        "العيوب في النكاح",
+        "الفسخ بالعيب",
+        "خيار العيب",
+        "طلب الطلاق",
+        "عنة الزوج",
+        "فسخ النكاح بالعيب",
+        "الجب",
+        "الخلع"
+      ],
+      "num_results": 10,
+      "search_time_ms": 1033,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "فسخ النكاح بالعيب",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 100.0,
+          "page": "188",
+          "snippet_len": 345
+        },
+        {
+          "title": "فسخ النكاح بالعيب",
+          "book": "كتاب 148531",
+          "score": 99.9,
+          "page": "145",
+          "snippet_len": 593
+        },
+        {
+          "title": "فسخ النكاح بالعيب",
+          "book": "شرح مقدمة ابن حجر رحمه الله",
+          "score": 99.9,
+          "page": "529",
+          "snippet_len": 544
+        }
+      ]
+    },
+    {
+      "id": "nk12",
+      "text": "hak asuh anak setelah cerai",
+      "lang": "id",
+      "domain": "مناكحات",
+      "translated_terms": [
+        "الأولاد",
+        "الطلاق",
+        "الولد",
+        "بعد",
+        "بعد ذلك",
+        "طلاق",
+        "فراق",
+        "ولد"
+      ],
+      "num_results": 10,
+      "search_time_ms": 332,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "{عتل بعد ذلك زنيم}",
+          "book": "اللامع الصبيح بشرح الجامع الصحيح",
+          "score": 100.0,
+          "page": "519",
+          "snippet_len": 588
+        },
+        {
+          "title": "وتبقى بعد ذلك كلمة",
+          "book": "مقالات العلامة الدكتور",
+          "score": 99.9,
+          "page": "279",
+          "snippet_len": 598
+        },
+        {
+          "title": "ماذا حدث بعد ذلك؟!",
+          "book": "وماذا بعد ..",
+          "score": 99.9,
+          "page": "3",
+          "snippet_len": 490
+        }
+      ]
+    },
+    {
+      "id": "mu01",
+      "text": "riba bank konvensional hukumnya",
+      "lang": "id",
+      "domain": "معاملات",
+      "translated_terms": [
+        "البنوك الربوية",
+        "التعامل مع البنوك",
+        "الربا المصرفي",
+        "الفائدة المصرفية",
+        "ربا البنوك",
+        "ربا الفضل",
+        "ربا النسيئة",
+        "فائدة البنك"
+      ],
+      "num_results": 10,
+      "search_time_ms": 1245,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "التعامل مع البنوك الربوية",
+          "book": "القرآن الكريم وعلومه",
+          "score": 100.0,
+          "page": "191",
+          "snippet_len": 435
+        },
+        {
+          "title": "(التعامل مع البنوك الربوية)",
+          "book": "فتاوى إسلامية",
+          "score": 99.9,
+          "page": "394",
+          "snippet_len": 543
+        },
+        {
+          "title": "حكم التعامل مع البنوك الربوية",
+          "book": "جامع تراث العلامة الألباني في الفقه",
+          "score": 92.7,
+          "page": "255",
+          "snippet_len": 543
+        }
+      ]
+    },
+    {
+      "id": "mu02",
+      "text": "jual beli online hukumnya",
+      "lang": "id",
+      "domain": "معاملات",
+      "translated_terms": [
+        "الإلكتروني",
+        "البيع",
+        "البيع الإلكتروني",
+        "البيع عبر الإنترنت",
+        "الشراء عبر الإنترنت",
+        "المعاملات",
+        "بيع",
+        "بيع المعاطاة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 1408,
+      "top_score": 100.0,
+      "unique_books": 7,
+      "top3": [
+        {
+          "title": "بيع المعاطاة",
+          "book": "كتاب 384",
+          "score": 100.0,
+          "page": "3313",
+          "snippet_len": 364
+        },
+        {
+          "title": "١ - بيع المعاطاة",
+          "book": "كتاب 384",
+          "score": 91.5,
+          "page": "3494",
+          "snippet_len": 522
+        },
+        {
+          "title": "٥٦٢ - بيع المعاطاة",
+          "book": "اختيارات شيخ الإسلام ابن تيمية الفقهية",
+          "score": 91.3,
+          "page": "386",
+          "snippet_len": 562
+        }
+      ]
+    },
+    {
+      "id": "mu03",
+      "text": "gadai emas di bank syariah",
+      "lang": "id",
+      "domain": "معاملات",
+      "translated_terms": [
+        "البنك",
+        "البنوك",
+        "البنوك الإسلامية",
+        "الذهب",
+        "الرهن",
+        "المصارف الإسلامية",
+        "المصرف",
+        "ذهب"
+      ],
+      "num_results": 10,
+      "search_time_ms": 1204,
+      "top_score": 100.0,
+      "unique_books": 7,
+      "top3": [
+        {
+          "title": "رهن الذهب في الفضة",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الأولى",
+          "score": 100.0,
+          "page": "480",
+          "snippet_len": 565
+        },
+        {
+          "title": "البنوك الإسلامية",
+          "book": "جامع تراث العلامة الألباني في الفقه",
+          "score": 96.5,
+          "page": "181",
+          "snippet_len": 380
+        },
+        {
+          "title": "البنوك الإسلامية",
+          "book": "جامع تراث العلامة الألباني في الفقه",
+          "score": 96.5,
+          "page": "196",
+          "snippet_len": 548
+        }
+      ]
+    },
+    {
+      "id": "mu04",
+      "text": "asuransi syariah halal haram",
+      "lang": "en",
+      "domain": "معاملات",
+      "translated_terms": [
+        "التأمين",
+        "التأمين التكافلي",
+        "الحرام",
+        "الحلال",
+        "المباح",
+        "المحرم",
+        "تأمين",
+        "تكافل"
+      ],
+      "num_results": 10,
+      "search_time_ms": 905,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "التأمين التكافلي",
+          "book": "القرآن الكريم وعلومه",
+          "score": 100.0,
+          "page": "295",
+          "snippet_len": 554
+        },
+        {
+          "title": "التأمين المباح.. والتأمين الحرام",
+          "book": "فتاوى الشبكة الإسلامية",
+          "score": 37.3,
+          "page": "10570",
+          "snippet_len": 598
+        },
+        {
+          "title": "تكافل",
+          "book": "الفتاوى الاقتصادية",
+          "score": 35.5,
+          "page": "55",
+          "snippet_len": 597
+        }
+      ]
+    },
+    {
+      "id": "mu05",
+      "text": "wakaf tanah syarat dan rukunnya",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الأوقاف",
+        "الشروط",
+        "الوقف",
+        "شرط",
+        "وقف"
+      ],
+      "num_results": 10,
+      "search_time_ms": 570,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "شرط الوقف",
+          "book": "المجددي البركتي",
+          "score": 100.0,
+          "page": "121",
+          "snippet_len": 536
+        },
+        {
+          "title": "بيان شرط الوقف",
+          "book": "كتاب 107",
+          "score": 91.6,
+          "page": "361",
+          "snippet_len": 498
+        },
+        {
+          "title": "شرط الصداق أحق الشروط",
+          "book": "فتاوى إسلامية",
+          "score": 87.7,
+          "page": "177",
+          "snippet_len": 580
+        }
+      ]
+    },
+    {
+      "id": "mu06",
+      "text": "hutang piutang dalam islam",
+      "lang": "id",
+      "domain": "معاملات",
+      "translated_terms": [
+        "الدين",
+        "القرض",
+        "دين",
+        "قرض"
+      ],
+      "num_results": 10,
+      "search_time_ms": 361,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "اشتراط توثيق دين القرض",
+          "book": "موسوعة فقه المعاملات",
+          "score": 100.0,
+          "page": "651",
+          "snippet_len": 539
+        },
+        {
+          "title": "توثيق دين القرض بالكتابة والشهادة",
+          "book": "موسوعة فقه المعاملات",
+          "score": 92.7,
+          "page": "693",
+          "snippet_len": 456
+        },
+        {
+          "title": "اشتراط توثيق دين القرض:",
+          "book": "الموسوعة الفقهية الكويتية",
+          "score": 85.1,
+          "page": "127",
+          "snippet_len": 421
+        }
+      ]
+    },
+    {
+      "id": "mu07",
+      "text": "jual beli salam istishna",
+      "lang": "en",
+      "domain": "معاملات",
+      "translated_terms": [
+        "البيع",
+        "المعاملات",
+        "بيع"
+      ],
+      "num_results": 10,
+      "search_time_ms": 187,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "كتاب البيع وسائر المعاملات",
+          "book": "الحواشي السابغات",
+          "score": 100.0,
+          "page": "329",
+          "snippet_len": 600
+        },
+        {
+          "title": "كتاب البيع وسائر المعاملات",
+          "book": "كتاب 14153",
+          "score": 100.0,
+          "page": "203",
+          "snippet_len": 497
+        },
+        {
+          "title": "كتاب البيع وسائر المعاملات",
+          "book": "كتاب أخصر المختصرات",
+          "score": 100.0,
+          "page": "181",
+          "snippet_len": 601
+        }
+      ]
+    },
+    {
+      "id": "mu08",
+      "text": "mudharabah akad bagi hasil",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [
+        "المضاربة",
+        "مضاربة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 303,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "مضاربة",
+          "book": "موسوعة فقه المعاملات",
+          "score": 100.0,
+          "page": "145",
+          "snippet_len": 596
+        },
+        {
+          "title": "عقد مضاربة",
+          "book": "فتاوى يسألونك",
+          "score": 90.7,
+          "page": "442",
+          "snippet_len": 555
+        },
+        {
+          "title": "مضاربة فاسدة",
+          "book": "فتاوى يسألونك",
+          "score": 90.7,
+          "page": "139",
+          "snippet_len": 578
+        }
+      ]
+    },
+    {
+      "id": "mu09",
+      "text": "hukum dropship dalam islam",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [
+        "أحكام",
+        "الحكم",
+        "حكم"
+      ],
+      "num_results": 10,
+      "search_time_ms": 363,
+      "top_score": 100.0,
+      "unique_books": 7,
+      "top3": [
+        {
+          "title": "المبحث الثالث في أحكام الحكم",
+          "book": "فصول البدائع في أصول الشرائع",
+          "score": 100.0,
+          "page": "249",
+          "snippet_len": 603
+        },
+        {
+          "title": "الفصل الثالث: في أحكام الحكم",
+          "book": "كتاب 11727",
+          "score": 99.8,
+          "page": "83",
+          "snippet_len": 603
+        },
+        {
+          "title": "[محل حكم الحكم: ]",
+          "book": "جواهر الدرر في حل ألفاظ المختصر",
+          "score": 94.2,
+          "page": "205",
+          "snippet_len": 597
+        }
+      ]
+    },
+    {
+      "id": "mu10",
+      "text": "waris pembagian harta",
+      "lang": "id",
+      "domain": "معاملات",
+      "translated_terms": [
+        "أصحاب الفروض",
+        "الأموال",
+        "الإرث",
+        "التركة",
+        "الفرائض",
+        "المال",
+        "الميراث",
+        "فروض الإرث"
+      ],
+      "num_results": 10,
+      "search_time_ms": 400,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "[ميراث أصحاب الفروض]",
+          "book": "كتاب 12227",
+          "score": 100.0,
+          "page": "558",
+          "snippet_len": 603
+        },
+        {
+          "title": "تقديم أصحاب الفروض في الإرث:",
+          "book": "الفقه المنهجي على مذهب الإمام الشافعي رحمه الله تعالى",
+          "score": 90.0,
+          "page": "84",
+          "snippet_len": 602
+        },
+        {
+          "title": "- أصحاب الفروض",
+          "book": "كتاب 384",
+          "score": 84.5,
+          "page": "7739",
+          "snippet_len": 603
+        }
+      ]
+    },
+    {
+      "id": "mu11",
+      "text": "wasiat maksimal sepertiga",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [
+        "الوصية",
+        "وصية"
+      ],
+      "num_results": 10,
+      "search_time_ms": 336,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "٩ - الوصية بآلات اللهو وصية باطلة",
+          "book": "الغناء والمعازف في ضوء الكتاب والسنة وآثار الصحابة - رضي الل",
+          "score": 100.0,
+          "page": "55",
+          "snippet_len": 512
+        },
+        {
+          "title": "وصية الحامل والرجل يستأذن ورثته في الوصية",
+          "book": "كتاب الطهارة",
+          "score": 93.6,
+          "page": "86",
+          "snippet_len": 597
+        },
+        {
+          "title": "١٣ - وصية الحامل، والرجل يستأذن ورثته في الوصية",
+          "book": "المُصَنَّفُ",
+          "score": 88.1,
+          "page": "416",
+          "snippet_len": 589
+        }
+      ]
+    },
+    {
+      "id": "mu12",
+      "text": "hibah harta kepada anak",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [
+        "الأموال",
+        "الأولاد",
+        "المال",
+        "الهبة",
+        "الولد",
+        "مال",
+        "هبة",
+        "ولد"
+      ],
+      "num_results": 10,
+      "search_time_ms": 711,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "ولد الولد الخليفة ولد",
+          "book": "كتاب 12406",
+          "score": 100.0,
+          "page": "5",
+          "snippet_len": 463
+        },
+        {
+          "title": "باب الرجوع في هبة الولد والتسوية بين الأولاد في النحل",
+          "book": "وَبِه ثقتي ورجائي",
+          "score": 94.9,
+          "page": "296",
+          "snippet_len": 507
+        },
+        {
+          "title": "ولد ام الولد",
+          "book": "كتاب 6178",
+          "score": 94.5,
+          "page": "854",
+          "snippet_len": 576
+        }
+      ]
+    },
+    {
+      "id": "aq01",
+      "text": "tauhid rububiyah uluhiyah",
+      "lang": "id",
+      "domain": "عقيدة",
+      "translated_terms": [
+        "التوحيد",
+        "توحيد"
+      ],
+      "num_results": 10,
+      "search_time_ms": 322,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "توحيد الألوهية أساس التوحيد",
+          "book": "شرح رسالة العبودية لابن تيمية",
+          "score": 100.0,
+          "page": "22",
+          "snippet_len": 319
+        },
+        {
+          "title": "التوحيد الأول: توحيد العامة",
+          "book": "آثار الإمام ابن القيم الجوزية وما لحقها من أعمال (٣١)",
+          "score": 99.9,
+          "page": "504",
+          "snippet_len": 548
+        },
+        {
+          "title": "التوحيد الثاني: توحيد الخاصة",
+          "book": "آثار الإمام ابن القيم الجوزية وما لحقها من أعمال (٣١)",
+          "score": 99.9,
+          "page": "516",
+          "snippet_len": 560
+        }
+      ]
+    },
+    {
+      "id": "aq02",
+      "text": "syirik kecil dan besar",
+      "lang": "id",
+      "domain": "عقيدة",
+      "translated_terms": [
+        "الشرك",
+        "شرك"
+      ],
+      "num_results": 10,
+      "search_time_ms": 196,
+      "top_score": 100.0,
+      "unique_books": 7,
+      "top3": [
+        {
+          "title": "شرك الصوفية أخبث الشرك",
+          "book": "كتاب 8317",
+          "score": 100.0,
+          "page": "123",
+          "snippet_len": 298
+        },
+        {
+          "title": "الشرك نوعان: شرك أكبر، وشرك أصغر",
+          "book": "كتاب 36185",
+          "score": 86.5,
+          "page": "29",
+          "snippet_len": 525
+        },
+        {
+          "title": "الشرك في توحيد الربوبية شرك جزئي",
+          "book": "شرح العقيدة الطحاوية",
+          "score": 86.4,
+          "page": "2",
+          "snippet_len": 288
+        }
+      ]
+    },
+    {
+      "id": "aq03",
+      "text": "bid'ah hasanah dan sayyi'ah",
+      "lang": "id",
+      "domain": "عقيدة",
+      "translated_terms": [
+        "البدع",
+        "البدعة",
+        "بدعة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 269,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "بدعة القدر من أوائل البدع",
+          "book": "شرح العقيدة الواسطية",
+          "score": 100.0,
+          "page": "4",
+          "snippet_len": 592
+        },
+        {
+          "title": "تقسيم البدعة إلى بدعة مفسقة ومكفرة",
+          "book": "استثمار الوقت عند العلماء",
+          "score": 97.8,
+          "page": "13",
+          "snippet_len": 507
+        },
+        {
+          "title": "البدع ضلال وليس فيها بدعة حسنة",
+          "book": "الحث على اتباع السنة والتحذير من البدع وبيان خطرها",
+          "score": 92.7,
+          "page": "42",
+          "snippet_len": 419
+        }
+      ]
+    },
+    {
+      "id": "aq04",
+      "text": "tawassul kepada orang shaleh",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [
+        "التوسل",
+        "توسل"
+      ],
+      "num_results": 10,
+      "search_time_ms": 341,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "التوسل بالأعمال الصالحة توسل مشروع",
+          "book": "شرح العقيدة الطحاوية",
+          "score": 100.0,
+          "page": "12",
+          "snippet_len": 588
+        },
+        {
+          "title": "التوسل توسل بني إسرائيل بالتابوت",
+          "book": "مجلة البحوث الإسلامية",
+          "score": 92.1,
+          "page": "45",
+          "snippet_len": 541
+        },
+        {
+          "title": "٧ - التوسل إلى الله تعالى بأكثر من توسل",
+          "book": "شرح الدعاء من الكتاب والسنة",
+          "score": 82.2,
+          "page": "276",
+          "snippet_len": 511
+        }
+      ]
+    },
+    {
+      "id": "aq05",
+      "text": "maulid nabi hukumnya",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [
+        "الرسول",
+        "النبي",
+        "محمد"
+      ],
+      "num_results": 10,
+      "search_time_ms": 616,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "معنى الرسول ومعنى النبي",
+          "book": "شرح العقيدة الواسطية",
+          "score": 100.0,
+          "page": "3",
+          "snippet_len": 522
+        },
+        {
+          "title": "الرسول أخص مطلقا من النبي",
+          "book": "الدر المنضود في الصلاة والسلام على صاحب المقام المحمود",
+          "score": 93.3,
+          "page": "56",
+          "snippet_len": 318
+        },
+        {
+          "title": "ذكر النبي بدل الرسول وعكسه",
+          "book": "علوم القرآن",
+          "score": 92.7,
+          "page": "233",
+          "snippet_len": 409
+        }
+      ]
+    },
+    {
+      "id": "aq06",
+      "text": "iman kepada qadha qadar",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "إيمان",
+        "الإيمان",
+        "القضاء والقدر",
+        "قضاء وقدر"
+      ],
+      "num_results": 10,
+      "search_time_ms": 759,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "قضاء وقدر",
+          "book": "إن هذا الكتاب مزيجٌ مرتَّبٌ، وجهدٌ مهذَّبٌ مشذَّبٌ. وهو يقول",
+          "score": 100.0,
+          "page": "46",
+          "snippet_len": 300
+        },
+        {
+          "title": "القضاء والقدر",
+          "book": "مجلة المنار",
+          "score": 93.0,
+          "page": "265",
+          "snippet_len": 569
+        },
+        {
+          "title": "القضاء والقدر",
+          "book": "مجلة المنار",
+          "score": 93.0,
+          "page": "189",
+          "snippet_len": 591
+        }
+      ]
+    },
+    {
+      "id": "aq07",
+      "text": "hukum murtad dalam islam",
+      "lang": "id",
+      "domain": "عقيدة",
+      "translated_terms": [
+        "أحكام",
+        "الحكم",
+        "الردة",
+        "المرتد",
+        "حكم",
+        "ردة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 368,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "أحكام الردة",
+          "book": "الفقه المنهجي على مذهب الإمام الشافعي رحمه الله تعالى",
+          "score": 100.0,
+          "page": "104",
+          "snippet_len": 584
+        },
+        {
+          "title": "أحكام المرتد",
+          "book": "كتاب 384",
+          "score": 98.3,
+          "page": "5580",
+          "snippet_len": 527
+        },
+        {
+          "title": "[أحكام المرتد]",
+          "book": "وَلَا يُقَالُ: يَلْزَمُ عَلَى هَذَا كَوْنُ الْكُوفِيِّينَ مُ",
+          "score": 98.0,
+          "page": "200",
+          "snippet_len": 603
+        }
+      ]
+    },
+    {
+      "id": "aq08",
+      "text": "sifat dua puluh allah",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [
+        "الله",
+        "سبحانه وتعالى"
+      ],
+      "num_results": 10,
+      "search_time_ms": 234,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "صفات الله سبحانه وتعالى",
+          "book": "فحسب، بل من التبيين والإيضاح",
+          "score": 100.0,
+          "page": "179",
+          "snippet_len": 504
+        },
+        {
+          "title": "فرح الله سبحانه وتعالى",
+          "book": "الصبر على المصائب",
+          "score": 100.0,
+          "page": "4",
+          "snippet_len": 558
+        },
+        {
+          "title": "ذكر الله سبحانه وتعالى",
+          "book": "الموطأ",
+          "score": 100.0,
+          "page": "263",
+          "snippet_len": 600
+        }
+      ]
+    },
+    {
+      "id": "ts01",
+      "text": "taubat nasuha syarat dan caranya",
+      "lang": "id",
+      "domain": "تصوف",
+      "translated_terms": [
+        "التوبة",
+        "الشروط",
+        "توبة",
+        "شرط"
+      ],
+      "num_results": 10,
+      "search_time_ms": 535,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "شرط الصداق أحق الشروط",
+          "book": "فتاوى إسلامية",
+          "score": 100.0,
+          "page": "177",
+          "snippet_len": 580
+        },
+        {
+          "title": "الشروط الموجبة لإسقاط التوبة لعقوبة الذنب",
+          "book": "شرح كتاب الإيمان الأوسط لابن تيمية",
+          "score": 81.3,
+          "page": "6",
+          "snippet_len": 599
+        },
+        {
+          "title": "التحلل من المظالم شرط في التوبة",
+          "book": "شرح كتاب السنة للبربهاري",
+          "score": 78.4,
+          "page": "19",
+          "snippet_len": 515
+        }
+      ]
+    },
+    {
+      "id": "ts02",
+      "text": "dzikir setelah shalat",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الأذكار",
+        "الصلاة",
+        "الصلوات",
+        "بعد",
+        "بعد ذلك",
+        "ذكر",
+        "صلاة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 346,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "ذكر ما جرى بعد ذلك",
+          "book": "تذكرة أولي النهى والعرفان",
+          "score": 100.0,
+          "page": "13",
+          "snippet_len": 603
+        },
+        {
+          "title": "[ذكر الملوك بعد ذلك] [١]",
+          "book": "كتاب 12406",
+          "score": 100.0,
+          "page": "421",
+          "snippet_len": 522
+        },
+        {
+          "title": "ذكر ما جرى للعسكر بعد ذلك",
+          "book": "السنة الثامنة والأربعين بعد الستمائة",
+          "score": 93.2,
+          "page": "353",
+          "snippet_len": 457
+        }
+      ]
+    },
+    {
+      "id": "ts03",
+      "text": "riya dan ujub perbedaannya",
+      "lang": "id",
+      "domain": "تصوف",
+      "translated_terms": [
+        "الرياء",
+        "العُجب",
+        "رياء",
+        "عجب"
+      ],
+      "num_results": 10,
+      "search_time_ms": 342,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "[رياء]",
+          "book": "كتاب 13631",
+          "score": 100.0,
+          "page": "269",
+          "snippet_len": 591
+        },
+        {
+          "title": "* (عجب)",
+          "book": "كتاب الأفعال",
+          "score": 99.6,
+          "page": "238",
+          "snippet_len": 572
+        },
+        {
+          "title": "[عجب]",
+          "book": "كتاب 13631",
+          "score": 99.4,
+          "page": "528",
+          "snippet_len": 542
+        }
+      ]
+    },
+    {
+      "id": "ts04",
+      "text": "ghibah dan namimah hukumnya",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [
+        "الغيبة",
+        "النميمة",
+        "غيبة",
+        "نميمة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 294,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "صفة الغيبة النميمة النفاق",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الأولى",
+          "score": 100.0,
+          "page": "16",
+          "snippet_len": 556
+        },
+        {
+          "title": "معنى الغيبة النميمة قول الزور اتق الله",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الأولى",
+          "score": 80.9,
+          "page": "23",
+          "snippet_len": 592
+        },
+        {
+          "title": "اللسان وآفاته - الغيبة والبهتان- النميمة - الكذب - السب",
+          "book": "العقيدة",
+          "score": 80.8,
+          "page": "2",
+          "snippet_len": 183
+        }
+      ]
+    },
+    {
+      "id": "ts05",
+      "text": "adab murid kepada guru",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [],
+      "num_results": 0,
+      "search_time_ms": 1,
+      "top_score": 0,
+      "unique_books": 0,
+      "top3": []
+    },
+    {
+      "id": "ts06",
+      "text": "tawakkal kepada allah",
+      "lang": "id",
+      "domain": "عقيدة",
+      "translated_terms": [
+        "التوكل",
+        "التوكل على الله",
+        "الله",
+        "توكل",
+        "حقيقة التوكل",
+        "سبحانه وتعالى"
+      ],
+      "num_results": 10,
+      "search_time_ms": 220,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "حقيقة التوكل على الله",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الأولى",
+          "score": 100.0,
+          "page": "376",
+          "snippet_len": 452
+        },
+        {
+          "title": "حقيقة التوكل على الله",
+          "book": "فتاوى إسلامية",
+          "score": 99.9,
+          "page": "18",
+          "snippet_len": 418
+        },
+        {
+          "title": "حقيقة التوكل على الله",
+          "book": "إجمال موضوعات السيرة النبوية",
+          "score": 99.9,
+          "page": "5",
+          "snippet_len": 500
+        }
+      ]
+    },
+    {
+      "id": "mk01",
+      "text": "makanan haram dalam islam",
+      "lang": "en",
+      "domain": "عبادات",
+      "translated_terms": [
+        "أكل",
+        "الأطعمة",
+        "الأطعمة المحرمة",
+        "الأكل",
+        "الحرام",
+        "الطعام",
+        "المحرم",
+        "المحرمات من الطعام"
+      ],
+      "num_results": 10,
+      "search_time_ms": 484,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "الأطعمة المحرمة",
+          "book": "القرآن الكريم وعلومه",
+          "score": 100.0,
+          "page": "156",
+          "snippet_len": 449
+        },
+        {
+          "title": "[الأطعمة المحرمة]",
+          "book": "نَيْلُ المَآرِب",
+          "score": 99.9,
+          "page": "396",
+          "snippet_len": 576
+        },
+        {
+          "title": "عاشرا - أكل الأطعمة المحرمة:",
+          "book": "الموسوعة الفقهية الكويتية",
+          "score": 86.1,
+          "page": "397",
+          "snippet_len": 391
+        }
+      ]
+    },
+    {
+      "id": "mk02",
+      "text": "hukum makan gelatin babi",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "أكل الجيلاتين",
+        "أكل لحم الخنزير",
+        "التداوي بالمحرم",
+        "الجيلاتين من الخنزير",
+        "حرمة أكل الخنزير",
+        "حكم الجيلاتين",
+        "لحم الخنزير",
+        "أحكام"
+      ],
+      "num_results": 10,
+      "search_time_ms": 679,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "مسألة أكل لحم الخنزير",
+          "book": "كتاب 767",
+          "score": 100.0,
+          "page": "55",
+          "snippet_len": 600
+        },
+        {
+          "title": "الحكمة في تحريم أكل لحم الخنزير",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الأولى",
+          "score": 86.4,
+          "page": "274",
+          "snippet_len": 363
+        },
+        {
+          "title": "١٤٦- لماذا حرم الإسلام أكل لحم الخنزير؟",
+          "book": "أنها سورة قصيرة، حيث لم تتجاوز آياتها إحدى عشرة آية",
+          "score": 80.8,
+          "page": "139",
+          "snippet_len": 566
+        }
+      ]
+    },
+    {
+      "id": "mk03",
+      "text": "sembelihan ahli kitab boleh dimakan",
+      "lang": "id",
+      "domain": "معاملات",
+      "translated_terms": [
+        "أكل ذبيحة الكتابي",
+        "أهل الكتاب",
+        "التذكية",
+        "الجواز",
+        "الذبائح",
+        "الذبح",
+        "جواز",
+        "حلال"
+      ],
+      "num_results": 10,
+      "search_time_ms": 487,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "ذبائح أهل الكتاب",
+          "book": "جامع تراث العلامة الألباني في المنهج",
+          "score": 100.0,
+          "page": "128",
+          "snippet_len": 470
+        },
+        {
+          "title": "[ذبائح أهل الكتاب]",
+          "book": "أحكام القرآن",
+          "score": 100.0,
+          "page": "455",
+          "snippet_len": 597
+        },
+        {
+          "title": "ذبائح أهل الكتاب",
+          "book": "فتاوى إسلامية",
+          "score": 100.0,
+          "page": "400",
+          "snippet_len": 603
+        }
+      ]
+    },
+    {
+      "id": "mk04",
+      "text": "khamr dan nabidz hukumnya",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [
+        "الخمر",
+        "المسكر",
+        "خمر"
+      ],
+      "num_results": 10,
+      "search_time_ms": 309,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "• حد شرب الخمر أو المسكر",
+          "book": "كتاب 35120",
+          "score": 100.0,
+          "page": "284",
+          "snippet_len": 435
+        },
+        {
+          "title": "المسكر قليله وكثيره حرام - أو قال -: خمر",
+          "book": "كل شراب أسكر فهو حرام",
+          "score": 97.9,
+          "page": "79",
+          "snippet_len": 585
+        },
+        {
+          "title": "المبحث الثاني إطلاق اسم الخمر على المسكر",
+          "book": "المطلع على دقائق زاد المستقنع",
+          "score": 87.4,
+          "page": "342",
+          "snippet_len": 575
+        }
+      ]
+    },
+    {
+      "id": "mk05",
+      "text": "hukum merokok dalam islam",
+      "lang": "id",
+      "domain": "معاملات",
+      "translated_terms": [
+        "أحكام",
+        "التدخين",
+        "الحكم",
+        "الدخان",
+        "حكم",
+        "حكم التدخين"
+      ],
+      "num_results": 10,
+      "search_time_ms": 657,
+      "top_score": 100.0,
+      "unique_books": 7,
+      "top3": [
+        {
+          "title": "حكم التدخين",
+          "book": "معالم الدعوة إلى الله",
+          "score": 100.0,
+          "page": "33",
+          "snippet_len": 429
+        },
+        {
+          "title": "حكم التدخين",
+          "book": "معالم الدعوة إلى الله",
+          "score": 100.0,
+          "page": "13",
+          "snippet_len": 590
+        },
+        {
+          "title": "حكم التدخين",
+          "book": "فضل الجهاد والشهادة في سبيل الله",
+          "score": 100.0,
+          "page": "26",
+          "snippet_len": 496
+        }
+      ]
+    },
+    {
+      "id": "mk06",
+      "text": "istihalah najis menjadi suci",
+      "lang": "en",
+      "domain": "طهارة",
+      "translated_terms": [
+        "التطهير",
+        "الطهارة",
+        "المتنجس",
+        "النجس",
+        "طهارة",
+        "نجاسة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 222,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "الطهارة من النجس:",
+          "book": "الفقه المنهجي على مذهب الإمام الشافعي رحمه الله تعالى",
+          "score": 100.0,
+          "page": "38",
+          "snippet_len": 601
+        },
+        {
+          "title": "طهارة البدن من النجس",
+          "book": "كتاب 13251",
+          "score": 96.3,
+          "page": "287",
+          "snippet_len": 597
+        },
+        {
+          "title": "طهارة الثوب من النجس",
+          "book": "كتاب 13251",
+          "score": 96.1,
+          "page": "268",
+          "snippet_len": 573
+        }
+      ]
+    },
+    {
+      "id": "jn01",
+      "text": "hukum mencuri dalam islam",
+      "lang": "id",
+      "domain": "جنايات",
+      "translated_terms": [
+        "أحكام",
+        "الحكم",
+        "السرقة",
+        "السرقة في الإسلام",
+        "حد السرقة",
+        "حكم",
+        "حكم السرقة",
+        "سرقة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 136,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "حد السرقة:",
+          "book": "الفقه المنهجي على مذهب الإمام الشافعي رحمه الله تعالى",
+          "score": 100.0,
+          "page": "75",
+          "snippet_len": 595
+        },
+        {
+          "title": "حد السرقة",
+          "book": "كتاب 13251",
+          "score": 99.9,
+          "page": "477",
+          "snippet_len": 545
+        },
+        {
+          "title": "حد السرقة",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 99.9,
+          "page": "390",
+          "snippet_len": 517
+        }
+      ]
+    },
+    {
+      "id": "jn02",
+      "text": "qishas diyat perbedaannya",
+      "lang": "en",
+      "domain": "عام",
+      "translated_terms": [
+        "الدية",
+        "دية"
+      ],
+      "num_results": 10,
+      "search_time_ms": 254,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "(٤٤٧) باب دية الجنين، ووجوب الدية في قتل الخطأ",
+          "book": "فتح المنعم شرح صحيح مسلم",
+          "score": 100.0,
+          "page": "554",
+          "snippet_len": 546
+        },
+        {
+          "title": "(باب دية الجنين ووجوب الدية في قتل الخطإ (وشبه",
+          "book": "صحيح مسلم شرح النووي",
+          "score": 100.0,
+          "page": "175",
+          "snippet_len": 570
+        },
+        {
+          "title": "في تأجيل الدية على العاقلة، وتأجيل دية ما دون النفس",
+          "book": "كتاب الطهارة",
+          "score": 94.9,
+          "page": "492",
+          "snippet_len": 598
+        }
+      ]
+    },
+    {
+      "id": "jn03",
+      "text": "hukum membunuh dalam islam",
+      "lang": "id",
+      "domain": "جنايات",
+      "translated_terms": [
+        "أحكام",
+        "الحكم",
+        "القتل",
+        "حكم",
+        "قتل"
+      ],
+      "num_results": 10,
+      "search_time_ms": 672,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "شروط الحكم بأن القتل بالنار قتل عمد",
+          "book": "شرح زاد المستقنع",
+          "score": 100.0,
+          "page": "7",
+          "snippet_len": 420
+        },
+        {
+          "title": "شروط الحكم بأن القتل بالخنق قتل عمد",
+          "book": "شرح زاد المستقنع",
+          "score": 100.0,
+          "page": "9",
+          "snippet_len": 334
+        },
+        {
+          "title": "شروط الحكم بأن القتل بالحبس قتل عمد",
+          "book": "شرح زاد المستقنع",
+          "score": 100.0,
+          "page": "3",
+          "snippet_len": 469
+        }
+      ]
+    },
+    {
+      "id": "jn04",
+      "text": "ta'zir dalam hukum islam",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [
+        "أحكام",
+        "التعزير",
+        "الحكم",
+        "تعزير",
+        "حكم"
+      ],
+      "num_results": 10,
+      "search_time_ms": 432,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "حكم التعزير",
+          "book": "شرح زاد المستقنع",
+          "score": 100.0,
+          "page": "11",
+          "snippet_len": 595
+        },
+        {
+          "title": "* حكم التعزير:",
+          "book": "الموسوعة الفقهية",
+          "score": 100.0,
+          "page": "253",
+          "snippet_len": 542
+        },
+        {
+          "title": "باب في أحكام التعزير",
+          "book": "كتاب 11811",
+          "score": 99.4,
+          "page": "546",
+          "snippet_len": 495
+        }
+      ]
+    },
+    {
+      "id": "jn05",
+      "text": "hudud jenis dan hukumnya",
+      "lang": "id",
+      "domain": "جنايات",
+      "translated_terms": [
+        "الحدود",
+        "حد",
+        "حدود"
+      ],
+      "num_results": 10,
+      "search_time_ms": 524,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "الخامس حد الحدود",
+          "book": "كتاب 9429",
+          "score": 100.0,
+          "page": "456",
+          "snippet_len": 535
+        },
+        {
+          "title": "في حد البلوغ وإقامة الحدود",
+          "book": "كتاب الطهارة",
+          "score": 84.7,
+          "page": "446",
+          "snippet_len": 581
+        },
+        {
+          "title": "كتاب الحدود - حد الخمر [١]",
+          "book": "شرح صحيح مسلم - المقدمة - ترجمة الإمام مسلم بن الحجاج",
+          "score": 84.4,
+          "page": "1",
+          "snippet_len": 602
+        }
+      ]
+    },
+    {
+      "id": "kt01",
+      "text": "hukum transplantasi organ",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [
+        "أحكام",
+        "الحكم",
+        "حكم",
+        "زراعة الأعضاء",
+        "نقل الأعضاء"
+      ],
+      "num_results": 10,
+      "search_time_ms": 516,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "حكم زراعة الأعضاء",
+          "book": "جامع تراث العلامة الألباني في الفقه",
+          "score": 100.0,
+          "page": "485",
+          "snippet_len": 374
+        },
+        {
+          "title": "زراعة الأعضاء",
+          "book": "القرآن الكريم وعلومه",
+          "score": 96.2,
+          "page": "478",
+          "snippet_len": 327
+        },
+        {
+          "title": "حكم زراعة الأعضاء.",
+          "book": "هل علي بن أبي طالب معصوم",
+          "score": 92.2,
+          "page": "8373",
+          "snippet_len": 564
+        }
+      ]
+    },
+    {
+      "id": "kt02",
+      "text": "hukum bayi tabung dalam islam",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [
+        "أحكام",
+        "أطفال الأنابيب",
+        "التلقيح الصناعي",
+        "الحكم",
+        "الرضيع",
+        "الصبي",
+        "الطفل",
+        "حكم"
+      ],
+      "num_results": 10,
+      "search_time_ms": 954,
+      "top_score": 100.0,
+      "unique_books": 6,
+      "top3": [
+        {
+          "title": "حكم التلقيح الصناعي",
+          "book": "الابتداع في دين الله",
+          "score": 100.0,
+          "page": "16",
+          "snippet_len": 557
+        },
+        {
+          "title": "التلقيح الصناعي",
+          "book": "كتاب 384",
+          "score": 97.5,
+          "page": "2649",
+          "snippet_len": 534
+        },
+        {
+          "title": "حكم أطفال الأنابيب",
+          "book": "جامع تراث العلامة الألباني في الفقه",
+          "score": 97.4,
+          "page": "535",
+          "snippet_len": 547
+        }
+      ]
+    },
+    {
+      "id": "kt03",
+      "text": "vaksin mengandung babi darurat",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الاضطرار",
+        "التطعيم",
+        "الضرورة",
+        "اللقاح",
+        "خنزير",
+        "ضرورة",
+        "لحم الخنزير"
+      ],
+      "num_results": 10,
+      "search_time_ms": 752,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "- لحم الخنزير",
+          "book": "كتاب 384",
+          "score": 100.0,
+          "page": "302",
+          "snippet_len": 588
+        },
+        {
+          "title": "لحم الخنزير",
+          "book": "التعليقاتُ الرَّضية",
+          "score": 99.7,
+          "page": "115",
+          "snippet_len": 184
+        },
+        {
+          "title": "مسألة لحم الخنزير",
+          "book": "فَنَذْكُرُ الْآيَةَ، ثُمَّ نَعْطِفُ",
+          "score": 91.2,
+          "page": "80",
+          "snippet_len": 548
+        }
+      ]
+    },
+    {
+      "id": "kt04",
+      "text": "cryptocurrency bitcoin halal haram",
+      "lang": "en",
+      "domain": "عام",
+      "translated_terms": [
+        "البتكوين",
+        "الحرام",
+        "الحلال",
+        "العملات الرقمية",
+        "المباح",
+        "المحرم",
+        "حرام",
+        "حلال"
+      ],
+      "num_results": 10,
+      "search_time_ms": 783,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "الحرام حرام",
+          "book": "موسوعة الأخلاق والزهد والرقائق",
+          "score": 100.0,
+          "page": "142",
+          "snippet_len": 554
+        },
+        {
+          "title": "الحب حلال أو حرام",
+          "book": "كتاب 432",
+          "score": 95.9,
+          "page": "210",
+          "snippet_len": 517
+        },
+        {
+          "title": "الصيد حلال لغير المحرم",
+          "book": "فتاوى إسلامية",
+          "score": 93.6,
+          "page": "454",
+          "snippet_len": 537
+        }
+      ]
+    },
+    {
+      "id": "kt05",
+      "text": "hukum foto dan gambar makhluk hidup",
+      "lang": "id",
+      "domain": "معاملات",
+      "translated_terms": [
+        "أحكام",
+        "التصوير",
+        "الحكم",
+        "الصورة",
+        "المصوِّر",
+        "تصوير",
+        "تصوير ذوات الأرواح",
+        "حكم"
+      ],
+      "num_results": 10,
+      "search_time_ms": 669,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "تصوير ذوات الأرواح",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الأولى",
+          "score": 100.0,
+          "page": "676",
+          "snippet_len": 479
+        },
+        {
+          "title": "تصوير ذوات الأرواح",
+          "book": "مجلة البحوث الإسلامية",
+          "score": 92.0,
+          "page": "104",
+          "snippet_len": 601
+        },
+        {
+          "title": "رسم ذوات الأرواح",
+          "book": "فتاوى اللجنة الدائمة - المجموعة الأولى",
+          "score": 86.3,
+          "page": "675",
+          "snippet_len": 531
+        }
+      ]
+    },
+    {
+      "id": "kt06",
+      "text": "musik dan nyanyian hukumnya",
+      "lang": "id",
+      "domain": "معاملات",
+      "translated_terms": [
+        "الأغاني",
+        "الغناء",
+        "الغناء والمعازف",
+        "المعازف",
+        "الموسيقى",
+        "حكم الغناء",
+        "حكم المعازف",
+        "غناء"
+      ],
+      "num_results": 10,
+      "search_time_ms": 410,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "حكم الغناء والمعازف في الشريعة الإسلامية",
+          "book": "صلاح الدين وتجديد الجهاد",
+          "score": 100.0,
+          "page": "2",
+          "snippet_len": 371
+        },
+        {
+          "title": "الغناء والمعازف",
+          "book": "جامع تراث العلامة الألباني في الفقه",
+          "score": 92.3,
+          "page": "303",
+          "snippet_len": 407
+        },
+        {
+          "title": "كتاب الغناء والمعازف",
+          "book": "جامع تراث العلامة الألباني في الفقه",
+          "score": 84.5,
+          "page": "303",
+          "snippet_len": 407
+        }
+      ]
+    },
+    {
+      "id": "kt07",
+      "text": "bank asi hukumnya dalam islam",
+      "lang": "id",
+      "domain": "معاملات",
+      "translated_terms": [
+        "البنك",
+        "البنوك",
+        "المصرف"
+      ],
+      "num_results": 10,
+      "search_time_ms": 476,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "١ - البنك (المصرف)",
+          "book": "الصندوق الخيري لنشر البحوث والرسائل العلمية",
+          "score": 100.0,
+          "page": "623",
+          "snippet_len": 597
+        },
+        {
+          "title": "٢ - كفالة من يقترض من المصرف (البنك)",
+          "book": "الفِقهُ الميَسَّر",
+          "score": 74.4,
+          "page": "67",
+          "snippet_len": 579
+        },
+        {
+          "title": "المصرف الإسلامي",
+          "book": "كتاب 384",
+          "score": 60.8,
+          "page": "3755",
+          "snippet_len": 448
+        }
+      ]
+    },
+    {
+      "id": "kt08",
+      "text": "operasi plastik hukumnya",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [],
+      "num_results": 0,
+      "search_time_ms": 0,
+      "top_score": 0,
+      "unique_books": 0,
+      "top3": []
+    },
+    {
+      "id": "kt09",
+      "text": "kloning manusia pandangan islam",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [
+        "الاستنساخ"
+      ],
+      "num_results": 10,
+      "search_time_ms": 341,
+      "top_score": 100.0,
+      "unique_books": 6,
+      "top3": [
+        {
+          "title": "الاستنساخ",
+          "book": "تارك الصلاة",
+          "score": 100.0,
+          "page": "1",
+          "snippet_len": 519
+        },
+        {
+          "title": "(أ) الاستنساخ:",
+          "book": "الموسوعة القرآنية المتخصصة",
+          "score": 91.3,
+          "page": "719",
+          "snippet_len": 555
+        },
+        {
+          "title": "ثانيا: الاستنساخ البشري",
+          "book": "الفِقهُ الميَسَّر",
+          "score": 83.6,
+          "page": "79",
+          "snippet_len": 273
+        }
+      ]
+    },
+    {
+      "id": "kt10",
+      "text": "hukum aborsi dalam islam",
+      "lang": "id",
+      "domain": "عام",
+      "translated_terms": [
+        "أحكام",
+        "إجهاض",
+        "الإجهاض",
+        "الحكم",
+        "حكم"
+      ],
+      "num_results": 10,
+      "search_time_ms": 1398,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "حكم الإجهاض",
+          "book": "شرح أخصر المختصرات",
+          "score": 100.0,
+          "page": "12",
+          "snippet_len": 548
+        },
+        {
+          "title": "حكم الإجهاض",
+          "book": "فتاوى يسألونك",
+          "score": 100.0,
+          "page": "161",
+          "snippet_len": 508
+        },
+        {
+          "title": "[حكم الإجهاض]",
+          "book": "المَسْبُوكُ",
+          "score": 100.0,
+          "page": "183",
+          "snippet_len": 568
+        }
+      ]
+    },
+    {
+      "id": "en01",
+      "text": "rulings on interest in Islamic finance",
+      "lang": "en",
+      "domain": "معاملات",
+      "translated_terms": [
+        "الاقتصاد الإسلامي",
+        "الربا",
+        "المعاملات المالية",
+        "ربا",
+        "ربا الفضل",
+        "ربا النسيئة",
+        "فائدة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 165,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "ربا النسيئة فيما لا يدخله ربا الفضل",
+          "book": "كتاب الطهارة",
+          "score": 100.0,
+          "page": "318",
+          "snippet_len": 568
+        },
+        {
+          "title": "ربا النسيئة",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 87.4,
+          "page": "366",
+          "snippet_len": 505
+        },
+        {
+          "title": "ربا النسيئة",
+          "book": "كتاب 13251",
+          "score": 87.4,
+          "page": "483",
+          "snippet_len": 503
+        }
+      ]
+    },
+    {
+      "id": "en02",
+      "text": "conditions for valid marriage in Islam",
+      "lang": "en",
+      "domain": "مناكحات",
+      "translated_terms": [
+        "التزويج",
+        "الصحة",
+        "زواج",
+        "صحة",
+        "صحيح",
+        "عقد النكاح",
+        "نكاح"
+      ],
+      "num_results": 10,
+      "search_time_ms": 617,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "شروط صحة عقد النكاح",
+          "book": "كتاب 13251",
+          "score": 100.0,
+          "page": "420",
+          "snippet_len": 528
+        },
+        {
+          "title": "شروط صحة عقد النكاح",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 100.0,
+          "page": "161",
+          "snippet_len": 436
+        },
+        {
+          "title": "شروط صحة عقد النكاح",
+          "book": "صحيح فقه السنة وأدلته وتوضيح مذاهب الأئمة",
+          "score": 99.8,
+          "page": "135",
+          "snippet_len": 550
+        }
+      ]
+    },
+    {
+      "id": "en03",
+      "text": "fasting rules during Ramadan",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الصيام",
+        "رمضان",
+        "شهر رمضان",
+        "صوم",
+        "صيام"
+      ],
+      "num_results": 10,
+      "search_time_ms": 162,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "صوم شهر رمضان",
+          "book": "كتاب 37532",
+          "score": 100.0,
+          "page": "59",
+          "snippet_len": 593
+        },
+        {
+          "title": "صوم شهر رمضان",
+          "book": "كتاب 21644",
+          "score": 99.9,
+          "page": "231",
+          "snippet_len": 527
+        },
+        {
+          "title": "صيام شهر رمضان",
+          "book": "السيرة النبوية كما جاءت في الأحاديث الصحيحة",
+          "score": 99.8,
+          "page": "44",
+          "snippet_len": 590
+        }
+      ]
+    },
+    {
+      "id": "en04",
+      "text": "inheritance shares in Islamic law",
+      "lang": "en",
+      "domain": "عام",
+      "translated_terms": [
+        "أحكام",
+        "الإرث",
+        "التركة",
+        "الحكم",
+        "الفرائض",
+        "الميراث",
+        "حكم",
+        "ميراث"
+      ],
+      "num_results": 10,
+      "search_time_ms": 762,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "الميراث وتوزيع التركة",
+          "book": "رسالة إلى فنان",
+          "score": 100.0,
+          "page": "9",
+          "snippet_len": 583
+        },
+        {
+          "title": "١ - أحكام الإرث",
+          "book": "كتاب 37532",
+          "score": 98.6,
+          "page": "391",
+          "snippet_len": 506
+        },
+        {
+          "title": "١ - أحكام الإرث",
+          "book": "كتاب 36185",
+          "score": 98.6,
+          "page": "879",
+          "snippet_len": 520
+        }
+      ]
+    },
+    {
+      "id": "en05",
+      "text": "ruling on apostasy in Islam",
+      "lang": "en",
+      "domain": "عام",
+      "translated_terms": [
+        "أحكام",
+        "الحكم",
+        "الردة",
+        "المرتد",
+        "حكم",
+        "ردة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 293,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "أحكام الردة",
+          "book": "الفقه المنهجي على مذهب الإمام الشافعي رحمه الله تعالى",
+          "score": 100.0,
+          "page": "104",
+          "snippet_len": 584
+        },
+        {
+          "title": "أحكام المرتد",
+          "book": "كتاب 384",
+          "score": 98.3,
+          "page": "5580",
+          "snippet_len": 527
+        },
+        {
+          "title": "[أحكام المرتد]",
+          "book": "وَلَا يُقَالُ: يَلْزَمُ عَلَى هَذَا كَوْنُ الْكُوفِيِّينَ مُ",
+          "score": 98.0,
+          "page": "200",
+          "snippet_len": 603
+        }
+      ]
+    },
+    {
+      "id": "ar01",
+      "text": "حكم الربا في الاسلام",
+      "lang": "ar",
+      "domain": "معاملات",
+      "translated_terms": [
+        "الاسلام",
+        "الربا",
+        "حكم",
+        "حكم الربا في الاسلام"
+      ],
+      "num_results": 10,
+      "search_time_ms": 1487,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "حكم الربا",
+          "book": "كتاب 13251",
+          "score": 100.0,
+          "page": "461",
+          "snippet_len": 581
+        },
+        {
+          "title": "حكم الربا:",
+          "book": "الإشراف العام",
+          "score": 99.8,
+          "page": "4518",
+          "snippet_len": 603
+        },
+        {
+          "title": "حكم الربا",
+          "book": "كتاب 23607",
+          "score": 99.8,
+          "page": "370",
+          "snippet_len": 547
+        }
+      ]
+    },
+    {
+      "id": "ar02",
+      "text": "شروط صحة النكاح",
+      "lang": "ar",
+      "domain": "مناكحات",
+      "translated_terms": [
+        "النكاح",
+        "شروط",
+        "شروط صحة النكاح",
+        "صحة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 460,
+      "top_score": 100.0,
+      "unique_books": 8,
+      "top3": [
+        {
+          "title": "شروط صحة النكاح",
+          "book": "القرآن الكريم وعلومه",
+          "score": 100.0,
+          "page": "46",
+          "snippet_len": 496
+        },
+        {
+          "title": "[شروط صحة النكاح]",
+          "book": "نَيْلُ المَآرِب",
+          "score": 100.0,
+          "page": "144",
+          "snippet_len": 559
+        },
+        {
+          "title": "[شروط صحة النكاح]",
+          "book": "كتاب 21607",
+          "score": 99.9,
+          "page": "335",
+          "snippet_len": 483
+        }
+      ]
+    },
+    {
+      "id": "ar03",
+      "text": "أحكام الطهارة",
+      "lang": "ar",
+      "domain": "طهارة",
+      "translated_terms": [
+        "أحكام",
+        "أحكام الطهارة",
+        "الطهارة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 88,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "أحكام الطهارة",
+          "book": "الفقه المنهجي على مذهب الإمام الشافعي رحمه الله تعالى",
+          "score": 100.0,
+          "page": "27",
+          "snippet_len": 494
+        },
+        {
+          "title": "أحكام الطهارة",
+          "book": "إجمال موضوعات السيرة النبوية",
+          "score": 100.0,
+          "page": "7",
+          "snippet_len": 568
+        },
+        {
+          "title": "أحكام الطهارة",
+          "book": "فتاوى في المسح على الخفين",
+          "score": 99.9,
+          "page": "1",
+          "snippet_len": 390
+        }
+      ]
+    },
+    {
+      "id": "ar04",
+      "text": "الميراث والفرائض",
+      "lang": "ar",
+      "domain": "عام",
+      "translated_terms": [
+        "الميراث",
+        "الميراث والفرائض",
+        "والفرائض"
+      ],
+      "num_results": 10,
+      "search_time_ms": 967,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "الوصايا والفرائض",
+          "book": "كتاب 36552",
+          "score": 100.0,
+          "page": "470",
+          "snippet_len": 585
+        },
+        {
+          "title": "الفقه والفرائض",
+          "book": "مجلة البحوث الإسلامية",
+          "score": 92.3,
+          "page": "205",
+          "snippet_len": 603
+        },
+        {
+          "title": "النوازل والفتاوى والفرائض",
+          "book": "الدكتور أبو القاسم سعد الله",
+          "score": 91.5,
+          "page": "79",
+          "snippet_len": 531
+        }
+      ]
+    },
+    {
+      "id": "ar05",
+      "text": "حكم الزكاة في المال",
+      "lang": "ar",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الزكاة",
+        "المال",
+        "حكم",
+        "حكم الزكاة في المال"
+      ],
+      "num_results": 10,
+      "search_time_ms": 765,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "ما حكم الزكاة في المال المدخر؟.",
+          "book": "هل علي بن أبي طالب معصوم",
+          "score": 100.0,
+          "page": "2592",
+          "snippet_len": 441
+        },
+        {
+          "title": "حكم الزكاة في المال غير الفائض عن الحاجة",
+          "book": "شرح صحيح مسلم - المقدمة - ترجمة الإمام مسلم بن الحجاج",
+          "score": 95.5,
+          "page": "16",
+          "snippet_len": 527
+        },
+        {
+          "title": "حكم الزكاة في المال المعد لشراء بيت",
+          "book": "فتاوى الشبكة الإسلامية",
+          "score": 76.3,
+          "page": "15175",
+          "snippet_len": 525
+        }
+      ]
+    },
+    {
+      "id": "cm01",
+      "text": "boleh gak shalat pakai celana pendek",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الجواز",
+        "الصلاة",
+        "الصلوات",
+        "جواز",
+        "حلال",
+        "صلاة",
+        "يجوز"
+      ],
+      "num_results": 10,
+      "search_time_ms": 552,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "[ما يجوز ويتوهم فيه عدم الجواز]",
+          "book": "كتاب 21607",
+          "score": 100.0,
+          "page": "77",
+          "snippet_len": 590
+        },
+        {
+          "title": "تارك الصلاة كافر حلال الدم",
+          "book": "أسباب السعادة وأسباب الشقاء",
+          "score": 96.9,
+          "page": "11",
+          "snippet_len": 540
+        },
+        {
+          "title": "الربا حلال حلال",
+          "book": "سلسلة: بحوث في العلمانية",
+          "score": 96.6,
+          "page": "249",
+          "snippet_len": 398
+        }
+      ]
+    },
+    {
+      "id": "cm02",
+      "text": "gimana hukumnya nikah beda agama",
+      "lang": "id",
+      "domain": "عقيدة",
+      "translated_terms": [
+        "الاختلاف",
+        "التزويج",
+        "الفرق",
+        "زواج",
+        "عقد النكاح",
+        "فرق",
+        "نكاح"
+      ],
+      "num_results": 10,
+      "search_time_ms": 359,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "* عقد النكاح",
+          "book": "الإنحراف العقدي في أدب الحداثة وفكرها",
+          "score": 100.0,
+          "page": "1790",
+          "snippet_len": 602
+        },
+        {
+          "title": "عقد النكاح",
+          "book": "شرح زاد المستقنع",
+          "score": 99.9,
+          "page": "16",
+          "snippet_len": 419
+        },
+        {
+          "title": "عقد النكاح",
+          "book": "العدة شرح العمدة",
+          "score": 99.9,
+          "page": "6",
+          "snippet_len": 586
+        }
+      ]
+    },
+    {
+      "id": "cm03",
+      "text": "kucing najis gak sih",
+      "lang": "id",
+      "domain": "طهارة",
+      "translated_terms": [
+        "القط",
+        "المتنجس",
+        "النجس",
+        "الهرة",
+        "نجاسة",
+        "هر"
+      ],
+      "num_results": 10,
+      "search_time_ms": 927,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "١١ - نجاسة الماء النجس حكمية",
+          "book": "اختيارات شيخ الإسلام ابن تيمية الفقهية",
+          "score": 100.0,
+          "page": "58",
+          "snippet_len": 592
+        },
+        {
+          "title": "القط:",
+          "book": "كتاب 10664",
+          "score": 91.1,
+          "page": "341",
+          "snippet_len": 540
+        },
+        {
+          "title": "هر",
+          "book": "عبد الله بن عبد العزيز البكريّ الأندلسي",
+          "score": 89.2,
+          "page": "1350",
+          "snippet_len": 543
+        }
+      ]
+    },
+    {
+      "id": "cm04",
+      "text": "kenapa riba diharamkan",
+      "lang": "id",
+      "domain": "معاملات",
+      "translated_terms": [
+        "الربا",
+        "ربا",
+        "ربا الفضل",
+        "ربا النسيئة",
+        "فائدة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 142,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "ربا النسيئة فيما لا يدخله ربا الفضل",
+          "book": "كتاب الطهارة",
+          "score": 100.0,
+          "page": "318",
+          "snippet_len": 568
+        },
+        {
+          "title": "ربا النسيئة",
+          "book": "الْمُسْنَدُ الْمَوْضُوعِيُّ الْجَامِعُ لِلْكُتُبِ الْعَشَرَة",
+          "score": 87.4,
+          "page": "366",
+          "snippet_len": 505
+        },
+        {
+          "title": "ربا النسيئة",
+          "book": "كتاب 13251",
+          "score": 87.4,
+          "page": "483",
+          "snippet_len": 503
+        }
+      ]
+    },
+    {
+      "id": "cm05",
+      "text": "apakah tahlilan itu bid'ah",
+      "lang": "id",
+      "domain": "عقيدة",
+      "translated_terms": [
+        "البدع",
+        "البدعة",
+        "بدعة"
+      ],
+      "num_results": 10,
+      "search_time_ms": 213,
+      "top_score": 100.0,
+      "unique_books": 9,
+      "top3": [
+        {
+          "title": "بدعة القدر من أوائل البدع",
+          "book": "شرح العقيدة الواسطية",
+          "score": 100.0,
+          "page": "4",
+          "snippet_len": 592
+        },
+        {
+          "title": "تقسيم البدعة إلى بدعة مفسقة ومكفرة",
+          "book": "استثمار الوقت عند العلماء",
+          "score": 97.8,
+          "page": "13",
+          "snippet_len": 507
+        },
+        {
+          "title": "البدع ضلال وليس فيها بدعة حسنة",
+          "book": "الحث على اتباع السنة والتحذير من البدع وبيان خطرها",
+          "score": 92.7,
+          "page": "42",
+          "snippet_len": 419
+        }
+      ]
+    },
+    {
+      "id": "cm06",
+      "text": "boleh gak wanita jadi imam shalat",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "إمام",
+        "الإمام",
+        "الإناث",
+        "البنت",
+        "الجواز",
+        "الصلاة",
+        "الصلوات",
+        "النساء"
+      ],
+      "num_results": 10,
+      "search_time_ms": 406,
+      "top_score": 100.0,
+      "unique_books": 7,
+      "top3": [
+        {
+          "title": "جواز صلاة النساء تبعا للرجال",
+          "book": "اللقاء الشهري",
+          "score": 100.0,
+          "page": "17",
+          "snippet_len": 583
+        },
+        {
+          "title": "ضابط جواز صلاة الإمام جالسا",
+          "book": "جامع تراث العلامة الألباني في الفقه",
+          "score": 98.1,
+          "page": "462",
+          "snippet_len": 598
+        },
+        {
+          "title": "الزوج وبنتا بنت البنت مع بنت ابن بنت البنت",
+          "book": "كتاب 432",
+          "score": 97.7,
+          "page": "458",
+          "snippet_len": 557
+        }
+      ]
+    },
+    {
+      "id": "cm07",
+      "text": "doa qunut dibaca kapan",
+      "lang": "id",
+      "domain": "عبادات",
+      "translated_terms": [
+        "الدعاء",
+        "القنوت",
+        "دعاء",
+        "دعاء القنوت",
+        "قنوت"
+      ],
+      "num_results": 10,
+      "search_time_ms": 1233,
+      "top_score": 100.0,
+      "unique_books": 10,
+      "top3": [
+        {
+          "title": "دعاء القنوت",
+          "book": "قصة هرقل والإسلام",
+          "score": 100.0,
+          "page": "11",
+          "snippet_len": 496
+        },
+        {
+          "title": "دعاء القنوت",
+          "book": "أَسْأَلُ اللَّهَ أَنْ يَنْفَعَ بِهِ، وَيَجْعَلَهُ ذُخْراً لَ",
+          "score": 100.0,
+          "page": "48",
+          "snippet_len": 603
+        },
+        {
+          "title": "دعاء القنوت:",
+          "book": "الموسوعة الفقهية الميسرة في فقه الكتاب والسنة المطهرة",
+          "score": 100.0,
+          "page": "128",
+          "snippet_len": 579
+        }
+      ]
+    }
+  ]
+}
