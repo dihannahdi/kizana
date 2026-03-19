@@ -1,5 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="12" fill="#1a5f3a"/>
-  <text x="32" y="42" text-anchor="middle" font-family="serif" font-size="22" font-weight="bold" fill="#ffffff" direction="rtl">بم</text>
-  <rect x="8" y="50" width="48" height="2" rx="1" fill="#c9a84c"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#1a5f3a" rx="12"/><text x="32" y="42" fill="#fff" direction="rtl" font-family="serif" font-size="22" font-weight="bold" text-anchor="middle">بم</text><rect width="48" height="2" x="8" y="50" fill="#c9a84c" rx="1"/></svg>
